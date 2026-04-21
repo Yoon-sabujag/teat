@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   const { systemPrompt, history, playerLine } = parsed.data;
 
   const response = await ai.models.generateContent({
-    model: process.env.GEMINI_MODEL ?? "gemini-2.0-flash",
+    model: process.env.GEMINI_MODEL ?? "gemini-2.5-flash",
     contents: [
       ...history.map((h) => ({
         role: h.role,
@@ -38,6 +38,7 @@ export async function POST(req: Request) {
     config: {
       systemInstruction: systemPrompt,
       maxOutputTokens: 512,
+      thinkingConfig: { thinkingBudget: 0 },
     },
   });
 

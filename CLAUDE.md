@@ -20,7 +20,9 @@ npm run typecheck   # tsc --noEmit
 node scripts/gen-placeholders.mjs   # 캐릭터 자리 이미지 재생성 (sharp 기반)
 ```
 
-Gemini API 프록시를 사용하려면 `.env.local`에 `GEMINI_API_KEY`를 설정해야 한다 (`.env.example` 참고). 모델은 `GEMINI_MODEL`로 오버라이드 가능 (기본 `gemini-2.0-flash`).
+Gemini API 프록시를 사용하려면 `.env.local`에 `GEMINI_API_KEY`를 설정해야 한다 (`.env.example` 참고). 모델은 `GEMINI_MODEL`로 오버라이드 가능 (기본 `gemini-2.5-flash`). `gemini-2.0-flash`는 신규 키로 더 이상 호출 안 됨.
+
+**Thinking 비활성화**: `/api/dialogue` 라우트에서 `thinkingConfig: { thinkingBudget: 0 }`을 강제로 설정한다. Gemini 2.5 Flash는 기본적으로 thinking 토큰을 쓰는데, 게임 NPC 대사처럼 짧고 즉각적인 응답이 필요한 경우 thinking이 토큰 한도를 다 먹어 본문이 잘리고 응답 지연도 생긴다. 캐릭터가 정말 깊이 있게 추론해야 하는 노드(예: 후반부 보스 NPC)가 생기면 그 노드만 별도로 thinking을 켜는 식으로 분기할 것.
 
 ## 게임 루프 — 세 단계
 
