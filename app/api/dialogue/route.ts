@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -9,14 +9,14 @@ const RequestSchema = z.object({
   systemPrompt: z.string(),
   history: z.array(
     z.object({
-      role: z.enum(["user", "assistant"]),
+      role: z.enum(["user", "model"]),
       content: z.string(),
     }),
   ),
   playerLine: z.string(),
 });
 
-const client = new Anthropic();
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export async function POST(req: Request) {
   const parsed = RequestSchema.safeParse(await req.json());
@@ -26,26 +26,23 @@ export async function POST(req: Request) {
 
   const { systemPrompt, history, playerLine } = parsed.data;
 
-  const response = await client.messages.create({
-    model: process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-6",
-    max_tokens: 512,
-    system: [
-      {
-        type: "text",
-        text: systemPrompt,
-        cache_control: { type: "ephemeral" },
-      },
+  const response = await ai.models.generateContent({
+    model: process.env.GEMINI_MODEL ?? "gemini-2.0-flash",
+    contents: [
+      ...history.map((h) => ({
+        role: h.role,
+        parts: [{ text: h.content }],
+      })),
+      { role: "user", parts: [{ text: playerLine }] },
     ],
-    messages: [
-      ...history,
-      { role: "user" as const, content: playerLine },
-    ],
+    config: {
+      systemInstruction: systemPrompt,
+      maxOutputTokens: 512,
+    },
   });
 
-  const reply = response.content
-    .filter((block): block is Anthropic.TextBlock => block.type === "text")
-    .map((b) => b.text)
-    .join("\n");
-
-  return NextResponse.json({ reply, usage: response.usage });
+  return NextResponse.json({
+    reply: response.text ?? "",
+    usage: response.usageMetadata,
+  });
 }

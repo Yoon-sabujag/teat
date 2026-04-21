@@ -20,7 +20,7 @@ npm run typecheck   # tsc --noEmit
 node scripts/gen-placeholders.mjs   # 캐릭터 자리 이미지 재생성 (sharp 기반)
 ```
 
-Claude API 프록시를 사용하려면 `.env.local`에 `ANTHROPIC_API_KEY`를 설정해야 한다 (`.env.example` 참고). 모델은 `ANTHROPIC_MODEL`로 오버라이드 가능 (기본 `claude-sonnet-4-6`).
+Gemini API 프록시를 사용하려면 `.env.local`에 `GEMINI_API_KEY`를 설정해야 한다 (`.env.example` 참고). 모델은 `GEMINI_MODEL`로 오버라이드 가능 (기본 `gemini-2.0-flash`).
 
 ## 게임 루프 — 세 단계
 
@@ -46,9 +46,9 @@ Claude API 프록시를 사용하려면 `.env.local`에 `ANTHROPIC_API_KEY`를 �
 - `Effect`로 상태 변경: `faith`, `suspicion`, `flag`, `end`(success/flee).
 - 런타임은 `lib/dialogue-engine/runner.ts`의 `useSceneRunner` 훅 한 곳에 집중. `DialogueScene` 컴포넌트가 이를 감싼 프레젠테이션 층.
 
-**LLM improv의 관례**: system prompt는 반드시 (1) NPC 페르소나, (2) 출력 언어(한국어), (3) 트리거 키워드를 응답 끝에 붙이라는 지시를 포함해야 한다. `minji-intro.yaml`의 `warm-open` 노드가 표준 템플릿이다.
+**LLM improv의 관례**: `systemInstruction`은 반드시 (1) NPC 페르소나, (2) 출력 언어(한국어), (3) 트리거 키워드를 응답 끝에 붙이라는 지시를 포함해야 한다. `minji-intro.yaml`의 `warm-open` 노드가 표준 템플릿이다.
 
-**프롬프트 캐싱**: `/api/dialogue` 라우트에서 `system` 블록에 `cache_control: { type: "ephemeral" }`을 설정해 NPC 페르소나 프롬프트를 재사용한다. 동일 NPC와 여러 턴 주고받을 때 비용 절감이 크므로 제거하지 말 것.
+**LLM 백엔드**: `/api/dialogue` 라우트는 `@google/genai` SDK를 통해 Gemini를 호출한다. 메시지 role은 Gemini 컨벤션에 따라 `user` / `model` 두 종류 (Anthropic의 `assistant`가 아님). 같은 NPC와 여러 턴이 길어질 경우 [Gemini Caches API](https://ai.google.dev/gemini-api/docs/caching)로 시스템 프롬프트를 캐시할 수 있지만, 현재는 미적용 (페르소나 프롬프트가 짧고 캐시 최소 토큰 임계치를 못 넘기는 경우가 많음).
 
 ### 상태 관리
 
@@ -69,7 +69,7 @@ Claude API 프록시를 사용하려면 `.env.local`에 `ANTHROPIC_API_KEY`를 �
 - `app/preach/[npcId]/page.tsx` — 1:1 전도 씬 (conversion mode)
 - `app/congregation/page.tsx` — 신도 대시보드 (클라이언트 컴포넌트, Zustand 직접 구독)
 - `app/coop/[followerId]/[targetId]/page.tsx` — 협공 씬 (coop mode)
-- `app/api/dialogue/route.ts` — Claude API 프록시 (절대 클라이언트에 키 노출 금지)
+- `app/api/dialogue/route.ts` — Gemini API 프록시 (절대 클라이언트에 키 노출 금지)
 
 ## 콘텐츠 작성 규칙
 
@@ -109,4 +109,4 @@ Claude API 프록시를 사용하려면 `.env.local`에 `ANTHROPIC_API_KEY`를 �
 - 테스트 프레임워크 미설치. 필요하면 Vitest 추가 후 `package.json` 스크립트와 본 문서 업데이트.
 - 튜토리얼/세이브 슬롯 UI 없음. `reset()` 액션은 store에 있지만 UI에 노출 안 됨.
 - NPC가 민지 한 명뿐. `content/npcs/`에 행인을 더 추가하면 자동으로 `/preach` 인덱스에 잡힌다.
-- improv 노드를 실제로 돌리려면 `.env.local`에 `ANTHROPIC_API_KEY`가 있어야 한다 (없으면 그 노드에서 500).
+- improv 노드를 실제로 돌리려면 `.env.local`에 `GEMINI_API_KEY`가 있어야 한다 (없으면 그 노드에서 500).
