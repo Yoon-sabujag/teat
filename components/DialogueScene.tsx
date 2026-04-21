@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useSceneRunner, type RunnerArgs } from "@/lib/dialogue-engine/runner";
 
 export function DialogueScene(props: RunnerArgs) {
@@ -59,12 +60,12 @@ export function DialogueScene(props: RunnerArgs) {
         </p>
 
         {ending ? (
-          <a
+          <Link
             href="/"
             className="rounded-xl bg-amber-500 px-4 py-3 text-center font-semibold text-black"
           >
             {ending === "success" ? "입교 성공" : "도망침"} — 돌아가기
-          </a>
+          </Link>
         ) : choices.length > 0 ? (
           <ul className="flex flex-col gap-2">
             {choices.map((c) => (

@@ -14,8 +14,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run dev         # 개발 서버 (모바일 뷰포트로 확인)
 npm run build       # 프로덕션 빌드
 npm run start       # 빌드 실행
-npm run lint        # next lint
+npm run lint        # eslint . (Next 16에서 next lint가 제거되므로 ESLint CLI 직접 사용)
 npm run typecheck   # tsc --noEmit
+
+node scripts/gen-placeholders.mjs   # 캐릭터 자리 이미지 재생성 (sharp 기반)
 ```
 
 Claude API 프록시를 사용하려면 `.env.local`에 `ANTHROPIC_API_KEY`를 설정해야 한다 (`.env.example` 참고). 모델은 `ANTHROPIC_MODEL`로 오버라이드 가능 (기본 `claude-sonnet-4-6`).
@@ -80,6 +82,7 @@ Claude API 프록시를 사용하려면 `.env.local`에 `ANTHROPIC_API_KEY`를 �
 - `expression` 값은 `lib/dialogue-engine/types.ts`의 `Expression` 유니언과 일치해야 함 (`neutral`, `smile`, `annoyed`, `skeptical`, `entranced`, `afraid`).
 - 없는 expression을 참조하면 이미지가 깨지므로 신규 expression 추가 시 타입 먼저 업데이트.
 - 이미지는 **사전 생성 (AI 생성 결과물을 저장)**. 런타임 이미지 생성은 사용하지 않는다.
+- 현재는 `scripts/gen-placeholders.mjs`로 만든 색상 그라디언트 자리 이미지가 들어있다. **실제 NPC 일러스트로 교체할 때 같은 파일명을 그대로 덮어쓰면 됨.** 새 NPC를 추가하면 `gen-placeholders.mjs`의 `characters` 맵에도 추가하거나, 직접 `public/characters/<npcId>/` 디렉토리를 채울 것.
 
 ### 스크립트 작성 시
 - 모든 종료 경로에 `{ kind: end, outcome: success | flee }` effect가 있어야 한다. 없으면 씬이 멈춘 상태로 남는다.
@@ -98,11 +101,12 @@ Claude API 프록시를 사용하려면 `.env.local`에 `ANTHROPIC_API_KEY`를 �
 - `.env.local`, `node_modules/`, `.next/`는 커밋 금지 (`.gitignore`로 차단됨).
 - 캐릭터 이미지는 아직 없음 — `public/characters/`는 `.gitkeep`만 있음. 새 NPC를 추가하면 해당 `<npcId>/` 디렉토리도 채워야 한다.
 
-## 현 상태 (중요)
+## 현 상태
 
-**이 저장소는 초기 스캐폴딩 상태**다:
+**아직 초기 스캐폴딩 단계**다. 다음 항목들이 비어 있다:
 
-- `npm install` 한 번도 돌리지 않았으므로 `package-lock.json` 없음. 첫 실행 시 설치 필요.
-- 캐릭터 이미지 실물 없음 — `DialogueScene`의 `<Image>`는 지금 깨진다. 먼저 `public/characters/minji/neutral.webp` 하나라도 채우고 테스트.
+- 실제 캐릭터 일러스트가 없어 `scripts/gen-placeholders.mjs`로 생성한 자리 이미지를 사용 중. 같은 경로에 진짜 webp를 덮어쓰면 자동으로 반영됨.
 - 테스트 프레임워크 미설치. 필요하면 Vitest 추가 후 `package.json` 스크립트와 본 문서 업데이트.
 - 튜토리얼/세이브 슬롯 UI 없음. `reset()` 액션은 store에 있지만 UI에 노출 안 됨.
+- NPC가 민지 한 명뿐. `content/npcs/`에 행인을 더 추가하면 자동으로 `/preach` 인덱스에 잡힌다.
+- improv 노드를 실제로 돌리려면 `.env.local`에 `ANTHROPIC_API_KEY`가 있어야 한다 (없으면 그 노드에서 500).
