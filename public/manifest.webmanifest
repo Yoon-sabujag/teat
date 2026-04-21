@@ -1,0 +1,11 @@
+{
+  "name": "도(道)믿남",
+  "short_name": "Teat",
+  "description": "대화기반 비주얼 시뮬레이션 설교 게임",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0b10",
+  "theme_color": "#0b0b10",
+  "orientation": "portrait",
+  "icons": []
+}

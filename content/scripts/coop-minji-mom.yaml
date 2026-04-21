@@ -1,0 +1,56 @@
+id: coop-minji-mom
+entry: intro
+nodes:
+  intro:
+    id: intro
+    lines:
+      - speaker: narration
+        text: 민지 엄마가 민지의 방으로 불쑥 들어왔다. 당신이 거기 앉아 있다.
+      - speaker: npc
+        text: 누구세요? 우리 민지한테 뭘 시키고 있는 거예요?
+        expression: annoyed
+    choices:
+      - id: reassure
+        label: (공손하게) 어머님, 민지 씨가 많이 힘들어해서요.
+        next: wary
+      - id: flee-now
+        label: 민지야, 다음에 보자.
+        next: flee
+        effects:
+          - kind: end
+            outcome: flee
+
+  wary:
+    id: wary
+    lines:
+      - speaker: companion
+        text: 엄마, 이 분 진짜 좋은 분이야.
+      - speaker: npc
+        text: 너 또 이상한 데 빠진 거 아니지?
+        expression: skeptical
+    improv:
+      systemPrompt: |
+        너는 50대 한국인 어머니다. 딸(민지)이 이상한 사람과 어울리는 것 같아 몹시 경계하고 있다.
+        상대의 말에서 진정성이 느껴지면 경계를 살짝 낮추지만, 사이비 냄새가 나면 격분한다.
+        한국어로 한 문장 대답하라. 진정성이 느껴지면 "[LISTEN]"을, 사이비 냄새가 나면 "[RAGE]"를 마지막에 붙여라.
+      triggers:
+        - keyword: "[LISTEN]"
+          next: opening
+        - keyword: "[RAGE]"
+          next: flee
+
+  opening:
+    id: opening
+    lines:
+      - speaker: npc
+        text: …일단 얘기는 들어볼게요.
+        expression: neutral
+        effects:
+          - kind: end
+            outcome: success
+
+  flee:
+    id: flee
+    lines:
+      - speaker: narration
+        text: 문이 쾅 닫혔다. 당분간은 민지 집에 가기 어렵겠다.

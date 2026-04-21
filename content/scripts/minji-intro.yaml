@@ -1,0 +1,84 @@
+id: minji-intro
+entry: approach
+nodes:
+  approach:
+    id: approach
+    lines:
+      - speaker: narration
+        text: 민지는 핸드폰을 보며 누군가를 기다리고 있다.
+      - speaker: player
+        text: 저기요, 잠깐 시간 괜찮으세요?
+      - speaker: npc
+        text: 네…?
+        expression: skeptical
+    choices:
+      - id: warm
+        label: (부드럽게) 혹시 요즘 마음이 좀 무거우시진 않으세요?
+        next: warm-open
+        effects:
+          - kind: faith
+            delta: 1
+      - id: direct
+        label: (직설적으로) 도를 아십니까?
+        next: shut-down
+        effects:
+          - kind: suspicion
+            delta: 3
+
+  warm-open:
+    id: warm-open
+    lines:
+      - speaker: npc
+        text: 어… 뭐 그런 건 있죠.
+        expression: neutral
+    improv:
+      systemPrompt: |
+        너는 20대 여성 '민지'다. 방금 낯선 남자가 카페 앞에서 부드럽게 말을 걸어왔다.
+        너는 경계하지만, 상대의 말에 일말의 공감이 생겼다. 한국어로 한두 문장 대답하라.
+        만약 상대가 신/운명/조상/팔자 같은 주제를 꺼내면 마지막에 "[CURIOUS]"를 붙여라.
+        만약 상대가 불쾌하게 굴면 마지막에 "[LEAVE]"를 붙여라.
+      triggers:
+        - keyword: "[CURIOUS]"
+          next: hook-landed
+        - keyword: "[LEAVE]"
+          next: shut-down
+
+  hook-landed:
+    id: hook-landed
+    lines:
+      - speaker: npc
+        text: 사실 요즘 좀… 이상한 꿈을 자주 꿔요.
+        expression: neutral
+      - speaker: player
+        text: 그건 우연이 아닙니다. 조상이 부르시는 겁니다.
+      - speaker: npc
+        text: 네…?
+        expression: afraid
+    choices:
+      - id: push
+        label: 저희 선생님을 한 번 만나보시겠어요?
+        next: success
+        effects:
+          - kind: end
+            outcome: success
+      - id: retreat
+        label: 더 이야기 나눌까요?
+        next: warm-open
+
+  shut-down:
+    id: shut-down
+    lines:
+      - speaker: npc
+        text: 아, 저 바빠서요. 죄송해요.
+        expression: annoyed
+      - speaker: narration
+        text: 민지는 빠르게 자리를 떴다.
+        effects:
+          - kind: end
+            outcome: flee
+
+  success:
+    id: success
+    lines:
+      - speaker: narration
+        text: 민지는 당신의 명함을 받아 들었다. 내일 센터에서 만나기로 했다.
