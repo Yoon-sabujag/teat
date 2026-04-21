@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import type { Choice, Effect, Line, RunnerState, Script } from "./types";
 import type { Npc, Relative } from "@/lib/social-graph/types";
 import { useGameStore } from "@/lib/game-state/store";
@@ -67,6 +67,7 @@ export function useSceneRunner(args: RunnerArgs) {
   const [ending, setEnding] = useState<Ending>(null);
   const [busy, setBusy] = useState(false);
   const [improvLine, setImprovLine] = useState<Line | null>(null);
+  const appliedLinesRef = useRef<Set<string>>(new Set());
 
   const convertNpc = useGameStore((s) => s.convertNpc);
   const recordCoopOutcome = useGameStore((s) => s.recordCoopOutcome);
@@ -103,18 +104,21 @@ export function useSceneRunner(args: RunnerArgs) {
     setImprovLine(null);
     setState((prev) => {
       const n = script.nodes[prev.nodeId];
+      const key = `${prev.nodeId}:${prev.lineIndex}`;
+      let after = prev;
+      if (!appliedLinesRef.current.has(key)) {
+        appliedLinesRef.current.add(key);
+        const result = applyEffects(prev, n.lines[prev.lineIndex]?.effects);
+        after = result.state;
+        if (result.ending) commitEnding(result.ending);
+      }
       if (prev.lineIndex < n.lines.length - 1) {
-        const { state: next, ending: e } = applyEffects(
-          prev,
-          n.lines[prev.lineIndex].effects,
-        );
-        if (e) commitEnding(e);
-        return { ...next, lineIndex: prev.lineIndex + 1 };
+        return { ...after, lineIndex: prev.lineIndex + 1 };
       }
       if (n.next) {
-        return { ...prev, nodeId: n.next, lineIndex: 0 };
+        return { ...after, nodeId: n.next, lineIndex: 0 };
       }
-      return prev;
+      return after;
     });
   }, [script, commitEnding]);
 
@@ -123,7 +127,18 @@ export function useSceneRunner(args: RunnerArgs) {
       const n = script.nodes[state.nodeId];
       const choice = n.choices?.find((c) => c.id === choiceId);
       if (!choice || !choiceAvailable(state, choice)) return;
-      const { state: next, ending: e } = applyEffects(state, choice.effects);
+      const lineKey = `${state.nodeId}:${state.lineIndex}`;
+      let after = state;
+      if (!appliedLinesRef.current.has(lineKey)) {
+        appliedLinesRef.current.add(lineKey);
+        const lineResult = applyEffects(
+          state,
+          n.lines[state.lineIndex]?.effects,
+        );
+        after = lineResult.state;
+        if (lineResult.ending) commitEnding(lineResult.ending);
+      }
+      const { state: next, ending: e } = applyEffects(after, choice.effects);
       if (e) commitEnding(e);
       setState({ ...next, nodeId: choice.next, lineIndex: 0 });
       setImprovLine(null);

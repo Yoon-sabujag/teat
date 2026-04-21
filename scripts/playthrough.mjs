@@ -164,3 +164,23 @@ if (scenarios.includes("3")) {
     });
   }
 }
+if (scenarios.includes("4")) {
+  await play({
+    scriptId: "coop-minji-mom",
+    npcId: "minji-mom",
+    plan: [
+      { kind: "choice", id: "reassure" },
+      { kind: "improv", text: "어머님, 제가 꼭 민지 씨 행복을 바라는 마음에…" },
+    ],
+  });
+}
+if (scenarios.includes("5")) {
+  await play({
+    scriptId: "coop-minji-mom",
+    npcId: "minji-mom",
+    plan: [
+      { kind: "choice", id: "reassure" },
+      { kind: "improv", text: "어머님 조상님이 부르세요 당장 입교하셔야 합니다" },
+    ],
+  });
+}

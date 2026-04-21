@@ -34,9 +34,6 @@ nodes:
       - id: close
         label: 그럼 한 번만 들어보시겠어요?
         next: success
-        effects:
-          - kind: end
-            outcome: success
 
   hard-follow:
     id: hard-follow
@@ -53,3 +50,6 @@ nodes:
     lines:
       - speaker: narration
         text: 소연도 명부에 이름을 올렸다.
+        effects:
+          - kind: end
+            outcome: success

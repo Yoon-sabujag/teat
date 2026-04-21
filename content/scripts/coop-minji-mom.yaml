@@ -16,9 +16,6 @@ nodes:
       - id: flee-now
         label: 민지야, 다음에 보자.
         next: flee
-        effects:
-          - kind: end
-            outcome: flee
 
   wary:
     id: wary
@@ -54,3 +51,6 @@ nodes:
     lines:
       - speaker: narration
         text: 문이 쾅 닫혔다. 당분간은 민지 집에 가기 어렵겠다.
+        effects:
+          - kind: end
+            outcome: flee

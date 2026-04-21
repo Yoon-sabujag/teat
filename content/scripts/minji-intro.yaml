@@ -58,9 +58,6 @@ nodes:
       - id: push
         label: 저희 선생님을 한 번 만나보시겠어요?
         next: success
-        effects:
-          - kind: end
-            outcome: success
       - id: retreat
         label: 더 이야기 나눌까요?
         next: warm-open
@@ -82,3 +79,6 @@ nodes:
     lines:
       - speaker: narration
         text: 민지는 당신의 명함을 받아 들었다. 내일 센터에서 만나기로 했다.
+        effects:
+          - kind: end
+            outcome: success
