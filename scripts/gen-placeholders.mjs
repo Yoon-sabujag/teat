@@ -15,6 +15,8 @@ const characters = {
   jaemin: { hue: 40, name: "재민", role: "흥신소" },
   "kim-sunggi": { hue: 280, name: "김승기", role: "그룹 부회장" },
   seungjae: { hue: 180, name: "백승재", role: "주인공" },
+  miyoung: { hue: 330, name: "미영", role: "변호사" },
+  junhyuk: { hue: 110, name: "준혁", role: "증권맨 · 도현 동창" },
 };
 
 const expressions = [
@@ -32,6 +34,8 @@ const backgrounds = {
   "office-exec": { hue: 210, name: "광화문 임원실 (저녁)" },
   "euljiro-office": { hue: 30, name: "을지로 7층 사무실" },
   "gwanghwamun-vip": { hue: 260, name: "광화문 VIP 상담실" },
+  "dohyun-officetel": { hue: 200, name: "도현 오피스텔 (강남)" },
+  "cheongdam-cafe": { hue: 330, name: "청담 카페 (저녁)" },
 };
 
 function charSvg({ hue, name, role, expression }) {

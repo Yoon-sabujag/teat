@@ -1,0 +1,324 @@
+id: c2-apartment
+title: "도현의 오피스텔"
+background: dohyun-officetel
+cast:
+  - npc: junhyuk
+    position: offscreen
+entry: lobby
+
+nodes:
+  lobby:
+    id: lobby
+    lines:
+      - speaker: narration
+        text: 강남역 뒤편. 주상복합 오피스텔 27층. 김승기 부회장이 넘겨준 카드키가 주머니에서 무겁다.
+      - speaker: narration
+        text: 로비 경비실에서 사복 경비원이 고개를 든다. 얼굴이 기억하는 얼굴이다.
+      - speaker: thought
+        text: 20년 전 우리 회사 경비. 퇴직 후 이 건물로 옮겼구나.
+    choices:
+      - id: greet-old
+        label: 아저씨, 오래간만입니다.
+        check: { stat: inmaek, dc: 11 }
+        success:
+          next: guard-talks
+          effects:
+            - kind: stat
+              target: inmaek
+              delta: 1
+            - kind: memory
+              text: 구 회사 경비 아저씨가 경비실을 지키고 있었다. 도현의 마지막 방문 정황을 귀띔해줬다.
+        failure:
+          next: guard-cold
+      - id: flash-key
+        label: (카드키를 보여주며) 도현 씨가 부탁한 일입니다.
+        next: guard-cold
+
+  guard-talks:
+    id: guard-talks
+    lines:
+      - speaker: narration
+        text: 경비원이 웃으며 작은 냉장고에서 커피 한 캔을 건넨다.
+      - speaker: narration
+        text: '"백 실장님은 내가 늘 기억하지." — 이런 반가움은 돈 주고 못 사는 것이다.'
+      - speaker: narration
+        text: 도현이 마지막으로 집에 들어온 건 4주 전 목요일 밤 11시. 혼자였다.
+      - speaker: narration
+        text: 다음 날 새벽 2시경, 검은 정장의 남자 둘이 로비를 지나 27층으로 올라갔다. 출입 기록은 남지 않았다.
+      - speaker: thought
+        text: 출입 기록이 없다. 누군가 CCTV와 출입 카드 로그를 손본 것이다.
+        effects:
+          - kind: flag
+            key: ghost_visitors
+            value: true
+          - kind: memory
+            text: 도현 실종 전날 새벽 2시, 로그에 남지 않는 검은 정장 두 명이 오피스텔에 들어갔다.
+    next: elevator
+
+  guard-cold:
+    id: guard-cold
+    lines:
+      - speaker: narration
+        text: 경비원은 카드키를 확인하고 고개를 끄덕인다. 그 외엔 말이 없다.
+      - speaker: thought
+        text: 이 아저씨는 뭔가 봤다. 그저 나에게 말할 이유를 못 찾았을 뿐이다.
+    next: elevator
+
+  elevator:
+    id: elevator
+    lines:
+      - speaker: narration
+        text: 엘리베이터가 27층에서 조용히 멈춘다. 복도의 간접 조명이 밑에서 올라온다.
+      - speaker: narration
+        text: 27층 끝 방. 2704호. 문 앞에 배달 안내 스티커도 없다.
+    next: entry
+
+  entry:
+    id: entry
+    lines:
+      - speaker: narration
+        text: 카드키를 대자 잠금이 풀린다. 문을 연다.
+      - speaker: narration
+        text: 집안은 정돈되어 있다. 과하게 정돈되어 있다.
+      - speaker: thought
+        text: 잠수한 사람의 집이 이럴 수는 없다. 누가 치웠다.
+    choices:
+      - id: sweep-living
+        label: 거실부터 훑어본다.
+        next: living-room
+      - id: sweep-study
+        label: 서재·책상부터 본다.
+        check: { stat: jikgam, dc: 12 }
+        success:
+          next: study-clue
+          effects:
+            - kind: memory
+              text: 도현의 책상 위에 가장 최근 인쇄물 한 장이 남아있었다. 특정 대기업 감사 공시 요약. 붉은 볼펜으로 줄 쳐진 항목 하나.
+        failure:
+          next: living-room
+
+  living-room:
+    id: living-room
+    lines:
+      - speaker: narration
+        text: 거실은 호텔 방 같다. 유리 탁자 위에 위스키 잔 하나. 바닥에 마른 자국이 약하게 남아있다.
+      - speaker: narration
+        text: 잔 입술에 두 사람의 흔적. 립스틱은 닦이지 않았다.
+        effects:
+          - kind: memory
+            text: 도현 집 거실 유리 탁자 위에 위스키 잔 두 개 분량의 흔적. 한 쪽에 닦이지 않은 립스틱.
+    choices:
+      - id: photo-jar
+        label: (사진으로 남긴다.)
+        next: study
+        effects:
+          - kind: flag
+            key: photo_glass
+            value: true
+      - id: move-on
+        label: (손대지 않고 서재로 간다.)
+        next: study
+
+  study-clue:
+    id: study-clue
+    lines:
+      - speaker: narration
+        text: 책상 서랍이 한 칸 어긋나 있다. 최근 누가 서둘러 여닫았다.
+      - speaker: narration
+        text: 서랍 안엔 A4 한 장. 모 대기업 감사 공시 요약. 한 항목 옆에 붉은 볼펜 표시.
+      - speaker: thought
+        text: 해외 법인 특수목적회사 편입분. 규모가 크다. 이게 USB의 일부일 수 있다.
+        effects:
+          - kind: flag
+            key: saw_audit_paper
+            value: true
+    next: study
+
+  study:
+    id: study
+    lines:
+      - speaker: narration
+        text: 서재. 벽면 책장의 책 절반이 빠져 있다.
+      - speaker: narration
+        text: 누군가 특정 주제의 책만 골라 가져갔다는 뜻이다. 남은 건 일반 소설, 경영학, 법률 입문서.
+      - speaker: narration
+        text: 빠진 건 — 세무, 해외 회계, 언론 PR, 그리고 공익제보 관련 서적.
+      - speaker: thought
+        text: 공익제보. 도현은 자기가 공익제보자가 될 가능성을 공부하고 있었다.
+        effects:
+          - kind: flag
+            key: disclosure_research
+            value: true
+          - kind: memory
+            text: 도현이 공익제보 관련 서적을 집중적으로 공부한 흔적.
+    next: intercom
+
+  intercom:
+    id: intercom
+    lines:
+      - speaker: narration
+        text: 현관 인터폰이 울린다. 로비 경비다.
+      - speaker: narration
+        text: '"백 실장님, 손님이 한 분 올라오시겠다는데요. 성함이… 준혁 씨."'
+      - speaker: thought
+        text: 준혁. 도현의 대학 동창이자 증권맨. 내가 들어온 걸 알았다.
+    choices:
+      - id: admit-junhyuk
+        label: 올려 보내세요.
+        next: junhyuk-arrives
+      - id: refuse-junhyuk
+        label: 지금 바쁩니다. 다음에 뵙죠.
+        check: { stat: gwonmo, dc: 13 }
+        success:
+          next: junhyuk-later
+          effects:
+            - kind: flag
+              key: deferred_junhyuk
+              value: true
+        failure:
+          next: junhyuk-arrives
+
+  junhyuk-arrives:
+    id: junhyuk-arrives
+    cast:
+      - npc: junhyuk
+        position: right
+        expression: neutral
+    lines:
+      - speaker: narration
+        text: 3분 뒤. 숨이 차서 올라온 준혁이 문턱에서 인사도 없이 들어선다.
+      - speaker: junhyuk
+        text: 실장님, 이거 진짜 찾으러 오신 거 맞죠.
+        expression: tense
+      - speaker: junhyuk
+        text: 저 도현이 걱정돼서 왔어요. 그러니까… 알려드릴게 하나 있어요.
+        expression: weary
+    choices:
+      - id: let-speak
+        label: 말해봐.
+        next: junhyuk-talk
+      - id: challenge-junhyuk
+        label: 네가 왜 이걸 지금 말하지?
+        check: { stat: jikgam, dc: 13 }
+        success:
+          next: junhyuk-admits
+          effects:
+            - kind: memory
+              text: 준혁은 도현과 함께 움직일지 말지 갈등했다. 결국 빠졌다. 그래서 지금 죄책감으로 나에게 말한다.
+        failure:
+          next: junhyuk-talk
+
+  junhyuk-admits:
+    id: junhyuk-admits
+    lines:
+      - speaker: junhyuk
+        text: …진작 말했어야 했어요.
+        expression: grim
+      - speaker: junhyuk
+        text: 저랑 도현이 같이 뭘 하기로 했었어요. 제가 마지막에 발을 뺐고요.
+        expression: weary
+      - speaker: junhyuk
+        text: 이거 말씀드리는 대가로 제 이름은 어디에도 나가면 안 돼요. 약속해 주세요.
+        expression: tense
+    choices:
+      - id: promise
+        label: 약속합니다. 네 이름은 안 나간다.
+        next: junhyuk-talk
+        effects:
+          - kind: flag
+            key: promised_junhyuk
+            value: true
+      - id: no-promise
+        label: 약속은 못 해요. 상황에 따라 달라질 수 있습니다.
+        check: { stat: yangsim, dc: 12 }
+        success:
+          next: junhyuk-leaves-partial
+          effects:
+            - kind: stat
+              target: yangsim
+              delta: 1
+        failure:
+          next: junhyuk-leaves-empty
+
+  junhyuk-talk:
+    id: junhyuk-talk
+    lines:
+      - speaker: junhyuk
+        text: 도현이가 실종되기 2주 전에 미영이랑 크게 싸웠대요.
+        expression: neutral
+      - speaker: junhyuk
+        text: 원래 약혼까지 얘기 나왔던 사이잖아요. 근데 도현이가 "뭘 해야겠다"고 미영한테 말한 뒤로 사이가 깨졌어요.
+        expression: tense
+      - speaker: junhyuk
+        text: 미영은 끝까지 "그러지 마"라고 했대요. 미영 입장에선 도현이 망가지는 걸 원하지 않았거든요.
+        expression: weary
+      - speaker: pc
+        text: 미영, 어디 가면 볼 수 있지?
+      - speaker: junhyuk
+        text: 내일 저녁 청담 OO카페요. 제가 약속 잡아드릴게요. 미영이 만나자고는 할 거예요.
+        expression: neutral
+      - speaker: junhyuk
+        text: 단, 미영이 실장님한테 진실 다 얘기할 거라 기대는 마세요. 걔는 일단 덜 말하는 쪽이거든요.
+        expression: grim
+        effects:
+          - kind: flag
+            key: miyoung_meeting
+            value: true
+          - kind: memory
+            text: 준혁을 통해 미영 약속을 잡았다. 미영은 도현의 계획에 반대했다.
+    next: junhyuk-exit
+
+  junhyuk-leaves-partial:
+    id: junhyuk-leaves-partial
+    lines:
+      - speaker: junhyuk
+        text: …그래요. 실장님 그런 분이긴 하죠.
+        expression: weary
+      - speaker: junhyuk
+        text: 그래도 이건 말씀드릴게요. 미영이요. 내일 저녁 청담에서 만날 수 있어요.
+        expression: grim
+      - speaker: junhyuk
+        text: 나머지는 미영한테 물어보세요. 저는 빠질게요.
+        expression: tense
+        effects:
+          - kind: flag
+            key: miyoung_meeting
+            value: true
+          - kind: memory
+            text: 준혁은 자기 이름을 약속받지 못하자 정보 절반만 남기고 물러섰다.
+    next: junhyuk-exit
+
+  junhyuk-leaves-empty:
+    id: junhyuk-leaves-empty
+    lines:
+      - speaker: junhyuk
+        text: 그럼 저 그냥 갈게요. 실장님, 저 모른 척 해주세요.
+        expression: tense
+      - speaker: narration
+        text: 문이 닫힌다. 그가 가진 정보도 같이 닫혔다.
+    next: junhyuk-exit
+
+  junhyuk-later:
+    id: junhyuk-later
+    lines:
+      - speaker: narration
+        text: 인터폰 너머로 준혁은 잠시 말이 없다가 끊는다. 아마 다시는 이렇게 쉽게 오지 않을 것이다.
+      - speaker: thought
+        text: 이 사람은 지금 말하고 싶어서 올라왔다. 내가 그 순간을 놓쳤다.
+    next: junhyuk-exit
+
+  junhyuk-exit:
+    id: junhyuk-exit
+    cast:
+      - npc: junhyuk
+        position: offscreen
+    lines:
+      - speaker: narration
+        text: 거실이 다시 조용해진다. 창 밖엔 강남의 수직 불빛.
+      - speaker: thought
+        text: 세 가지가 분명해졌다. 도현은 뭔가를 계획했다. 계획은 문서로 존재했다. 그리고 누가 집을 정리했다.
+      - speaker: thought
+        text: 내일 저녁 미영. 이 사람이 쥔 카드는, 내가 가진 것보다 훨씬 많다.
+        effects:
+          - kind: goto
+            scene: c2-miyoung

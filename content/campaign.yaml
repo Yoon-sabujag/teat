@@ -11,3 +11,8 @@ chapters:
     scenes:
       - c1-opening
       - c1-kim-sunggi
+  - id: chapter-2
+    title: "도현의 궤적"
+    scenes:
+      - c2-apartment
+      - c2-miyoung

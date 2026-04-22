@@ -1,0 +1,269 @@
+id: c2-miyoung
+title: "변호사 미영"
+background: cheongdam-cafe
+cast:
+  - npc: miyoung
+    position: center
+    expression: neutral
+entry: arrive
+
+nodes:
+  arrive:
+    id: arrive
+    lines:
+      - speaker: narration
+        text: 청담, 조용한 카페. 이른 저녁. 사람 많지 않다.
+      - speaker: narration
+        text: 미영은 이미 와 있다. 아메리카노, 아이폰 뒤집어 놓음, 법률 서류 가방 옆.
+      - speaker: miyoung
+        text: 백 실장님. 앉으시죠.
+        expression: neutral
+      - speaker: miyoung
+        text: 먼저 한 가지, 이 대화는 기록 안 되는 거죠? 전 녹음 안 합니다. 실장님도 안 하시는 걸로 알겠습니다.
+        expression: tense
+    choices:
+      - id: agree
+        label: 안 합니다. 제 원칙입니다.
+        next: open-question
+      - id: decline
+        label: 상황에 따라 다릅니다. 지금은 안 합니다.
+        check: { stat: yangsim, dc: 12 }
+        success:
+          next: open-question
+          effects:
+            - kind: memory
+              text: 미영에게 녹음 여부에 대해 원칙 대신 상황 조건을 달았다. 미영은 경계심을 올렸다.
+            - kind: flag
+              key: miyoung_on_guard
+              value: true
+        failure:
+          next: open-question
+
+  open-question:
+    id: open-question
+    lines:
+      - speaker: miyoung
+        text: 준혁이한테 어디까지 들으셨어요.
+        expression: tense
+    choices:
+      - id: honest
+        label: 당신과 도현이 최근에 싸웠다. 도현이 뭘 하려고 했다. 거기까지.
+        next: surface-truth
+      - id: downplay
+        label: 별 얘기 없었습니다. 직접 듣는 게 나을 것 같아서요.
+        check: { stat: gwonmo, dc: 12 }
+        success:
+          next: surface-truth
+          effects:
+            - kind: stat
+              target: gwonmo
+              delta: 1
+            - kind: memory
+              text: 준혁이 어디까지 말했는지 감추자 미영은 내가 생각보다 영리하다고 느꼈다.
+            - kind: flag
+              key: miyoung_respects
+              value: true
+        failure:
+          next: surface-truth
+
+  surface-truth:
+    id: surface-truth
+    lines:
+      - speaker: miyoung
+        text: 그럼 제가 아는 만큼 말씀드릴게요. 기록 전제로 하신다면, 이 버전을 드립니다.
+        expression: weary
+      - speaker: miyoung
+        text: 도현 씨와 저는 약혼한 사이였고, 최근에 이별 얘기가 오갔어요. 그게 전부예요.
+        expression: neutral
+      - speaker: miyoung
+        text: 실종 전날 저는 도현 씨를 만나지 않았습니다. 전날엔 로펌 야근이 길었어요.
+        expression: tense
+      - speaker: thought
+        text: '"이 버전을 드린다"는 말은 다른 버전이 있다는 뜻이다. 그리고 야근은 너무 편한 알리바이다.'
+    choices:
+      - id: press-on
+        label: (더 물어봐야 한다)
+        next: improv-node
+      - id: thank-and-leave
+        label: 오늘은 여기까지 듣겠습니다. 감사합니다.
+        check: { stat: ttuksim, dc: 14 }
+        success:
+          next: thank-leave-success
+          effects:
+            - kind: flag
+              key: held_back_with_miyoung
+              value: true
+            - kind: memory
+              text: 미영에게 첫 만남을 일찍 끊었다. 두 번째 만남이 가능하도록 길을 남겼다.
+        failure:
+          next: improv-node
+
+  improv-node:
+    id: improv-node
+    lines:
+      - speaker: miyoung
+        text: 더 물어보실 거죠. 편하게 하세요.
+        expression: tense
+    improv:
+      npc: miyoung
+      systemPrompt: |
+        너는 28세 한국 여성 변호사 '미영'이다. 로펌 송무팀 3년차. 유학파.
+        탐정 백승재(46)와 청담 카페에서 첫 만남. 지금은 저녁이다.
+
+        숨겨야 하는 진실(우선순위 순):
+        1) 너는 도현의 실종 전날 밤 도현 오피스텔에 있었다. 위스키를 같이 마셨다.
+        2) 도현의 아이폰을 네가 보관하고 있다. 비밀번호는 안다.
+        3) 도현은 너에게 "USB를 외부에 넘기겠다"고 말했다. 너는 말렸다.
+        4) 너는 도현이 살아있다고 믿는다. 이유는 네게 보낸 익명 메시지 한 통.
+
+        드러내는 원칙:
+        - 직접 물어본 것만 답한다. 선제적으로 내주지 않는다.
+        - 법조인답게 말을 천천히 골라 쓴다. 단정적인 표현을 피한다.
+        - 압박이 세면 벽을 친다. 잘 조율하면 한 층씩 내려가 말한다.
+        - 탐정이 위협적이라 느끼면 자리를 뜬다.
+
+        한국어로 한두 문장 답하라. 응답 끝에 다음 키워드 중 하나를 반드시 붙여라:
+        - 탐정이 전화·카톡·아이폰·사진·녹음 등 도현의 기기 관련을 물으면: [PHONE]
+        - 탐정이 "너 그날 밤 도현 집에 있었지"를 직간접적으로 지적하면: [CAUGHT]
+        - 탐정이 도현의 생사 혹은 익명 메시지를 물으면: [ALIVE]
+        - 탐정이 협박/강압적이거나 녹음·증언을 언급하면: [LEAVE]
+        - 위 네 가지 중 아무것도 해당 안 되면: [HOLD]
+      triggers:
+        - keyword: "[PHONE]"
+          next: phone-admission
+          effects:
+            - kind: flag
+              key: miyoung_has_phone
+              value: true
+            - kind: memory
+              text: 미영이 도현의 아이폰을 보관하고 있다. 본인이 직접은 아직 인정하지 않았지만 표정으로 드러냈다.
+        - keyword: "[CAUGHT]"
+          next: caught-that-night
+          effects:
+            - kind: flag
+              key: miyoung_was_there
+              value: true
+            - kind: memory
+              text: 미영은 도현 실종 전날 밤 오피스텔에 있었다. 야근 알리바이는 거짓이다.
+        - keyword: "[ALIVE]"
+          next: alive-signal
+          effects:
+            - kind: flag
+              key: dohyun_probably_alive
+              value: true
+            - kind: memory
+              text: 미영은 도현이 살아있을 가능성을 믿고 있다. 익명 메시지 한 통이 근거다.
+        - keyword: "[LEAVE]"
+          next: miyoung-leaves
+          effects:
+            - kind: flag
+              key: miyoung_walked_out
+              value: true
+
+  phone-admission:
+    id: phone-admission
+    lines:
+      - speaker: miyoung
+        text: 아이폰 얘긴… 제가 보관하고 있어요. 지금은 안 보여드려요.
+        expression: weary
+      - speaker: miyoung
+        text: 비번을 알고, 내용도 봤어요. 그 이상은 나중에 다시 얘기해요. 실장님이 이 자리를 잘 지켜주시면.
+        expression: tense
+      - speaker: thought
+        text: '"잘 지켜주시면"이란 — 내가 오늘 여기서 너무 많이 파지 않으면 다음에 더 주겠다는 말.'
+    next: close-with-info
+
+  caught-that-night:
+    id: caught-that-night
+    lines:
+      - speaker: miyoung
+        text: …그날 저녁에 잠깐 갔어요. 오래 있진 않았어요.
+        expression: weary
+      - speaker: miyoung
+        text: 도현 씨는 제가 나올 때까지 살아있었고, 멀쩡했어요. 그 이후는 저도 몰라요.
+        expression: grim
+      - speaker: thought
+        text: 야근 알리바이를 포기했다. 이건 이 사람이 내릴 수 있는 가장 큰 한 걸음이다.
+    next: close-with-info
+
+  alive-signal:
+    id: alive-signal
+    lines:
+      - speaker: miyoung
+        text: 실종 2주 차에, 저한테 아무 내용 없는 번호로 문자가 한 통 왔어요.
+        expression: neutral
+      - speaker: miyoung
+        text: 문장 하나요. "나 미영이야. 너한테 그 문장 기억나지." 그게 다예요.
+        expression: weary
+      - speaker: miyoung
+        text: 저만 알 수 있는 문장이었어요. 그래서 저는 도현이 살아있다고 봅니다. 단지 어디 있는지는 모르고요.
+        expression: grim
+    next: close-with-info
+
+  miyoung-leaves:
+    id: miyoung-leaves
+    cast:
+      - npc: miyoung
+        position: center
+        expression: angry
+    lines:
+      - speaker: miyoung
+        text: 실장님. 오늘은 여기까지 할게요.
+        expression: angry
+      - speaker: narration
+        text: 미영이 일어나 가방을 드는 동안 탁자에 놓인 커피에 거품이 흔들린다.
+      - speaker: miyoung
+        text: 다음에 연락은 제가 드릴게요. 실장님은 저한테 먼저 연락 안 하셨으면 합니다.
+        expression: grim
+      - speaker: narration
+        text: 카페 문이 닫힌다. 내가 가진 건 오늘 들은 첫 번째 버전 하나.
+    next: scene-close
+
+  thank-leave-success:
+    id: thank-leave-success
+    lines:
+      - speaker: miyoung
+        text: …일찍 일어나시네요.
+        expression: tense
+      - speaker: miyoung
+        text: 솔직히 더 물으실 줄 알았어요. 오늘은 제가 좀 편하네요.
+        expression: weary
+      - speaker: miyoung
+        text: 다음에 시간 내요. 제가 연락드릴게요. 이번엔 먼저.
+        expression: neutral
+      - speaker: narration
+        text: 미영이 먼저 카페를 나간다. 두 번째 만남의 룰은 이미 세팅됐다.
+    next: scene-close
+
+  close-with-info:
+    id: close-with-info
+    lines:
+      - speaker: narration
+        text: 미영이 손가락으로 컵 받침을 두어 번 돌린다. 이 대화의 끝을 알리는 신호다.
+      - speaker: miyoung
+        text: 오늘은 여기까지. 한 번 더 뵐지 말지는 실장님이 이 며칠을 어떻게 움직이느냐에 달렸어요.
+        expression: grim
+      - speaker: miyoung
+        text: 하나만 기억해 주세요. 도현 씨는 완전히 혼자였어요. 그게 제가 제일 속상했던 거예요.
+        expression: weary
+      - speaker: narration
+        text: 미영이 조용히 일어나 먼저 나간다.
+    next: scene-close
+
+  scene-close:
+    id: scene-close
+    cast:
+      - npc: miyoung
+        position: offscreen
+    lines:
+      - speaker: narration
+        text: 창 밖으로 강남의 차가 길게 지나간다. 손에 쥔 스푼이 차가워져 있다.
+      - speaker: thought
+        text: 오늘 얻은 건 — 도현이 계획이 있었다. 미영이 일부를 안다. 그리고 어딘가에 아이폰이 있다.
+      - speaker: thought
+        text: 차 상무, 그리고 도현. 두 사람은 같은 회사의 같은 방을 향해 움직이고 있었다.
+      - speaker: narration
+        text: 휴대폰이 울린다. 모르는 번호.
+        effects:
+          - kind: chapterComplete
+            chapter: chapter-2

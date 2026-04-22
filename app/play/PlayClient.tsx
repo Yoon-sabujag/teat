@@ -95,13 +95,22 @@ export function PlayClient({ campaign, scenes, npcs, backgrounds }: Props) {
   if (banner) {
     return (
       <main className="relative min-h-dvh bg-neutral-950">
-        <div className="flex min-h-dvh items-center justify-center">
+        <div className="flex min-h-dvh flex-col items-center justify-center gap-8 p-6">
           <div className="text-center">
             <p className="text-xs uppercase tracking-[0.4em] text-neutral-500">
               chapter
             </p>
             <p className="mt-3 text-3xl font-light text-neutral-100">{banner}</p>
           </div>
+          <Link
+            href="/"
+            className="rounded-xl border border-neutral-700 px-5 py-3 text-sm text-neutral-300"
+          >
+            타이틀로 (세이브는 유지됩니다)
+          </Link>
+          <p className="max-w-xs text-center text-xs text-neutral-600">
+            이후 에피소드는 추후 업데이트됩니다.
+          </p>
         </div>
       </main>
     );
