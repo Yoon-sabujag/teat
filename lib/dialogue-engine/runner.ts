@@ -6,8 +6,10 @@ import type {
   Choice,
   Effect,
   Line,
+  LineRequires,
   RunnerState,
   Scene,
+  Node as SceneNode,
 } from "./types";
 import { rollCheck } from "@/lib/pc/skill-check";
 import { type CheckResult } from "@/lib/pc/stats";
@@ -19,19 +21,44 @@ export type SceneEvent =
   | { kind: "chapterComplete"; chapter: string; nextChapter?: string }
   | { kind: "end"; outcome: string };
 
+function matchesRequires(
+  r: LineRequires | Choice["requires"] | undefined,
+  flags: Record<string, boolean | string | number>,
+  stats: Record<string, number>,
+): boolean {
+  if (!r) return true;
+  if (r.flag && !flags[r.flag]) return false;
+  if (r.flagEquals && flags[r.flagEquals.key] !== r.flagEquals.value)
+    return false;
+  if (
+    "flagNotEquals" in r &&
+    r.flagNotEquals &&
+    flags[r.flagNotEquals.key] === r.flagNotEquals.value
+  )
+    return false;
+  if (r.minStat && (stats[r.minStat.stat] ?? 0) < r.minStat.value) return false;
+  if (r.maxStat && (stats[r.maxStat.stat] ?? 0) > r.maxStat.value) return false;
+  return true;
+}
+
 function choiceAvailable(
   flags: Record<string, boolean | string | number>,
   stats: Record<string, number>,
   choice: Choice,
 ): boolean {
-  const r = choice.requires;
-  if (!r) return true;
-  if (r.flag && !flags[r.flag]) return false;
-  if (r.flagEquals && flags[r.flagEquals.key] !== r.flagEquals.value)
-    return false;
-  if (r.minStat && (stats[r.minStat.stat] ?? 0) < r.minStat.value) return false;
-  if (r.maxStat && (stats[r.maxStat.stat] ?? 0) > r.maxStat.value) return false;
-  return true;
+  return matchesRequires(choice.requires, flags, stats);
+}
+
+function firstVisibleIndex(
+  node: SceneNode,
+  from: number,
+  flags: Record<string, boolean | string | number>,
+  stats: Record<string, number>,
+): number | null {
+  for (let i = from; i < node.lines.length; i++) {
+    if (matchesRequires(node.lines[i].requires, flags, stats)) return i;
+  }
+  return null;
 }
 
 type Args = {
@@ -58,10 +85,16 @@ export function useSceneRunner({ scene, onEvent }: Args) {
 
   const cast: CastMember[] = node.cast ?? scene.cast;
   const background = node.background ?? scene.background;
+
+  const visibleIdx =
+    firstVisibleIndex(node, state.lineIndex, pc.flags, pc.stats);
+  const displayIndex = visibleIdx ?? node.lines.length;
   const currentLine: Line = state.improvText
     ? { speaker: node.improv?.npc ?? "npc", text: state.improvText }
-    : node.lines[state.lineIndex] ?? { speaker: "narration", text: "…" };
-  const atEndOfLines = state.lineIndex >= node.lines.length - 1;
+    : (visibleIdx !== null && node.lines[visibleIdx]) ||
+      { speaker: "narration", text: "…" };
+  const atEndOfLines =
+    firstVisibleIndex(node, displayIndex + 1, pc.flags, pc.stats) === null;
 
   const applyEffects = useCallback(
     (effects: Effect[] | undefined) => {
@@ -97,11 +130,12 @@ export function useSceneRunner({ scene, onEvent }: Args) {
   );
 
   const applyCurrentLineEffectsOnce = useCallback(() => {
-    const key = `${state.nodeId}:${state.lineIndex}`;
+    if (visibleIdx === null) return;
+    const key = `${state.nodeId}:${visibleIdx}`;
     if (appliedRef.current.has(key)) return;
     appliedRef.current.add(key);
-    applyEffects(node.lines[state.lineIndex]?.effects);
-  }, [state.nodeId, state.lineIndex, node.lines, applyEffects]);
+    applyEffects(node.lines[visibleIdx]?.effects);
+  }, [state.nodeId, visibleIdx, node.lines, applyEffects]);
 
   const advance = useCallback(() => {
     if (state.improvText) {
@@ -111,8 +145,10 @@ export function useSceneRunner({ scene, onEvent }: Args) {
     applyCurrentLineEffectsOnce();
     setState((prev) => {
       const n = scene.nodes[prev.nodeId];
-      if (prev.lineIndex < n.lines.length - 1) {
-        return { ...prev, lineIndex: prev.lineIndex + 1 };
+      const fromIdx = displayIndex + 1;
+      const nextIdx = firstVisibleIndex(n, fromIdx, pc.flags, pc.stats);
+      if (nextIdx !== null) {
+        return { ...prev, lineIndex: nextIdx };
       }
       if (n.next) {
         appliedRef.current.clear();
@@ -120,7 +156,14 @@ export function useSceneRunner({ scene, onEvent }: Args) {
       }
       return prev;
     });
-  }, [state.improvText, applyCurrentLineEffectsOnce, scene]);
+  }, [
+    state.improvText,
+    applyCurrentLineEffectsOnce,
+    scene,
+    displayIndex,
+    pc.flags,
+    pc.stats,
+  ]);
 
   const runChoice = useCallback(
     (choice: Choice) => {

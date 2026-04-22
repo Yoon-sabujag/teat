@@ -42,9 +42,16 @@ nodes:
           - kind: stat
             target: inmaek
             delta: 1
+          - kind: flag
+            key: c1_greeting
+            value: warm
       - id: hi-business
         label: 바로 일 얘기 하자.
         next: business-fast
+        effects:
+          - kind: flag
+            key: c1_greeting
+            value: business
       - id: probe-jaemin
         label: 너 소문 어디서 듣고 왔어.
         check: { stat: jikgam, dc: 12 }
@@ -53,8 +60,15 @@ nodes:
           effects:
             - kind: memory
               text: 재민이는 내가 간판 붙인 지 이틀 만에 알고 찾아왔다. 그런 정보는 공짜로 흐르지 않는다.
+            - kind: flag
+              key: c1_greeting
+              value: probed
         failure:
           next: catch-up
+          effects:
+            - kind: flag
+              key: c1_greeting
+              value: probe_missed
 
   catch-up:
     id: catch-up
@@ -65,6 +79,13 @@ nodes:
       - speaker: jaemin
         text: 형도 곧 듣게 될 거예요. 어쩌면 이미 듣고 있고.
         expression: smile
+      - speaker: jaemin
+        requires:
+          flagEquals:
+            key: c1_greeting
+            value: probe_missed
+        text: (혼자 속으로) 형이 오늘은 제 편인지 아닌지 감이 잘 안 오네.
+        expression: neutral
     next: offer-job
 
   business-fast:
@@ -76,6 +97,8 @@ nodes:
       - speaker: jaemin
         text: 지금 형 간판 붙었다는 얘기 본사 쪽에서도 알아요. 빠르죠?
         expression: tense
+      - speaker: thought
+        text: 재민이가 웃는 얼굴을 버렸다. 이 친구가 웃음을 아낀다는 건, 들을 얘기가 진짜 있다는 뜻이다.
     next: offer-job
 
   probe-jaemin-success:
@@ -102,16 +125,59 @@ nodes:
     id: offer-job
     lines:
       - speaker: jaemin
-        text: 암튼 형, 저 하나 알려드릴게요. 오늘 오후에 형한테 전화 한 통 올 거예요.
+        requires:
+          flagEquals:
+            key: c1_greeting
+            value: warm
+        text: 형 오늘 기분 좋아 보여서 저도 편해요. 근데 편하게만 듣진 마세요.
         expression: smile
+      - speaker: jaemin
+        requires:
+          flagEquals:
+            key: c1_greeting
+            value: business
+        text: 빨리 갈게요. 오늘 오후에 형한테 전화 한 통 올 거예요.
+        expression: neutral
+      - speaker: jaemin
+        requires:
+          flagEquals:
+            key: c1_greeting
+            value: probed
+        text: 뭐 이왕 제가 반쯤 실토했으니까, 알려드릴 건 더 드릴게요.
+        expression: tense
+      - speaker: jaemin
+        requires:
+          flagEquals:
+            key: c1_greeting
+            value: probe_missed
+        text: 암튼 형 하나 알려드릴게요. 눈치 못 채셨어도 상관없고.
+        expression: amused
+      - speaker: jaemin
+        text: 오늘 오후에 형한테 전화 한 통 올 거예요.
+        expression: neutral
+        requires:
+          flagNotEquals:
+            key: c1_greeting
+            value: business
       - speaker: jaemin
         text: 받으면 큰 건이에요. 안 받으면 더 큰일 나고.
         expression: amused
       - speaker: pc
         text: 어느 쪽이야.
       - speaker: jaemin
+        requires:
+          flagEquals:
+            key: c1_greeting
+            value: probed
+        text: 그 답을 형한테 다 드리면 제 몫이 없잖아요. 받으시고 나서 저한테 한 번 더 물어보세요.
+        expression: tense
+      - speaker: jaemin
         text: 그게 포인트예요 형. 받으시면 알아요. 저는 일단 커피 한 잔 시켜놓을게요.
         expression: smile
+        requires:
+          flagNotEquals:
+            key: c1_greeting
+            value: probed
     next: phone-rings
 
   phone-rings:
@@ -128,6 +194,10 @@ nodes:
       - id: pick-up
         label: 전화를 받는다.
         next: pick-up
+        effects:
+          - kind: flag
+            key: c1_pickup
+            value: immediate
       - id: let-it-ring
         label: 일부러 안 받는다.
         check: { stat: ttuksim, dc: 13 }
@@ -139,12 +209,18 @@ nodes:
               delta: 1
             - kind: memory
               text: 첫 전화를 일부러 놓쳤다. 상대는 다시 걸어와야 한다. 이게 협상의 시작이다.
+            - kind: flag
+              key: c1_pickup
+              value: delayed
         failure:
           next: pick-up
           effects:
             - kind: stat
               target: ttuksim
               delta: -1
+            - kind: flag
+              key: c1_pickup
+              value: fumbled
 
   let-it-ring-success:
     id: let-it-ring-success
@@ -156,6 +232,8 @@ nodes:
         expression: amused
       - speaker: narration
         text: 30초 뒤. 같은 번호. 다시 울린다.
+      - speaker: thought
+        text: 상대가 두 번 걸어야 했다. 첫 라운드는 이겼다.
     next: pick-up
 
   pick-up:
@@ -166,6 +244,22 @@ nodes:
       - speaker: narration
         text: 전화 너머, 매너 좋게 절제된 중년 남자 목소리.
       - speaker: kim-sunggi
+        requires:
+          flagEquals:
+            key: c1_pickup
+            value: delayed
+        text: 백승재 실장님 되시죠? 두 번 걸었습니다. 김승기입니다.
+      - speaker: kim-sunggi
+        requires:
+          flagEquals:
+            key: c1_pickup
+            value: fumbled
+        text: 아… 지금 받으셨네요. 김승기입니다. 잠시 바쁘셨죠?
+      - speaker: kim-sunggi
+        requires:
+          flagEquals:
+            key: c1_pickup
+            value: immediate
         text: 백승재 실장님 되시죠? 김승기입니다.
       - speaker: thought
         text: 김승기 부회장. 내 전직 그룹의 2대 형. 이 사람이 직접 전화를 건다.

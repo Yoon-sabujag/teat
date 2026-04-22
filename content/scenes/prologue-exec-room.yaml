@@ -35,7 +35,11 @@ nodes:
     choices:
       - id: formal
         label: 네. 잘 알고 있습니다.
-        next: formalities
+        next: formal-route
+        effects:
+          - kind: flag
+            key: prologue_opening
+            value: formal
       - id: probe
         label: 상무님, 진짜 이유가 뭡니까.
         check: { stat: gwonmo, dc: 13 }
@@ -45,14 +49,17 @@ nodes:
             - kind: memory
               text: 차 상무는 내 질문에 잠시 말이 막혔다. 실적은 표면일 뿐이다.
             - kind: flag
-              key: prologue_probed
-              value: true
+              key: prologue_opening
+              value: probe_success
         failure:
           next: probe-failure
           effects:
             - kind: stat
               target: yangsim
               delta: -1
+            - kind: flag
+              key: prologue_opening
+              value: probe_failure
       - id: silent
         label: (침묵한다)
         check: { stat: ttuksim, dc: 12 }
@@ -61,17 +68,38 @@ nodes:
           effects:
             - kind: memory
               text: 내가 침묵하자 차 상무가 먼저 말을 이었다.
+            - kind: flag
+              key: prologue_opening
+              value: silent_success
         failure:
-          next: formalities
+          next: formal-route
+          effects:
+            - kind: flag
+              key: prologue_opening
+              value: silent_fail
 
-  formalities:
-    id: formalities
+  formal-route:
+    id: formal-route
     lines:
       - speaker: cha-sangmu
         text: 승재씨, 이건 실적 문제만이 아니에요. 회사도 큰 그림이 있고, 승재씨도 이제 좀 쉴 때가 된 거예요.
         expression: smile
       - speaker: thought
         text: 쉬라는 말이 이렇게 차갑다. 이게 이 회사 말이다.
+      - speaker: cha-sangmu
+        text: 승재씨 같은 분이 이런 자리에서 예의를 지켜주시니까, 저도 오래 가만히 안 끌게요.
+        expression: weary
+        requires:
+          flagEquals:
+            key: prologue_opening
+            value: formal
+      - speaker: cha-sangmu
+        text: 침묵 편하지 않았죠. 나는 승재씨 그 침묵이 고마워요.
+        expression: weary
+        requires:
+          flagEquals:
+            key: prologue_opening
+            value: silent_fail
     next: paperwork
 
   probe-success:
@@ -88,6 +116,8 @@ nodes:
       - speaker: cha-sangmu
         text: 지금 이걸 조용히 마무리하는 게, 서로한테 제일 덜 아픈 길입니다.
         expression: weary
+      - speaker: thought
+        text: 말의 결이 바뀌었다. 이 자리가 단순한 퇴직이 아니라는 걸 이 사람이 먼저 실토했다.
     next: paperwork
 
   probe-failure:
@@ -99,6 +129,8 @@ nodes:
       - speaker: cha-sangmu
         text: 나는 승재씨한테 그런 답을 주고 싶지 않아요. 오늘은 안 할게요.
         expression: grim
+      - speaker: thought
+        text: 방어만 하게 만들었다. 이 사람이 나에 대한 평가를 다시 쓰는 게 보인다.
     next: paperwork
 
   silent-success:
@@ -110,6 +142,8 @@ nodes:
       - speaker: cha-sangmu
         text: …그 성격이 좋을 때도 있고, 안 좋을 때도 있어요.
         expression: weary
+      - speaker: thought
+        text: 이 사람은 지금 스스로 무슨 말을 하고 있는지 알고 한다. 그게 더 무섭다.
     next: paperwork
 
   paperwork:
@@ -117,6 +151,24 @@ nodes:
     lines:
       - speaker: narration
         text: 차 상무가 서류 봉투에서 A4 몇 장을 꺼낸다. 퇴직 합의서. 경쟁금지조항 밑줄.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: prologue_opening
+            value: probe_success
+        text: 방금 전의 침묵 때문인지, 서류를 건네는 손이 평소보다 조금 느리다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: prologue_opening
+            value: probe_failure
+        text: 차 상무는 내 시선을 피하면서 서류를 건넨다. 이제 이 자리는 업무다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: prologue_opening
+            value: silent_success
+        text: 서류가 책상 위를 미끄러진다. 내 반응을 예상할 수 없어 그는 한 걸음 뒤로 앉아있다.
       - speaker: cha-sangmu
         text: 여기 사인 부탁드리고, 다음 주까지는 짐 정리해 주시면 돼요.
         expression: neutral
@@ -136,6 +188,10 @@ nodes:
               value: true
         failure:
           next: sign-quick
+          effects:
+            - kind: flag
+              key: prologue_signing
+              value: read_failed
       - id: sign-quick
         label: 사인한다.
         next: sign-quick
@@ -143,6 +199,9 @@ nodes:
           - kind: stat
             target: ttuksim
             delta: -1
+          - kind: flag
+            key: prologue_signing
+            value: clean
       - id: push-back
         label: 하루만 검토해도 될까요?
         check: { stat: beopri, dc: 14 }
@@ -154,8 +213,15 @@ nodes:
             - kind: flag
               key: delayed_signing
               value: true
+            - kind: flag
+              key: prologue_signing
+              value: deferred
         failure:
           next: pushback-failure
+          effects:
+            - kind: flag
+              key: prologue_signing
+              value: forced
 
   read-caught:
     id: read-caught
@@ -175,11 +241,22 @@ nodes:
             - kind: stat
               target: gwonmo
               delta: 1
+            - kind: flag
+              key: prologue_signing
+              value: reluctantly
         failure:
           next: back-down
+          effects:
+            - kind: flag
+              key: prologue_signing
+              value: backed_down
       - id: pretend-ok
         label: 아니요. 상관없습니다.
         next: sign-quick
+        effects:
+          - kind: flag
+            key: prologue_signing
+            value: pretended
 
   confront-success:
     id: confront-success
@@ -189,6 +266,9 @@ nodes:
         expression: weary
       - speaker: thought
         text: '"특정 인물을 겨냥한 건 아닙니다" — 이 말은 특정 사안을 겨냥했다는 말이다.'
+      - speaker: cha-sangmu
+        text: 승재씨가 이 조항을 지키실 거라고 저는 믿어요. 안 지키실 분 아니니까.
+        expression: grim
     next: sign-reluctantly
 
   back-down:
@@ -197,6 +277,8 @@ nodes:
       - speaker: cha-sangmu
         text: 승재씨, 오늘은 그냥 사인하고 가세요. 내가 나중에 밥 한번 살게요.
         expression: smile
+      - speaker: thought
+        text: 밥. 그 약속은 18년 중에 한 번도 이루어진 적이 없다.
     next: sign-quick
 
   pushback-success:
@@ -218,16 +300,20 @@ nodes:
       - speaker: cha-sangmu
         text: 승재씨, 하루 더 생각해서 뭐가 달라지나요. 지금 편하게 하시죠.
         expression: grim
+      - speaker: thought
+        text: 하루가 그에게는 버겁구나. 그가 지금 버티고 있는 무언가가 있다.
     next: sign-quick
 
   sign-reluctantly:
     id: sign-reluctantly
     lines:
       - speaker: narration
-        text: 펜이 오래 머뭇거리다 종이를 지나간다.
+        text: 펜이 오래 머뭇거리다 종이를 지나간다. 서명 글씨가 평소보다 짧다.
       - speaker: cha-sangmu
         text: 수고하셨습니다. 18년, 고생 많았어요.
         expression: smile
+      - speaker: thought
+        text: 고생. 그 단어가 이 자리에서 나왔다는 건, 이 사람이 나한테 미안한 게 있다는 뜻이다.
     next: leave-office
 
   sign-quick:
@@ -235,6 +321,18 @@ nodes:
     lines:
       - speaker: narration
         text: 펜이 종이를 지나간다. 조용히.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: pretended
+        text: 아무것도 못 본 사람 연기는 18년 다닌 회사에서 많이 해봤다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: forced
+        text: 하루의 여유는 받지 못했다. 펜이 종이에 닿는 그 무게감은 평소보다 두 배다.
       - speaker: cha-sangmu
         text: 수고하셨습니다. 18년, 고생 많았어요.
         expression: smile
@@ -248,11 +346,116 @@ nodes:
       - speaker: cha-sangmu
         text: 승재씨.
         expression: weary
+
+      # Deferred signing: don't tell him "aim generic" — he knows he's on a tight clock
       - speaker: cha-sangmu
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: deferred
+        text: 월요일 오전 아홉 시. 그때까지 생각 잘 해주세요.
+        expression: grim
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: deferred
+        text: '"생각 잘"이 아니라 "답 잘"이라고 말하고 싶었을 거다.'
+
+      # Reluctantly signed after confronting the 5-year clause
+      - speaker: cha-sangmu
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: reluctantly
+        text: 오늘 그 질문, 저도 이해해요. 그래도 이제 덮읍시다.
+        expression: grim
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: reluctantly
+        text: 덮자. 18년의 마지막 단어가 "덮자"구나.
+
+      # Pretended okay after seeing the NDA
+      - speaker: cha-sangmu
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: pretended
+        text: 승재씨, 난 항상 승재씨가 프로페셔널이라고 생각했어요. 오늘도 그랬고.
+        expression: smile
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: pretended
+        text: 칭찬인 척 한 경고다. 봤지만 입 다물 거지, 하는.
+
+      # Backed down after spotting the clause
+      - speaker: cha-sangmu
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: backed_down
+        text: 다행이에요, 승재씨. 사람 좋은 거 어디 안 가요.
+        expression: smile
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: backed_down
+        text: 사람 좋은 거. 이 회사에서 사람 좋은 건 제일 먼저 정리되는 자질이다.
+
+      # Forced signing after failed pushback
+      - speaker: cha-sangmu
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: forced
+        text: 오늘 같은 날은, 먼저 비우는 게 마음 편해요.
+        expression: weary
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: forced
+        text: 먼저 비우는. 이 단어도 그의 책상에서 외운 문장 중 하나겠지.
+
+      # Clean sign-quick or read-check failed — the generic farewell that used to apply to all paths
+      - speaker: cha-sangmu
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: clean
         text: 좀 쉬어요. 아무 생각 말고.
         expression: grim
       - speaker: thought
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: clean
         text: 아무 생각 말고. 어떻게 그래.
+      - speaker: cha-sangmu
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: read_failed
+        text: 좀 쉬어요. 아무 생각 말고.
+        expression: grim
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: prologue_signing
+            value: read_failed
+        text: 서류 제대로 못 본 채 여기 서 있다. 피곤이 이겼다.
+
+      # 1-line tail with secondary flag layer (NDA awareness) — independent of signing mode
+      - speaker: thought
+        requires:
+          flag: noticed_nda
+        text: 복도 끝에서 다시 고개를 돌려본다. 저 방 안의 결재판, 저게 내가 마지막으로 본 결재판이 될까.
+
       - speaker: narration
         text: 문을 닫는다. 복도가 길다.
         effects:

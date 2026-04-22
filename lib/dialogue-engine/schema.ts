@@ -38,12 +38,31 @@ const Effect = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("end"), outcome: z.string() }),
 ]);
 
+const LineRequires = z.object({
+  flag: z.string().optional(),
+  flagEquals: z
+    .object({
+      key: z.string(),
+      value: z.union([z.boolean(), z.string(), z.number()]),
+    })
+    .optional(),
+  flagNotEquals: z
+    .object({
+      key: z.string(),
+      value: z.union([z.boolean(), z.string(), z.number()]),
+    })
+    .optional(),
+  minStat: z.object({ stat: StatEnum, value: z.number() }).optional(),
+  maxStat: z.object({ stat: StatEnum, value: z.number() }).optional(),
+});
+
 const Line = z.object({
   speaker: z.string(),
   text: z.string(),
   expression: Expression.optional(),
   position: Position.optional(),
   effects: z.array(Effect).optional(),
+  requires: LineRequires.optional(),
 });
 
 const Branch = z.object({

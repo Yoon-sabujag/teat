@@ -61,7 +61,42 @@ node scripts/gen-placeholders.mjs   # 캐릭터·배경 자리 이미지 재생�
 - 일반 선택지: `next` + 옵션 `effects`
 - 스킬 체크 선택지: `check: { stat, dc }` + `success: Branch` + `failure: Branch`
   - 체크: `d20 + PC.stats[stat] vs dc`. 실패도 반드시 **다른 결의 결과**가 나오게 설계 (Disco Elysium 철학)
-- `requires`: `flag`, `flagEquals`, `minStat`, `maxStat` — 특정 조건에서만 노출
+- `requires`: `flag`, `flagEquals`, `flagNotEquals`, `minStat`, `maxStat` — 특정 조건에서만 노출
+
+### Line-level requires — 분기 텍스처의 핵심
+
+**Line에도 `requires`를 달 수 있다.** 조건 안 맞으면 그 라인은 건너뜀 (effects도 안 터짐). 씬 그래프가 여러 분기를 거쳐 같은 노드로 수렴할 때 **수렴 노드 안에서 플레이어가 어떤 경로로 왔는지 반영**하는 용도.
+
+**반드시 지킬 패턴** — 선택지에서 플래그를 심고, 수렴 노드에서 그 플래그로 분기 텍스트를 삽입한다. 안 하면 "뭘 골라도 같은 대사"가 됨:
+
+```yaml
+choices:
+  - id: accept
+    effects: [{ kind: flag, key: c1_acceptance, value: clean }]
+  - id: negotiate
+    check: { stat: gwonmo, dc: 14 }
+    success:
+      effects: [{ kind: flag, key: c1_acceptance, value: negotiated }]
+    failure:
+      effects: [{ kind: flag, key: c1_acceptance, value: negotiate_failed }]
+
+# 수렴 노드
+accept:
+  lines:
+    - speaker: kim-sunggi
+      requires: { flagEquals: { key: c1_acceptance, value: negotiated } }
+      text: 오늘 조건 추가하신 거, 속상합니다. 다만 그래서 더 믿습니다.
+    - speaker: kim-sunggi
+      requires: { flagEquals: { key: c1_acceptance, value: negotiate_failed } }
+      text: 조정은 어렵습니다. 다만 조심히 움직이세요.
+    - speaker: kim-sunggi
+      requires: { flagEquals: { key: c1_acceptance, value: clean } }
+      text: 고맙습니다, 백 실장님.
+```
+
+**안티패턴**: 모든 분기가 같은 수렴 노드로 가고, 그 노드 안에 공통 대사만 있으면 플레이어는 선택한 티가 안 난다. 경로별 1~2줄이라도 다르게.
+
+**플래그 명명**: `<씬id접두>_<결정어>` — `prologue_opening`, `prologue_signing`, `c1_greeting`, `c1_pickup`, `c1_drink`, `c1_response`, `c1_acceptance`. 값은 스네이크케이스 문자열.
 
 ### LLM Improv 노드
 

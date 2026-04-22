@@ -22,12 +22,26 @@ export type Effect =
   | { kind: "chapterComplete"; chapter: string; nextChapter?: string }
   | { kind: "end"; outcome: string };
 
+export type LineRequires = {
+  flag?: string;
+  flagEquals?: { key: string; value: boolean | string | number };
+  flagNotEquals?: { key: string; value: boolean | string | number };
+  minStat?: { stat: Stat; value: number };
+  maxStat?: { stat: Stat; value: number };
+};
+
 export type Line = {
   speaker: Speaker;
   text: string;
   expression?: Expression;
   position?: Position;
   effects?: Effect[];
+  /**
+   * If set, the line is only rendered when all conditions match the PC's
+   * current flags/stats. Used to give convergent nodes branch-specific
+   * flavor without duplicating entire nodes.
+   */
+  requires?: LineRequires;
 };
 
 export type ChoiceRequires = {
