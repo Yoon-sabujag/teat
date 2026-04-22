@@ -4,9 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-**Teat** (코드네임) — 대화기반 비주얼 시뮬레이션 설교 게임. 플레이어는 "도(道)믿남"이 되어 거리에서 행인에게 접근해 자신의 교단으로 입교시키고, 입교한 신도가 본인의 가족·친구를 데려와 **2대1 협공 설교**로 추가 전도를 하는 바이럴 확산형 게임이다.
+**을지로 7층** (코드네임 `teat`, 저장소 이름은 그대로 둠) — 한국 누아르 **대화 CRPG**.
 
-**톤**: 한국 인터넷 밈 "도믿남"을 풍자하는 **코미디/부조리극**. 실제 사이비 포교 매뉴얼이 아니라 과장된 패러디임. 대사 작성 시 이 톤을 유지할 것 — 진지한 심리 조작 지침이 되지 않도록 하라.
+- 주인공 **백승재(46)**. SK·삼성급 재벌그룹 전략기획실 18년 → 해외사업본부 "실적 부진"으로 명예퇴직 권고. 퇴직금으로 **을지로 3가 낡은 빌딩 7층**에 "백승재 리서치" 사무실. 간판은 시장조사, 실제는 사람 찾기.
+- 첫 의뢰: 그룹 부회장 김승기가 실종된 조카 김도현(재벌 3세) 수색을 **개인 명의**로 부탁. 파고들수록 승재 본인의 해고가 같은 사건 라인에 묶여있다.
+- **레퍼런스 톤**: 《비밀의 숲》 + 《미생》 + 《내부자들》 + 《시그널》. 중년·음울·조직어.
 
 ## Commands
 
@@ -14,101 +16,141 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run dev         # 개발 서버 (모바일 뷰포트로 확인)
 npm run build       # 프로덕션 빌드
 npm run start       # 빌드 실행
-npm run lint        # eslint . (Next 16에서 next lint가 제거되므로 ESLint CLI 직접 사용)
+npm run lint        # eslint . (Next 16에서 next lint 제거 예정이라 ESLint CLI 직접 사용)
 npm run typecheck   # tsc --noEmit
 
-node scripts/gen-placeholders.mjs   # 캐릭터 자리 이미지 재생성 (sharp 기반)
+node scripts/gen-placeholders.mjs   # 캐릭터·배경 자리 이미지 재생성 (sharp 기반)
 ```
 
-Gemini API 프록시를 사용하려면 `.env.local`에 `GEMINI_API_KEY`를 설정해야 한다 (`.env.example` 참고). 모델은 `GEMINI_MODEL`로 오버라이드 가능 (기본 `gemini-2.5-flash`). `gemini-2.0-flash`는 신규 키로 더 이상 호출 안 됨.
+`.env.local`:
+- `GEMINI_API_KEY` — improv 노드에 필요 (Gemini API 프록시)
+- `GEMINI_MODEL` — 기본 `gemini-2.5-flash` (2.0은 신규 키로 호출 불가)
 
-**Thinking 비활성화**: `/api/dialogue` 라우트에서 `thinkingConfig: { thinkingBudget: 0 }`을 강제로 설정한다. Gemini 2.5 Flash는 기본적으로 thinking 토큰을 쓰는데, 게임 NPC 대사처럼 짧고 즉각적인 응답이 필요한 경우 thinking이 토큰 한도를 다 먹어 본문이 잘리고 응답 지연도 생긴다. 캐릭터가 정말 깊이 있게 추론해야 하는 노드(예: 후반부 보스 NPC)가 생기면 그 노드만 별도로 thinking을 켜는 식으로 분기할 것.
+**Thinking 비활성화**: `/api/dialogue` 라우트에서 `thinkingConfig: { thinkingBudget: 0 }`을 강제. 2.5 Flash는 기본이 thinking on이라 그대로 두면 토큰이 thinking에 다 먹혀 본문이 잘림. 플레이어 발언을 LLM이 진짜 깊게 추론해야 하는 노드(예: 7장 차 상무 카페 대면)가 생기면 그 노드만 별도 설정.
 
-## 게임 루프 — 세 단계
+## 핵심 구조
 
-코드 구조가 이 세 단계를 반영하므로 반드시 먼저 이해할 것.
+게임은 **Campaign → Chapter → Scene → Node → Line**의 위계:
 
-1. **전도 (1:1)** — `/preach/[npcId]`. 행인 한 명과의 분기형 VN 대화. 성공 시 해당 NPC가 `followers`에 추가되고, 그 NPC의 `relatives`가 모두 `pendingTargets`로 쌓인다.
-2. **관리 (N명 동시)** — `/congregation`. 모든 입교한 신도를 대시보드로 본다. 각 신도의 `faith`(맹신도 레벨), 남은 입교 대상 목록이 표시된다. 여기서 Zustand 스토어가 **유일한 진실 공급원**.
-3. **협공 (2대1)** — `/coop/[followerId]/[targetId]`. 입교한 신도를 `companion`으로 데리고 그의 가족/친구를 설득하는 VN. 대사 스피커는 `npc`(타겟), `companion`(신도), `player`(플레이어) 세 종류.
+- **Campaign** (`content/campaign.yaml`): 전체 게임의 루트. 챕터 순서 정의.
+- **Chapter**: 제목 + 속한 씬 id 목록. 챕터 단위로 "완료" 플래그 기록.
+- **Scene** (`content/scenes/<id>.yaml`): 한 장소·상황. 배경·캐스트·노드 그래프.
+- **Node**: 한 스크립트 단위. `lines[]` 재생 후 `choices[]` 또는 `next` 또는 `improv`.
+- **Line**: 한 대사. `speaker`, `text`, `expression`, `position`, `effects[]`.
 
-성공 조건은 "각 NPC가 자기 가족/친구를 입교시키는 것"이므로, 사실상 **재귀적 전도 그래프**가 게임의 목표 구조다.
+### Scene 그래프 DSL 요약
 
-## 아키텍처
+- `speaker`: `"narration"`, `"pc"`, `"thought"`, 또는 NPC id (content/npcs/ 아래 yaml 파일명)
+- `expression`: 8종 (`lib/dialogue-engine/types.ts`의 Expression). 이미지 파일명과 일치해야 함
+- `position`: `left | center | right | offscreen`
+- `effects`: `{ kind: ... }` 형태. Line에도, Choice에도, Check의 success/failure 브랜치에도 달 수 있음
 
-### 대화 엔진 (Hybrid)
+### Effect 종류
 
-핵심 설계는 **스크립트된 분기 트리 + LLM improv 노드** 하이브리드.
+| kind | 용도 |
+|---|---|
+| `stat { target, delta }` | PC 스탯 증감 (0~10 clamp) |
+| `flag { key, value }` | 조건부 선택지 열쇠 |
+| `memory { text }` | PC 누적 기억. 후반 LLM 컨텍스트 주입용 |
+| `goto { scene }` | 다른 씬으로 전이 |
+| `chapterComplete { chapter, nextChapter? }` | 챕터 완료 배너 + 다음 챕터 첫 씬으로 전이 |
+| `end { outcome }` | 배드 엔딩 처리 (챕터 중단) |
 
-- 모든 대화는 `content/scripts/*.yaml`의 Scene Graph로 작성 (`lib/dialogue-engine/schema.ts`의 Zod 스키마 참조).
-- 각 `Node`는 선형 `lines[]`를 재생한 뒤 셋 중 하나로 분기:
-  - `choices[]` — 분기 선택지 (메인 게임 플레이)
-  - `next` — 다음 노드로 자동 이동 (선형 구간)
-  - `improv` — **LLM에게 제어권 이양**. `systemPrompt`로 NPC 페르소나를 주입, `triggers[]`의 키워드가 LLM 응답에 나타나면 다시 스크립트 노드로 복귀.
-- `Effect`로 상태 변경: `faith`, `suspicion`, `flag`, `end`(success/flee).
-- 런타임은 `lib/dialogue-engine/runner.ts`의 `useSceneRunner` 훅 한 곳에 집중. `DialogueScene` 컴포넌트가 이를 감싼 프레젠테이션 층.
+### Choice와 Skill Check
 
-**LLM improv의 관례**: `systemInstruction`은 반드시 (1) NPC 페르소나, (2) 출력 언어(한국어), (3) 트리거 키워드를 응답 끝에 붙이라는 지시를 포함해야 한다. `minji-intro.yaml`의 `warm-open` 노드가 표준 템플릿이다.
+- 일반 선택지: `next` + 옵션 `effects`
+- 스킬 체크 선택지: `check: { stat, dc }` + `success: Branch` + `failure: Branch`
+  - 체크: `d20 + PC.stats[stat] vs dc`. 실패도 반드시 **다른 결의 결과**가 나오게 설계 (Disco Elysium 철학)
+- `requires`: `flag`, `flagEquals`, `minStat`, `maxStat` — 특정 조건에서만 노출
 
-**LLM 백엔드**: `/api/dialogue` 라우트는 `@google/genai` SDK를 통해 Gemini를 호출한다. 메시지 role은 Gemini 컨벤션에 따라 `user` / `model` 두 종류 (Anthropic의 `assistant`가 아님). 같은 NPC와 여러 턴이 길어질 경우 [Gemini Caches API](https://ai.google.dev/gemini-api/docs/caching)로 시스템 프롬프트를 캐시할 수 있지만, 현재는 미적용 (페르소나 프롬프트가 짧고 캐시 최소 토큰 임계치를 못 넘기는 경우가 많음).
+### LLM Improv 노드
 
-### 상태 관리
+노드에 `improv: { npc, systemPrompt, triggers[] }` 설정하면 `lines[]` 이후 자유 입력창. 시스템 프롬프트에 페르소나를 주입, `triggers[]`의 키워드가 LLM 응답에 포함되면 다음 노드로 라우팅. 트리거에 `effects`도 부착 가능.
 
-- **서버 측**: NPC 정의와 스크립트는 `content/` 아래 YAML. 페이지가 서버 컴포넌트에서 `loadNpc`/`loadScript`로 읽어 클라이언트에 prop으로 전달. 이 데이터는 **정적 콘텐츠**로 취급 — 저장 상태에 들어가지 않는다.
-- **클라이언트 측**: 플레이어 진행 상황(입교한 신도, 각 신도의 `faith`, 남은 타겟)은 `lib/game-state/store.ts`의 Zustand 스토어. `persist` 미들웨어로 **localStorage에 자동 저장** (`teat-save` 키, 버전 1).
-- **런너 내부 상태**: `faith`/`suspicion`/`flags`는 한 씬 안에서만 유효한 휘발성 상태로 `useState`에 보관. 씬 종료 시 결과(`success`/`flee`)만 스토어에 커밋.
+**프롬프트 관례**: (1) 페르소나, (2) 한국어 출력, (3) 트리거 키워드를 응답 끝에 붙이라는 지시. 아직 프롤로그/1장에 improv 노드 없음 — 향후 **차 상무 카페 대면(7장)**, **미영 거짓말(2·3·6장)** 같은 핵심 씬에 투입 예정.
 
-스토어 스키마를 변경하면 `version`을 올리고 마이그레이션을 작성할 것 — 기존 플레이어의 로컬 세이브가 깨진다.
+## 상태 관리
 
-### 소셜 그래프
+- **PC 상태** (`lib/game-state/store.ts`): Zustand + localStorage persist (`euljiro-save` 키, v1)
+  - `pc.stats`: 6개 스탯 (`gwonmo`, `beopri`, `jikgam`, `ttuksim`, `inmaek`, `yangsim`). 초기값 2~3.
+  - `pc.flags`: 씬 간 공유 플래그 (`accepted_case`, `noticed_nda` 등)
+  - `pc.memory`: LLM 컨텍스트용 짧은 텍스트 로그. 후반 차 상무 심문 씬에서 시스템 프롬프트에 주입해 "너 그때 이랬잖아" 연출
+  - `currentChapter`, `currentScene`, `history`, `completedChapters`
+- **씬 런타임 상태** (`lib/dialogue-engine/runner.ts`): 현재 노드·라인 인덱스. 씬 전환 시 리셋.
 
-`Npc` → `Relative[]`는 현재 2단계만 허용한다 (행인 → 그의 가족/친구). 재귀적으로 가족의 가족까지 확장하려면 `Relative` 타입에 `relatives`를 추가하고 `loadRelative`를 재설계해야 한다. 지금은 **의도적으로 평면 구조**를 유지 중.
+스토어 스키마 변경 시 `version` 올리고 마이그레이션 작성 필요.
 
-### 라우팅
+## 스탯 설계 메모
 
-- `app/page.tsx` — 타이틀/메뉴
-- `app/preach/page.tsx` — 행인 목록 (인덱스). `listAvailableProspects`가 `content/npcs/*.yaml`을 스캔
-- `app/preach/[npcId]/page.tsx` — 1:1 전도 씬 (conversion mode)
-- `app/congregation/page.tsx` — 신도 대시보드 (클라이언트 컴포넌트, Zustand 직접 구독)
-- `app/coop/[followerId]/[targetId]/page.tsx` — 협공 씬 (coop mode)
+| 스탯 | 용도 | 낮으면 |
+|---|---|---|
+| **권모** | 조직 정치 해독, 숨은 의도 | 허풍 감지 실패 |
+| **법리** | 계약·규정 언어 | NDA 함정 못 봄 |
+| **직감** | 거짓말·위험 감지 | 의뢰인 동기 놓침 |
+| **뚝심** | 협박·접대 버티기, 장기전 | 쉽게 합의 |
+| **인맥** | 과거 인연 회수 | 재민·박형사 거리감 |
+| **양심** | **양날**. 진실·미영 유리 ↔ 차상무·재민·김승기에게 동류 인정 | — |
+
+## 라우팅
+
+- `app/page.tsx` — 타이틀. 세이브 유무 감지 후 "이어서 하기" / "새로 시작"
+- `app/play/page.tsx` — 서버 컴포넌트. 모든 씬·NPC·배경 YAML 로드해 `PlayClient`에 주입
+- `app/play/PlayClient.tsx` — 현재 씬을 스토어에서 읽어 `SceneView` 렌더. `goto`/`chapterComplete`/`end` 이벤트 처리
+- `components/SceneView.tsx` — 배경 레이어 + 캐릭터 스프라이트 컴포지팅 + 대사 박스 + 선택지/입력/체크 결과
 - `app/api/dialogue/route.ts` — Gemini API 프록시 (절대 클라이언트에 키 노출 금지)
 
 ## 콘텐츠 작성 규칙
 
-### YAML 파일 명명
-- `content/npcs/<npcId>.yaml` — NPC 정의. `id`는 파일명과 일치.
-- `content/scripts/<scriptId>.yaml` — 대화 스크립트. `id`는 파일명과 일치. 전도용은 `<npcId>-intro`, 협공용은 `coop-<npcId>-<relationId>` 관례 사용.
+### 파일 위치
+- `content/campaign.yaml` — 루트
+- `content/npcs/<id>.yaml` — NPC 프로필 (id, displayName, role, bio)
+- `content/backgrounds/<id>.yaml` — 배경 메타 (id, displayName, file)
+- `content/scenes/<id>.yaml` — 씬 그래프
 
-### 이미지 에셋
-- 경로: `public/characters/<npcId>/<expression>.webp`
-- `expression` 값은 `lib/dialogue-engine/types.ts`의 `Expression` 유니언과 일치해야 함 (`neutral`, `smile`, `annoyed`, `skeptical`, `entranced`, `afraid`).
-- 없는 expression을 참조하면 이미지가 깨지므로 신규 expression 추가 시 타입 먼저 업데이트.
-- 이미지는 **사전 생성 (AI 생성 결과물을 저장)**. 런타임 이미지 생성은 사용하지 않는다.
-- 현재는 `scripts/gen-placeholders.mjs`로 만든 색상 그라디언트 자리 이미지가 들어있다. **실제 NPC 일러스트로 교체할 때 같은 파일명을 그대로 덮어쓰면 됨.** 새 NPC를 추가하면 `gen-placeholders.mjs`의 `characters` 맵에도 추가하거나, 직접 `public/characters/<npcId>/` 디렉토리를 채울 것.
+### 이미지 자산
+- 캐릭터: `public/characters/<npcId>/<expression>.webp` — **투명 배경** (실제 AI 생성 시). 현재는 플레이스홀더라 그라디언트
+- 배경: `public/backgrounds/<file>.webp` — 풀 사이즈 장면 배경
+- 표정 8종: `neutral`, `smile`, `tense`, `weary`, `angry`, `shock`, `grim`, `amused`
+- 신규 캐릭터·배경 추가 시 `scripts/gen-placeholders.mjs`의 `characters`/`backgrounds` 맵에도 추가 (또는 수동으로 public/ 아래 채우기)
 
-### 스크립트 작성 시
-- 모든 종료 경로에 `{ kind: end, outcome: success | flee }` effect가 있어야 한다. 없으면 씬이 멈춘 상태로 남는다.
-- `choices[]`는 최소 2개, 의미 있는 트레이드오프가 있어야 한다 (예: faith+ vs suspicion-).
-- Improv 노드는 분기점에만 사용. 메인 플롯은 스크립트로 고정.
+### YAML 주의사항
 
-## 모바일 우선
+- **대사 안에 `: ` (콜론+스페이스) 또는 시작 `"` 가 있으면 반드시 단일 따옴표로 감싸기.** js-yaml이 plain scalar로 파싱하다 깨짐. 예:
+  - `text: '간판: "백승재 리서치". 간판 밑...'`
+  - `text: '"백승재가 을지로에 사무실 낸다"고. 그래서...'`
+- 모든 종료 경로에 `end` 또는 `chapterComplete` 있어야 함. 없으면 "다음 ▶" 눌러도 반응 없음
+- `choices[]`는 최소 2개, 의미 있는 트레이드오프
+- 스킬 체크의 `failure` 브랜치도 **재미있는 결과**가 나오게 (플레이어를 벌하지 말 것)
 
-- 모든 페이지는 `max-w-md` 이내 폭으로 디자인. 뷰포트는 `userScalable: false`, `viewportFit: "cover"`.
-- 터치 타깃 최소 44px (`py-3`/`py-4` 유지).
-- `@import "tailwindcss"`를 사용하는 **Tailwind v4** 세팅. v3 문법(`@tailwind base` 등) 사용 금지.
+### 스탯 DC 가이드
 
-## 저장소 규칙
+- 초보: DC 10~11 (50% 근처 성공)
+- 보통: DC 12~13 (30~40%)
+- 어려움: DC 14~15 (20%)
+- 최고 난이도: DC 16~ (10% 이하)
 
-- 개발 브랜치: `claude/add-claude-documentation-bNGxg` (초기 스캐폴딩 기준). 이후 작업은 별도 feature 브랜치로.
-- `.env.local`, `node_modules/`, `.next/`는 커밋 금지 (`.gitignore`로 차단됨).
-- 캐릭터 이미지는 아직 없음 — `public/characters/`는 `.gitkeep`만 있음. 새 NPC를 추가하면 해당 `<npcId>/` 디렉토리도 채워야 한다.
+PC 초기 스탯 2, 최대 10이라 후반으로 갈수록 높은 DC를 뚫을 수 있게 설계.
 
 ## 현 상태
 
-**아직 초기 스캐폴딩 단계**다. 다음 항목들이 비어 있다:
+**프롤로그 + 1장만 구현됨 (플레이 시간 ~20분 예상)**:
 
-- 실제 캐릭터 일러스트가 없어 `scripts/gen-placeholders.mjs`로 생성한 자리 이미지를 사용 중. 같은 경로에 진짜 webp를 덮어쓰면 자동으로 반영됨.
-- 테스트 프레임워크 미설치. 필요하면 Vitest 추가 후 `package.json` 스크립트와 본 문서 업데이트.
-- 튜토리얼/세이브 슬롯 UI 없음. `reset()` 액션은 store에 있지만 UI에 노출 안 됨.
-- NPC가 민지 한 명뿐. `content/npcs/`에 행인을 더 추가하면 자동으로 `/preach` 인덱스에 잡힌다.
-- improv 노드를 실제로 돌리려면 `.env.local`에 `GEMINI_API_KEY`가 있어야 한다 (없으면 그 노드에서 500).
+1. **프롤로그 — 그날의 결재판**: 차 상무 앞에서 퇴직 합의서 서명. 3개 스킬 체크 분기 (`gwonmo`, `ttuksim`, `beopri`)
+2. **1장 — 을지로에 앉다**: 재민과의 재회 + 김승기 부회장의 의뢰 수락. `accepted_case`, `reserved_channel` 등 플래그 세팅
+
+### 아직 없는 것 (다음 단계)
+
+- 2장 이후 (**도현의 궤적** → **북한산 암자** → … → **9장 엔딩 분기**) 9개 챕터 남음
+- LLM improv 노드 — 차 상무 카페 대면(7장), 미영 거짓말(2·3·6장), 원장 스님(3장)에서 도입 예정
+- 캐릭터 메모리 → 시스템 프롬프트 주입 로직 (7장 전에 필요)
+- **실제 이미지**: 전부 플레이스홀더 (회색 그라디언트 + 라벨). 캐릭터 바이블 확정 후 Replicate(Flux Kontext)로 일괄 생성 예정
+- 단톡방 UI (딸 하진과의 대화용 — 다른 씬과 시각 대비)
+- 다중 엔딩 처리 UI
+- 메인 메뉴에 스탯 리셋 이상의 세이브 슬롯 관리
+
+## 개발 팁
+
+- 씬 작성 후 `npm run build`로 YAML 파싱 오류 먼저 확인 (런타임에 나는 것보다 빠름)
+- 새 씬은 반드시 이전 씬의 마지막 노드에서 `goto` 또는 `chapterComplete`로 연결되도록
+- 스킬 체크 밸런싱: DC가 너무 빡빡하면 실패 서사가 지배적이 됨. 처음 플레이에서 70% 체크가 성공하도록 전체 DC 점검
+- 실제 이미지로 교체할 때는 플레이스홀더와 **같은 파일명** 유지. 덮어쓰기만 하면 됨

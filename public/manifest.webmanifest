@@ -1,7 +1,7 @@
 {
-  "name": "도(道)믿남",
-  "short_name": "Teat",
-  "description": "대화기반 비주얼 시뮬레이션 설교 게임",
+  "name": "을지로 7층",
+  "short_name": "을지로 7층",
+  "description": "해고된 46세 남자, 첫 의뢰는 재벌 3세의 실종. 대화 CRPG.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0b0b10",

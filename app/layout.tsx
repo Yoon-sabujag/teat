@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Teat",
-  description: "대화기반 비주얼 시뮬레이션 설교 게임",
+  title: "을지로 7층",
+  description: "해고된 46세 남자, 첫 의뢰는 재벌 3세의 실종. 대화 CRPG.",
   manifest: "/manifest.webmanifest",
 };
 

@@ -2,92 +2,97 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { Npc } from "@/lib/social-graph/types";
+import type { Stat } from "@/lib/pc/stats";
 
-type PendingTarget = {
-  id: string;
-  displayName: string;
-  relation: string;
+type FlagValue = boolean | string | number;
+
+export type PcState = {
+  name: string;
+  stats: Record<Stat, number>;
+  flags: Record<string, FlagValue>;
+  memory: string[];
 };
 
-export type Follower = {
-  npcId: string;
-  displayName: string;
-  faith: number;
-  pendingTargets: PendingTarget[];
-  convertedTargets: string[];
+type SaveState = {
+  pc: PcState;
+  currentChapter: string;
+  currentScene: string;
+  history: string[];
+  completedChapters: string[];
 };
 
-type State = {
-  followers: Record<string, Follower>;
-  convertNpc: (npc: Npc) => void;
-  trainFollower: (npcId: string, delta: number) => void;
-  recordCoopOutcome: (
-    followerId: string,
-    targetId: string,
-    outcome: "success" | "flee",
-  ) => void;
+type Actions = {
+  startNew: (opts: { chapter: string; scene: string }) => void;
+  applyStat: (stat: Stat, delta: number) => void;
+  setFlag: (key: string, value: FlagValue) => void;
+  addMemory: (text: string) => void;
+  goToScene: (sceneId: string) => void;
+  completeChapter: (chapter: string, nextChapter?: string) => void;
   reset: () => void;
 };
 
-export const useGameStore = create<State>()(
+const INITIAL_PC: PcState = {
+  name: "백승재",
+  stats: {
+    gwonmo: 3,
+    beopri: 2,
+    jikgam: 2,
+    ttuksim: 2,
+    inmaek: 2,
+    yangsim: 2,
+  },
+  flags: {},
+  memory: [],
+};
+
+const INITIAL_STATE: SaveState = {
+  pc: INITIAL_PC,
+  currentChapter: "",
+  currentScene: "",
+  history: [],
+  completedChapters: [],
+};
+
+export const useSave = create<SaveState & Actions>()(
   persist(
     (set) => ({
-      followers: {},
-      convertNpc: (npc) =>
-        set((s) => {
-          if (s.followers[npc.id]) return s;
-          return {
-            followers: {
-              ...s.followers,
-              [npc.id]: {
-                npcId: npc.id,
-                displayName: npc.displayName,
-                faith: 1,
-                pendingTargets: npc.relatives.map((r) => ({
-                  id: r.id,
-                  displayName: r.displayName,
-                  relation: r.relation,
-                })),
-                convertedTargets: [],
-              },
+      ...INITIAL_STATE,
+      startNew: ({ chapter, scene }) =>
+        set(() => ({
+          ...INITIAL_STATE,
+          pc: { ...INITIAL_PC, stats: { ...INITIAL_PC.stats } },
+          currentChapter: chapter,
+          currentScene: scene,
+          history: [scene],
+        })),
+      applyStat: (stat, delta) =>
+        set((s) => ({
+          pc: {
+            ...s.pc,
+            stats: {
+              ...s.pc.stats,
+              [stat]: Math.max(0, Math.min(10, s.pc.stats[stat] + delta)),
             },
-          };
-        }),
-      trainFollower: (npcId, delta) =>
-        set((s) => {
-          const f = s.followers[npcId];
-          if (!f) return s;
-          return {
-            followers: {
-              ...s.followers,
-              [npcId]: { ...f, faith: Math.max(0, f.faith + delta) },
-            },
-          };
-        }),
-      recordCoopOutcome: (followerId, targetId, outcome) =>
-        set((s) => {
-          const f = s.followers[followerId];
-          if (!f) return s;
-          const remaining = f.pendingTargets.filter((t) => t.id !== targetId);
-          return {
-            followers: {
-              ...s.followers,
-              [followerId]: {
-                ...f,
-                pendingTargets: remaining,
-                convertedTargets:
-                  outcome === "success"
-                    ? [...f.convertedTargets, targetId]
-                    : f.convertedTargets,
-              },
-            },
-          };
-        }),
-      reset: () => set({ followers: {} }),
+          },
+        })),
+      setFlag: (key, value) =>
+        set((s) => ({ pc: { ...s.pc, flags: { ...s.pc.flags, [key]: value } } })),
+      addMemory: (text) =>
+        set((s) => ({ pc: { ...s.pc, memory: [...s.pc.memory, text] } })),
+      goToScene: (sceneId) =>
+        set((s) => ({
+          currentScene: sceneId,
+          history: [...s.history, sceneId],
+        })),
+      completeChapter: (chapter, nextChapter) =>
+        set((s) => ({
+          completedChapters: [...s.completedChapters, chapter],
+          currentChapter: nextChapter ?? s.currentChapter,
+        })),
+      reset: () => set(() => ({ ...INITIAL_STATE, pc: { ...INITIAL_PC, stats: { ...INITIAL_PC.stats } } })),
     }),
     {
-      name: "teat-save",
+      name: "euljiro-save",
       storage: createJSONStorage(() => localStorage),
       version: 1,
     },

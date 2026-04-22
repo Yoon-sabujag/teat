@@ -1,0 +1,13 @@
+id: euljiro-7f
+title: 을지로 7층
+startChapter: prologue
+chapters:
+  - id: prologue
+    title: "그날의 결재판"
+    scenes:
+      - prologue-exec-room
+  - id: chapter-1
+    title: "을지로에 앉다"
+    scenes:
+      - c1-opening
+      - c1-kim-sunggi

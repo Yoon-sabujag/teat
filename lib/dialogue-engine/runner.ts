@@ -1,152 +1,153 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import type { Choice, Effect, Line, RunnerState, Script } from "./types";
-import type { Npc, Relative } from "@/lib/social-graph/types";
-import { useGameStore } from "@/lib/game-state/store";
+import type {
+  CastMember,
+  Choice,
+  Effect,
+  Line,
+  RunnerState,
+  Scene,
+} from "./types";
+import { rollCheck } from "@/lib/pc/skill-check";
+import { type CheckResult } from "@/lib/pc/stats";
+import { useSave } from "@/lib/game-state/store";
 
-export type CharacterRef = { id: string; displayName: string };
+export type SceneEvent =
+  | { kind: "check"; result: CheckResult; label: string }
+  | { kind: "goto"; scene: string }
+  | { kind: "chapterComplete"; chapter: string; nextChapter?: string }
+  | { kind: "end"; outcome: string };
 
-export type RunnerArgs =
-  | {
-      mode: "conversion";
-      script: Script;
-      npc: Npc;
-    }
-  | {
-      mode: "coop";
-      script: Script;
-      follower: Npc;
-      target: Relative;
-    };
-
-type Ending = "success" | "flee" | null;
-
-function applyEffects(state: RunnerState, effects: Effect[] | undefined) {
-  if (!effects) return { state, ending: null as Ending };
-  let ending: Ending = null;
-  const next = { ...state, flags: { ...state.flags } };
-  for (const e of effects) {
-    switch (e.kind) {
-      case "faith":
-        next.faith += e.delta;
-        break;
-      case "suspicion":
-        next.suspicion += e.delta;
-        break;
-      case "flag":
-        next.flags[e.key] = e.value;
-        break;
-      case "end":
-        ending = e.outcome;
-        break;
-    }
-  }
-  return { state: next, ending };
-}
-
-function choiceAvailable(state: RunnerState, choice: Choice) {
+function choiceAvailable(
+  flags: Record<string, boolean | string | number>,
+  stats: Record<string, number>,
+  choice: Choice,
+): boolean {
   const r = choice.requires;
   if (!r) return true;
-  if (r.flag && !state.flags[r.flag]) return false;
-  if (r.minFaith !== undefined && state.faith < r.minFaith) return false;
-  if (r.maxSuspicion !== undefined && state.suspicion > r.maxSuspicion)
+  if (r.flag && !flags[r.flag]) return false;
+  if (r.flagEquals && flags[r.flagEquals.key] !== r.flagEquals.value)
     return false;
+  if (r.minStat && (stats[r.minStat.stat] ?? 0) < r.minStat.value) return false;
+  if (r.maxStat && (stats[r.maxStat.stat] ?? 0) > r.maxStat.value) return false;
   return true;
 }
 
-export function useSceneRunner(args: RunnerArgs) {
-  const { script } = args;
+type Args = {
+  scene: Scene;
+  onEvent: (event: SceneEvent) => void;
+};
+
+export function useSceneRunner({ scene, onEvent }: Args) {
   const [state, setState] = useState<RunnerState>({
-    nodeId: script.entry,
+    nodeId: scene.entry,
     lineIndex: 0,
-    faith: 0,
-    suspicion: 0,
-    flags: {},
   });
-  const [ending, setEnding] = useState<Ending>(null);
   const [busy, setBusy] = useState(false);
-  const [improvLine, setImprovLine] = useState<Line | null>(null);
-  const appliedLinesRef = useRef<Set<string>>(new Set());
+  const [lastCheck, setLastCheck] = useState<CheckResult | null>(null);
+  const appliedRef = useRef<Set<string>>(new Set());
 
-  const convertNpc = useGameStore((s) => s.convertNpc);
-  const recordCoopOutcome = useGameStore((s) => s.recordCoopOutcome);
+  const pc = useSave((s) => s.pc);
+  const applyStat = useSave((s) => s.applyStat);
+  const setFlag = useSave((s) => s.setFlag);
+  const addMemory = useSave((s) => s.addMemory);
 
-  const primary: CharacterRef =
-    args.mode === "conversion" ? args.npc : args.target;
-  const companion: CharacterRef | undefined =
-    args.mode === "coop" ? args.follower : undefined;
+  const node = scene.nodes[state.nodeId];
+  if (!node) throw new Error(`Missing node ${state.nodeId} in ${scene.id}`);
 
-  const node = script.nodes[state.nodeId];
-  if (!node) throw new Error(`Missing node: ${state.nodeId}`);
-
-  const currentLine: Line =
-    improvLine ?? node.lines[state.lineIndex] ?? {
-      speaker: "narration",
-      text: "…",
-    };
-
+  const cast: CastMember[] = node.cast ?? scene.cast;
+  const background = node.background ?? scene.background;
+  const currentLine: Line = state.improvText
+    ? { speaker: node.improv?.npc ?? "npc", text: state.improvText }
+    : node.lines[state.lineIndex] ?? { speaker: "narration", text: "…" };
   const atEndOfLines = state.lineIndex >= node.lines.length - 1;
 
-  const commitEnding = useCallback(
-    (outcome: "success" | "flee") => {
-      setEnding(outcome);
-      if (args.mode === "conversion" && outcome === "success") {
-        convertNpc(args.npc);
-      } else if (args.mode === "coop") {
-        recordCoopOutcome(args.follower.id, args.target.id, outcome);
+  const applyEffects = useCallback(
+    (effects: Effect[] | undefined) => {
+      if (!effects) return;
+      for (const e of effects) {
+        switch (e.kind) {
+          case "stat":
+            applyStat(e.target, e.delta);
+            break;
+          case "flag":
+            setFlag(e.key, e.value);
+            break;
+          case "memory":
+            addMemory(e.text);
+            break;
+          case "goto":
+            onEvent({ kind: "goto", scene: e.scene });
+            break;
+          case "chapterComplete":
+            onEvent({
+              kind: "chapterComplete",
+              chapter: e.chapter,
+              nextChapter: e.nextChapter,
+            });
+            break;
+          case "end":
+            onEvent({ kind: "end", outcome: e.outcome });
+            break;
+        }
       }
     },
-    [args, convertNpc, recordCoopOutcome],
+    [applyStat, setFlag, addMemory, onEvent],
   );
+
+  const applyCurrentLineEffectsOnce = useCallback(() => {
+    const key = `${state.nodeId}:${state.lineIndex}`;
+    if (appliedRef.current.has(key)) return;
+    appliedRef.current.add(key);
+    applyEffects(node.lines[state.lineIndex]?.effects);
+  }, [state.nodeId, state.lineIndex, node.lines, applyEffects]);
 
   const advance = useCallback(() => {
-    setImprovLine(null);
+    if (state.improvText) {
+      setState((s) => ({ ...s, improvText: undefined }));
+      return;
+    }
+    applyCurrentLineEffectsOnce();
     setState((prev) => {
-      const n = script.nodes[prev.nodeId];
-      const key = `${prev.nodeId}:${prev.lineIndex}`;
-      let after = prev;
-      if (!appliedLinesRef.current.has(key)) {
-        appliedLinesRef.current.add(key);
-        const result = applyEffects(prev, n.lines[prev.lineIndex]?.effects);
-        after = result.state;
-        if (result.ending) commitEnding(result.ending);
-      }
+      const n = scene.nodes[prev.nodeId];
       if (prev.lineIndex < n.lines.length - 1) {
-        return { ...after, lineIndex: prev.lineIndex + 1 };
+        return { ...prev, lineIndex: prev.lineIndex + 1 };
       }
       if (n.next) {
-        return { ...after, nodeId: n.next, lineIndex: 0 };
+        appliedRef.current.clear();
+        return { nodeId: n.next, lineIndex: 0 };
       }
-      return after;
+      return prev;
     });
-  }, [script, commitEnding]);
+  }, [state.improvText, applyCurrentLineEffectsOnce, scene]);
 
-  const onChoose = useCallback(
-    (choiceId: string) => {
-      const n = script.nodes[state.nodeId];
-      const choice = n.choices?.find((c) => c.id === choiceId);
-      if (!choice || !choiceAvailable(state, choice)) return;
-      const lineKey = `${state.nodeId}:${state.lineIndex}`;
-      let after = state;
-      if (!appliedLinesRef.current.has(lineKey)) {
-        appliedLinesRef.current.add(lineKey);
-        const lineResult = applyEffects(
-          state,
-          n.lines[state.lineIndex]?.effects,
-        );
-        after = lineResult.state;
-        if (lineResult.ending) commitEnding(lineResult.ending);
+  const runChoice = useCallback(
+    (choice: Choice) => {
+      applyCurrentLineEffectsOnce();
+      if (choice.check) {
+        const result = rollCheck(choice.check, pc.stats);
+        setLastCheck(result);
+        onEvent({ kind: "check", result, label: choice.label });
+        const branch = result.success ? choice.success : choice.failure;
+        if (!branch) return;
+        applyEffects(branch.effects);
+        if (branch.next) {
+          appliedRef.current.clear();
+          setState({ nodeId: branch.next, lineIndex: 0 });
+        }
+        return;
       }
-      const { state: next, ending: e } = applyEffects(after, choice.effects);
-      if (e) commitEnding(e);
-      setState({ ...next, nodeId: choice.next, lineIndex: 0 });
-      setImprovLine(null);
+      applyEffects(choice.effects);
+      if (choice.next) {
+        appliedRef.current.clear();
+        setState({ nodeId: choice.next, lineIndex: 0 });
+      }
     },
-    [script, state, commitEnding],
+    [applyCurrentLineEffectsOnce, pc.stats, onEvent, applyEffects],
   );
 
-  const onFreeform = useCallback(
+  const runImprov = useCallback(
     async (playerLine: string) => {
       if (!node.improv) return;
       setBusy(true);
@@ -155,47 +156,56 @@ export function useSceneRunner(args: RunnerArgs) {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
-            npcId: primary.id,
+            npcId: node.improv.npc,
             systemPrompt: node.improv.systemPrompt,
             history: [],
             playerLine,
           }),
         });
         const { reply } = (await res.json()) as { reply: string };
-        setImprovLine({ speaker: "npc", text: reply });
+        setState((s) => ({ ...s, improvText: reply }));
 
         const trigger = node.improv.triggers.find((t) =>
           reply.includes(t.keyword),
         );
         if (trigger) {
-          setState((prev) => ({ ...prev, nodeId: trigger.next, lineIndex: 0 }));
+          applyEffects(trigger.effects);
+          setTimeout(() => {
+            appliedRef.current.clear();
+            setState({ nodeId: trigger.next, lineIndex: 0 });
+          }, 2000);
         }
       } finally {
         setBusy(false);
       }
     },
-    [node, primary],
+    [node.improv, applyEffects],
   );
 
   const choices = useMemo(() => {
-    if (!atEndOfLines) return [];
-    return (node.choices ?? []).filter((c) => choiceAvailable(state, c));
-  }, [atEndOfLines, node, state]);
+    if (!atEndOfLines || state.improvText) return [];
+    return (node.choices ?? []).filter((c) =>
+      choiceAvailable(pc.flags, pc.stats, c),
+    );
+  }, [atEndOfLines, state.improvText, node.choices, pc.flags, pc.stats]);
 
   const isImprovNode =
-    atEndOfLines && !node.next && !node.choices?.length && !!node.improv;
+    atEndOfLines &&
+    !state.improvText &&
+    !node.next &&
+    !node.choices?.length &&
+    !!node.improv;
 
   return {
+    background,
+    cast,
     currentLine,
     choices,
-    onChoose,
-    onAdvance: advance,
-    onFreeform,
+    advance,
+    runChoice,
+    runImprov,
     isImprovNode,
     busy,
-    ending,
-    state,
-    primary,
-    companion,
+    lastCheck,
   };
 }

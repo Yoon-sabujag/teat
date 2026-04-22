@@ -1,60 +1,99 @@
-export type Speaker = "npc" | "player" | "companion" | "narration";
+import type { Stat, SkillCheck } from "@/lib/pc/stats";
+
+export type Speaker = "narration" | "pc" | "thought" | string;
 
 export type Expression =
   | "neutral"
   | "smile"
-  | "annoyed"
-  | "skeptical"
-  | "entranced"
-  | "afraid";
+  | "tense"
+  | "weary"
+  | "angry"
+  | "shock"
+  | "grim"
+  | "amused";
+
+export type Position = "left" | "center" | "right" | "offscreen";
 
 export type Effect =
-  | { kind: "faith"; delta: number }
-  | { kind: "suspicion"; delta: number }
-  | { kind: "flag"; key: string; value: boolean }
-  | { kind: "end"; outcome: "success" | "flee" };
+  | { kind: "stat"; target: Stat; delta: number }
+  | { kind: "flag"; key: string; value: boolean | string | number }
+  | { kind: "memory"; text: string }
+  | { kind: "goto"; scene: string }
+  | { kind: "chapterComplete"; chapter: string; nextChapter?: string }
+  | { kind: "end"; outcome: string };
 
 export type Line = {
   speaker: Speaker;
   text: string;
   expression?: Expression;
+  position?: Position;
   effects?: Effect[];
+};
+
+export type ChoiceRequires = {
+  flag?: string;
+  flagEquals?: { key: string; value: boolean | string | number };
+  minStat?: { stat: Stat; value: number };
+  maxStat?: { stat: Stat; value: number };
+};
+
+export type Branch = {
+  next?: string;
+  effects?: Effect[];
+  line?: { speaker: Speaker; text: string };
 };
 
 export type Choice = {
   id: string;
   label: string;
-  next: string;
-  requires?: { flag?: string; minFaith?: number; maxSuspicion?: number };
+  requires?: ChoiceRequires;
+  check?: SkillCheck;
+  /** Used when no `check` present. */
+  next?: string;
   effects?: Effect[];
+  /** Used when `check` present. */
+  success?: Branch;
+  failure?: Branch;
+};
+
+export type CastMember = {
+  npc: string;
+  position: Position;
+  expression?: Expression;
 };
 
 export type Node = {
   id: string;
+  /** Changing any of these mid-scene is allowed to restage the scene. */
+  cast?: CastMember[];
+  background?: string;
   lines: Line[];
-  /**
-   * If `choices` is empty and `next` is undefined, the engine hands control
-   * over to the LLM for freeform improv until a trigger keyword or effect
-   * routes back into a scripted node.
-   */
   choices?: Choice[];
   next?: string;
   improv?: {
-    triggers: Array<{ keyword: string; next: string }>;
+    npc: string;
+    triggers: Array<{ keyword: string; next: string; effects?: Effect[] }>;
     systemPrompt: string;
   };
 };
 
-export type Script = {
+export type Scene = {
   id: string;
+  title?: string;
+  background: string;
+  cast: CastMember[];
   entry: string;
   nodes: Record<string, Node>;
+};
+
+export type Chapter = {
+  id: string;
+  title: string;
+  scenes: string[];
 };
 
 export type RunnerState = {
   nodeId: string;
   lineIndex: number;
-  faith: number;
-  suspicion: number;
-  flags: Record<string, boolean>;
+  improvText?: string;
 };

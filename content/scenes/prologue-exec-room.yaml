@@ -1,0 +1,261 @@
+id: prologue-exec-room
+title: "그날의 결재판"
+background: office-exec
+cast:
+  - npc: cha-sangmu
+    position: center
+    expression: neutral
+entry: knock
+
+nodes:
+  knock:
+    id: knock
+    lines:
+      - speaker: narration
+        text: 1월의 광화문. 저녁 여섯 시가 안 되었는데 창 밖은 이미 어둡다.
+      - speaker: narration
+        text: 차 상무가 노크도 없이 문을 연다. 반쯤은 예의고, 반쯤은 예의가 아니다.
+      - speaker: cha-sangmu
+        text: 승재씨, 오래 기다렸죠? 미안해요.
+        expression: smile
+      - speaker: thought
+        text: 사과할 일이 따로 있을 텐데.
+    next: seat
+
+  seat:
+    id: seat
+    lines:
+      - speaker: narration
+        text: 차 상무가 내 앞에 앉는다. 결재판 하나와 서류 봉투를 책상에 올린다.
+      - speaker: cha-sangmu
+        text: 해외사업본부 실적 얘기는… 들었죠?
+        expression: weary
+      - speaker: thought
+        text: 18년 다닌 회사가 끝나는 순간치고는 너무 조용하다.
+    choices:
+      - id: formal
+        label: 네. 잘 알고 있습니다.
+        next: formalities
+      - id: probe
+        label: 상무님, 진짜 이유가 뭡니까.
+        check: { stat: gwonmo, dc: 13 }
+        success:
+          next: probe-success
+          effects:
+            - kind: memory
+              text: 차 상무는 내 질문에 잠시 말이 막혔다. 실적은 표면일 뿐이다.
+            - kind: flag
+              key: prologue_probed
+              value: true
+        failure:
+          next: probe-failure
+          effects:
+            - kind: stat
+              target: yangsim
+              delta: -1
+      - id: silent
+        label: (침묵한다)
+        check: { stat: ttuksim, dc: 12 }
+        success:
+          next: silent-success
+          effects:
+            - kind: memory
+              text: 내가 침묵하자 차 상무가 먼저 말을 이었다.
+        failure:
+          next: formalities
+
+  formalities:
+    id: formalities
+    lines:
+      - speaker: cha-sangmu
+        text: 승재씨, 이건 실적 문제만이 아니에요. 회사도 큰 그림이 있고, 승재씨도 이제 좀 쉴 때가 된 거예요.
+        expression: smile
+      - speaker: thought
+        text: 쉬라는 말이 이렇게 차갑다. 이게 이 회사 말이다.
+    next: paperwork
+
+  probe-success:
+    id: probe-success
+    lines:
+      - speaker: cha-sangmu
+        text: …
+        expression: tense
+      - speaker: cha-sangmu
+        text: 승재씨가 마지막 분기 결재판에서 뭘 봤는지, 나는 모르고 싶어요.
+        expression: grim
+      - speaker: thought
+        text: 결재판? 내가 뭘 봤다고?
+      - speaker: cha-sangmu
+        text: 지금 이걸 조용히 마무리하는 게, 서로한테 제일 덜 아픈 길입니다.
+        expression: weary
+    next: paperwork
+
+  probe-failure:
+    id: probe-failure
+    lines:
+      - speaker: cha-sangmu
+        text: 승재씨, 질문이 날카로우면 답도 날카로워져요.
+        expression: tense
+      - speaker: cha-sangmu
+        text: 나는 승재씨한테 그런 답을 주고 싶지 않아요. 오늘은 안 할게요.
+        expression: grim
+    next: paperwork
+
+  silent-success:
+    id: silent-success
+    lines:
+      - speaker: cha-sangmu
+        text: 예전부터 그게 승재씨 장점이었죠. 어려운 자리에서 한 번 더 생각하는 거.
+        expression: smile
+      - speaker: cha-sangmu
+        text: …그 성격이 좋을 때도 있고, 안 좋을 때도 있어요.
+        expression: weary
+    next: paperwork
+
+  paperwork:
+    id: paperwork
+    lines:
+      - speaker: narration
+        text: 차 상무가 서류 봉투에서 A4 몇 장을 꺼낸다. 퇴직 합의서. 경쟁금지조항 밑줄.
+      - speaker: cha-sangmu
+        text: 여기 사인 부탁드리고, 다음 주까지는 짐 정리해 주시면 돼요.
+        expression: neutral
+      - speaker: thought
+        text: 경쟁금지 3년. 같은 업종 재취업은 사실상 불가능.
+    choices:
+      - id: read-carefully
+        label: (조항을 꼼꼼히 읽는다)
+        check: { stat: beopri, dc: 12 }
+        success:
+          next: read-caught
+          effects:
+            - kind: memory
+              text: 퇴직 합의서에 '그룹 계열 및 협력사의 내부 자료 유출 시 5년 민형사 책임' 조항이 붙어있었다. 통상적 NDA보다 훨씬 세다.
+            - kind: flag
+              key: noticed_nda
+              value: true
+        failure:
+          next: sign-quick
+      - id: sign-quick
+        label: 사인한다.
+        next: sign-quick
+        effects:
+          - kind: stat
+            target: ttuksim
+            delta: -1
+      - id: push-back
+        label: 하루만 검토해도 될까요?
+        check: { stat: beopri, dc: 14 }
+        success:
+          next: pushback-success
+          effects:
+            - kind: memory
+              text: 차 상무가 당황했다. 이 합의서는 원래 즉시 서명을 전제로 준비된 것이다.
+            - kind: flag
+              key: delayed_signing
+              value: true
+        failure:
+          next: pushback-failure
+
+  read-caught:
+    id: read-caught
+    lines:
+      - speaker: thought
+        text: 5년? 업계 표준이 2년이다. 왜 5년이지.
+      - speaker: cha-sangmu
+        text: 뭐, 걸리는 조항이라도 있어요?
+        expression: tense
+    choices:
+      - id: confront
+        label: 5년 조항, 이유가 있습니까.
+        check: { stat: gwonmo, dc: 14 }
+        success:
+          next: confront-success
+          effects:
+            - kind: stat
+              target: gwonmo
+              delta: 1
+        failure:
+          next: back-down
+      - id: pretend-ok
+        label: 아니요. 상관없습니다.
+        next: sign-quick
+
+  confront-success:
+    id: confront-success
+    lines:
+      - speaker: cha-sangmu
+        text: …그건, 회사 방침이에요. 특정 인물을 겨냥한 건 아닙니다.
+        expression: weary
+      - speaker: thought
+        text: '"특정 인물을 겨냥한 건 아닙니다" — 이 말은 특정 사안을 겨냥했다는 말이다.'
+    next: sign-reluctantly
+
+  back-down:
+    id: back-down
+    lines:
+      - speaker: cha-sangmu
+        text: 승재씨, 오늘은 그냥 사인하고 가세요. 내가 나중에 밥 한번 살게요.
+        expression: smile
+    next: sign-quick
+
+  pushback-success:
+    id: pushback-success
+    lines:
+      - speaker: cha-sangmu
+        text: …
+        expression: tense
+      - speaker: cha-sangmu
+        text: 알겠습니다. 월요일 오전까지는 회신 주세요. 제가 기다리겠습니다.
+        expression: weary
+      - speaker: thought
+        text: 차 상무가 먼저 눈을 깔았다. 이 합의서, 뭔가 있다.
+    next: leave-office
+
+  pushback-failure:
+    id: pushback-failure
+    lines:
+      - speaker: cha-sangmu
+        text: 승재씨, 하루 더 생각해서 뭐가 달라지나요. 지금 편하게 하시죠.
+        expression: grim
+    next: sign-quick
+
+  sign-reluctantly:
+    id: sign-reluctantly
+    lines:
+      - speaker: narration
+        text: 펜이 오래 머뭇거리다 종이를 지나간다.
+      - speaker: cha-sangmu
+        text: 수고하셨습니다. 18년, 고생 많았어요.
+        expression: smile
+    next: leave-office
+
+  sign-quick:
+    id: sign-quick
+    lines:
+      - speaker: narration
+        text: 펜이 종이를 지나간다. 조용히.
+      - speaker: cha-sangmu
+        text: 수고하셨습니다. 18년, 고생 많았어요.
+        expression: smile
+    next: leave-office
+
+  leave-office:
+    id: leave-office
+    lines:
+      - speaker: narration
+        text: 일어서 문 앞에 선다. 차 상무가 뒤에서 한 마디 덧붙인다.
+      - speaker: cha-sangmu
+        text: 승재씨.
+        expression: weary
+      - speaker: cha-sangmu
+        text: 좀 쉬어요. 아무 생각 말고.
+        expression: grim
+      - speaker: thought
+        text: 아무 생각 말고. 어떻게 그래.
+      - speaker: narration
+        text: 문을 닫는다. 복도가 길다.
+        effects:
+          - kind: chapterComplete
+            chapter: prologue
+            nextChapter: chapter-1

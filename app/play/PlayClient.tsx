@@ -1,0 +1,119 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { SceneView } from "@/components/SceneView";
+import { useSave } from "@/lib/game-state/store";
+import type { SceneEvent } from "@/lib/dialogue-engine/runner";
+import type { Npc, Background } from "@/lib/content/loader";
+import type { ParsedCampaign, ParsedScene } from "@/lib/dialogue-engine/schema";
+
+type Props = {
+  campaign: ParsedCampaign;
+  scenes: Record<string, ParsedScene>;
+  npcs: Record<string, Npc>;
+  backgrounds: Record<string, Background>;
+};
+
+export function PlayClient({ campaign, scenes, npcs, backgrounds }: Props) {
+  const currentScene = useSave((s) => s.currentScene);
+  const goToScene = useSave((s) => s.goToScene);
+  const completeChapter = useSave((s) => s.completeChapter);
+  const [banner, setBanner] = useState<string | null>(null);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  if (!hydrated) {
+    return (
+      <main className="flex min-h-dvh items-center justify-center bg-neutral-950 text-neutral-500">
+        불러오는 중…
+      </main>
+    );
+  }
+
+  if (!currentScene) {
+    return (
+      <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-4 p-6 text-neutral-400">
+        <p>세이브가 없습니다.</p>
+        <Link
+          href="/"
+          className="rounded-xl bg-amber-500 px-4 py-3 text-sm font-semibold text-black"
+        >
+          타이틀로
+        </Link>
+      </main>
+    );
+  }
+
+  const scene = scenes[currentScene];
+  if (!scene) {
+    return (
+      <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-4 p-6 text-neutral-400">
+        <p>준비 중인 씬입니다: {currentScene}</p>
+        <Link
+          href="/"
+          className="rounded-xl bg-amber-500 px-4 py-3 text-sm font-semibold text-black"
+        >
+          타이틀로
+        </Link>
+      </main>
+    );
+  }
+
+  const onEvent = (event: SceneEvent) => {
+    switch (event.kind) {
+      case "goto":
+        goToScene(event.scene);
+        break;
+      case "chapterComplete": {
+        const chapter = campaign.chapters.find((c) => c.id === event.chapter);
+        completeChapter(event.chapter, event.nextChapter);
+        setBanner(`${chapter?.title ?? event.chapter} 완료`);
+        if (event.nextChapter) {
+          const next = campaign.chapters.find((c) => c.id === event.nextChapter);
+          if (next && next.scenes[0]) {
+            setTimeout(() => {
+              goToScene(next.scenes[0]);
+              setBanner(null);
+            }, 2500);
+          }
+        }
+        break;
+      }
+      case "end":
+        setBanner(`엔딩: ${event.outcome}`);
+        break;
+      case "check":
+        // Visual handled inside SceneView.
+        break;
+    }
+  };
+
+  if (banner) {
+    return (
+      <main className="relative min-h-dvh bg-neutral-950">
+        <div className="flex min-h-dvh items-center justify-center">
+          <div className="text-center">
+            <p className="text-xs uppercase tracking-[0.4em] text-neutral-500">
+              chapter
+            </p>
+            <p className="mt-3 text-3xl font-light text-neutral-100">{banner}</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <SceneView
+      key={scene.id}
+      scene={scene}
+      npcs={npcs}
+      backgrounds={backgrounds}
+      onEvent={onEvent}
+    />
+  );
+}

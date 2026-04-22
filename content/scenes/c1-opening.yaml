@@ -1,0 +1,178 @@
+id: c1-opening
+title: "을지로 7층"
+background: euljiro-office
+cast:
+  - npc: jaemin
+    position: right
+    expression: amused
+entry: arrive
+
+nodes:
+  arrive:
+    id: arrive
+    lines:
+      - speaker: narration
+        text: 을지로 3가. 인쇄 골목 끝자락, 낡은 빌딩 7층.
+      - speaker: narration
+        text: 20평도 안 되는 사무실. 책상 두 개, 의자 네 개, 어제 뗀 이전 세입자 간판 자국.
+      - speaker: narration
+        text: '간판: "백승재 리서치". 간판 밑에는 내 회사 이름과 전화번호만.'
+      - speaker: thought
+        text: 리서치. 시장조사도 리서치고, 사람 찾는 것도 리서치다.
+    next: jaemin-arrives
+
+  jaemin-arrives:
+    id: jaemin-arrives
+    lines:
+      - speaker: narration
+        text: 문이 열린다. 노크는 없다.
+      - speaker: jaemin
+        text: 형! 드디어 간판 붙였네요. 이게 얼마 만이야.
+        expression: smile
+      - speaker: jaemin
+        text: 근데 이 층 엘리베이터 안 돼요. 알죠?
+        expression: amused
+      - speaker: thought
+        text: 재민이. 을지로 뒷골목에서 "뭐든 찾아드림"이라는 명함으로 먹고 사는 애.
+    choices:
+      - id: hi-warmly
+        label: 오랜만이다. 잘 지냈어?
+        next: catch-up
+        effects:
+          - kind: stat
+            target: inmaek
+            delta: 1
+      - id: hi-business
+        label: 바로 일 얘기 하자.
+        next: business-fast
+      - id: probe-jaemin
+        label: 너 소문 어디서 듣고 왔어.
+        check: { stat: jikgam, dc: 12 }
+        success:
+          next: probe-jaemin-success
+          effects:
+            - kind: memory
+              text: 재민이는 내가 간판 붙인 지 이틀 만에 알고 찾아왔다. 그런 정보는 공짜로 흐르지 않는다.
+        failure:
+          next: catch-up
+
+  catch-up:
+    id: catch-up
+    lines:
+      - speaker: jaemin
+        text: 저야 뭐, 늘 그렇죠. 그쪽 업계에선 요즘 재미있는 소문 있어요.
+        expression: amused
+      - speaker: jaemin
+        text: 형도 곧 듣게 될 거예요. 어쩌면 이미 듣고 있고.
+        expression: smile
+    next: offer-job
+
+  business-fast:
+    id: business-fast
+    lines:
+      - speaker: jaemin
+        text: 좋아요. 형, 저도 시간 없어요.
+        expression: neutral
+      - speaker: jaemin
+        text: 지금 형 간판 붙었다는 얘기 본사 쪽에서도 알아요. 빠르죠?
+        expression: tense
+    next: offer-job
+
+  probe-jaemin-success:
+    id: probe-jaemin-success
+    lines:
+      - speaker: jaemin
+        text: 아 형, 저 원래 소문이 직업이잖아요.
+        expression: amused
+      - speaker: jaemin
+        text: 근데 형 간판 얘기는… 제가 찾은 거 아니에요. 누가 저한테 흘렸어요.
+        expression: tense
+      - speaker: jaemin
+        text: '"백승재가 을지로에 사무실 낸다"고. 그래서 저도 좀 일찍 왔어요.'
+        expression: neutral
+      - speaker: thought
+        text: 누군가 내 간판 소식을 흥신소에 뿌렸다. 왜?
+        effects:
+          - kind: flag
+            key: leaked_to_jaemin
+            value: true
+    next: offer-job
+
+  offer-job:
+    id: offer-job
+    lines:
+      - speaker: jaemin
+        text: 암튼 형, 저 하나 알려드릴게요. 오늘 오후에 형한테 전화 한 통 올 거예요.
+        expression: smile
+      - speaker: jaemin
+        text: 받으면 큰 건이에요. 안 받으면 더 큰일 나고.
+        expression: amused
+      - speaker: pc
+        text: 어느 쪽이야.
+      - speaker: jaemin
+        text: 그게 포인트예요 형. 받으시면 알아요. 저는 일단 커피 한 잔 시켜놓을게요.
+        expression: smile
+    next: phone-rings
+
+  phone-rings:
+    id: phone-rings
+    lines:
+      - speaker: narration
+        text: 재민의 말이 끝나기 전에 책상 위 휴대폰이 울린다.
+      - speaker: narration
+        text: 모르는 번호. 02 앞자리. 누가 봐도 본사 내선을 돌린 흔적.
+      - speaker: jaemin
+        text: 빠르다, 빠르다. 받으세요 형.
+        expression: amused
+    choices:
+      - id: pick-up
+        label: 전화를 받는다.
+        next: pick-up
+      - id: let-it-ring
+        label: 일부러 안 받는다.
+        check: { stat: ttuksim, dc: 13 }
+        success:
+          next: let-it-ring-success
+          effects:
+            - kind: stat
+              target: gwonmo
+              delta: 1
+            - kind: memory
+              text: 첫 전화를 일부러 놓쳤다. 상대는 다시 걸어와야 한다. 이게 협상의 시작이다.
+        failure:
+          next: pick-up
+          effects:
+            - kind: stat
+              target: ttuksim
+              delta: -1
+
+  let-it-ring-success:
+    id: let-it-ring-success
+    lines:
+      - speaker: narration
+        text: 벨이 여덟 번 울리고 끊긴다. 재민은 웃는다.
+      - speaker: jaemin
+        text: 형, 형 진짜 이 판 재미있게 하려고 하네요.
+        expression: amused
+      - speaker: narration
+        text: 30초 뒤. 같은 번호. 다시 울린다.
+    next: pick-up
+
+  pick-up:
+    id: pick-up
+    lines:
+      - speaker: pc
+        text: 여보세요.
+      - speaker: narration
+        text: 전화 너머, 매너 좋게 절제된 중년 남자 목소리.
+      - speaker: kim-sunggi
+        text: 백승재 실장님 되시죠? 김승기입니다.
+      - speaker: thought
+        text: 김승기 부회장. 내 전직 그룹의 2대 형. 이 사람이 직접 전화를 건다.
+      - speaker: kim-sunggi
+        text: 오늘 저녁, 본사 VIP 상담실에서 잠시 뵈실 수 있을까요? 긴한 의뢰가 있습니다.
+      - speaker: narration
+        text: 문장이 다 끝나기 전에 이미 어딘가에서 시계가 맞춰지고 있다.
+        effects:
+          - kind: goto
+            scene: c1-kim-sunggi
