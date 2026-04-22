@@ -28,11 +28,22 @@ nodes:
               delta: 1
             - kind: memory
               text: 구 회사 경비 아저씨가 경비실을 지키고 있었다. 도현의 마지막 방문 정황을 귀띔해줬다.
+            - kind: flag
+              key: c2_guard
+              value: warm
         failure:
           next: guard-cold
+          effects:
+            - kind: flag
+              key: c2_guard
+              value: missed
       - id: flash-key
         label: (카드키를 보여주며) 도현 씨가 부탁한 일입니다.
         next: guard-cold
+        effects:
+          - kind: flag
+            key: c2_guard
+            value: flash
 
   guard-talks:
     id: guard-talks
@@ -59,7 +70,17 @@ nodes:
     id: guard-cold
     lines:
       - speaker: narration
-        text: 경비원은 카드키를 확인하고 고개를 끄덕인다. 그 외엔 말이 없다.
+        requires:
+          flagEquals:
+            key: c2_guard
+            value: missed
+        text: 반가운 기색이 잠깐 스쳤다가 사라진다. 내가 먼저 다가갔는데, 그 거리를 그가 맞춰주지 않았다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c2_guard
+            value: flash
+        text: 경비원은 카드키 뒷면의 번호를 한 번 눈으로 찍고, 고개 한 번 끄덕이는 것으로 답을 끝낸다.
       - speaker: thought
         text: 이 아저씨는 뭔가 봤다. 그저 나에게 말할 이유를 못 찾았을 뿐이다.
     next: elevator
@@ -69,6 +90,16 @@ nodes:
     lines:
       - speaker: narration
         text: 엘리베이터가 27층에서 조용히 멈춘다. 복도의 간접 조명이 밑에서 올라온다.
+      - speaker: thought
+        requires:
+          flag: ghost_visitors
+        text: 새벽 2시의 그 둘은 이 복도를 걸었다. CCTV 각도 한 번 보고, 그들이 어디서 멈췄을지 계산한다.
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c2_guard
+            value: flash
+        text: 카드키 하나로 들어가는 공간. 이 키를 쥐었던 사람이 몇 명이었을까.
       - speaker: narration
         text: 27층 끝 방. 2704호. 문 앞에 배달 안내 스티커도 없다.
     next: entry
@@ -82,6 +113,10 @@ nodes:
         text: 집안은 정돈되어 있다. 과하게 정돈되어 있다.
       - speaker: thought
         text: 잠수한 사람의 집이 이럴 수는 없다. 누가 치웠다.
+      - speaker: thought
+        requires:
+          flag: ghost_visitors
+        text: 새벽 2시의 그 둘이 여기까지 올라왔다면, 이 정돈은 그들의 서명이다.
     choices:
       - id: sweep-living
         label: 거실부터 훑어본다.
@@ -96,6 +131,10 @@ nodes:
               text: 도현의 책상 위에 가장 최근 인쇄물 한 장이 남아있었다. 특정 대기업 감사 공시 요약. 붉은 볼펜으로 줄 쳐진 항목 하나.
         failure:
           next: living-room
+          effects:
+            - kind: flag
+              key: c2_missed_study
+              value: true
 
   living-room:
     id: living-room
@@ -144,6 +183,14 @@ nodes:
       - speaker: narration
         text: 빠진 건 — 세무, 해외 회계, 언론 PR, 그리고 공익제보 관련 서적.
       - speaker: thought
+        requires:
+          flag: saw_audit_paper
+        text: 붉은 볼펜의 한 줄, 그리고 빠진 책장. 도현은 이 둘을 나란히 놓고 공부하고 있었다.
+      - speaker: thought
+        requires:
+          flag: c2_missed_study
+        text: 책장이 이렇게 비어있는데 책상엔 아무것도 없다. 책상 쪽을 더 꼼꼼히 볼걸.
+      - speaker: thought
         text: 공익제보. 도현은 자기가 공익제보자가 될 가능성을 공부하고 있었다.
         effects:
           - kind: flag
@@ -166,6 +213,10 @@ nodes:
       - id: admit-junhyuk
         label: 올려 보내세요.
         next: junhyuk-arrives
+        effects:
+          - kind: flag
+            key: c2_junhyuk_entry
+            value: admitted
       - id: refuse-junhyuk
         label: 지금 바쁩니다. 다음에 뵙죠.
         check: { stat: gwonmo, dc: 13 }
@@ -175,8 +226,15 @@ nodes:
             - kind: flag
               key: deferred_junhyuk
               value: true
+            - kind: flag
+              key: c2_junhyuk_entry
+              value: deferred
         failure:
           next: junhyuk-arrives
+          effects:
+            - kind: flag
+              key: c2_junhyuk_entry
+              value: refuse_failed
 
   junhyuk-arrives:
     id: junhyuk-arrives
@@ -186,6 +244,16 @@ nodes:
         expression: neutral
     lines:
       - speaker: narration
+        requires:
+          flagEquals:
+            key: c2_junhyuk_entry
+            value: refuse_failed
+        text: 거절했는데도 3분 뒤 준혁은 올라와 있다. 경비실에서 이름이 통했거나, 본인이 우겼다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c2_junhyuk_entry
+            value: admitted
         text: 3분 뒤. 숨이 차서 올라온 준혁이 문턱에서 인사도 없이 들어선다.
       - speaker: junhyuk
         text: 실장님, 이거 진짜 찾으러 오신 거 맞죠.
@@ -197,6 +265,10 @@ nodes:
       - id: let-speak
         label: 말해봐.
         next: junhyuk-talk
+        effects:
+          - kind: flag
+            key: c2_junhyuk_open
+            value: let_speak
       - id: challenge-junhyuk
         label: 네가 왜 이걸 지금 말하지?
         check: { stat: jikgam, dc: 13 }
@@ -205,8 +277,15 @@ nodes:
           effects:
             - kind: memory
               text: 준혁은 도현과 함께 움직일지 말지 갈등했다. 결국 빠졌다. 그래서 지금 죄책감으로 나에게 말한다.
+            - kind: flag
+              key: c2_junhyuk_open
+              value: challenged_hit
         failure:
           next: junhyuk-talk
+          effects:
+            - kind: flag
+              key: c2_junhyuk_open
+              value: challenged_miss
 
   junhyuk-admits:
     id: junhyuk-admits
@@ -228,6 +307,9 @@ nodes:
           - kind: flag
             key: promised_junhyuk
             value: true
+          - kind: flag
+            key: c2_junhyuk_deal
+            value: promised
       - id: no-promise
         label: 약속은 못 해요. 상황에 따라 달라질 수 있습니다.
         check: { stat: yangsim, dc: 12 }
@@ -237,12 +319,41 @@ nodes:
             - kind: stat
               target: yangsim
               delta: 1
+            - kind: flag
+              key: c2_junhyuk_deal
+              value: half_out
         failure:
           next: junhyuk-leaves-empty
+          effects:
+            - kind: flag
+              key: c2_junhyuk_deal
+              value: shut_out
 
   junhyuk-talk:
     id: junhyuk-talk
     lines:
+      - speaker: junhyuk
+        requires:
+          flagEquals:
+            key: c2_junhyuk_deal
+            value: promised
+        text: 실장님이 약속해 주시니까 말씀드릴게요. 저는 이 얘기 집에 가서도 잊어야 해요.
+        expression: weary
+      - speaker: junhyuk
+        requires:
+          flagEquals:
+            key: c2_junhyuk_open
+            value: challenged_miss
+        text: 실장님, 저 안 숨기는데요… 뭐 물어보시면 답은 드릴게요. 저 그렇게 계산 많은 애는 아니에요.
+        expression: tense
+      - speaker: junhyuk
+        requires:
+          flagEquals:
+            key: c2_junhyuk_open
+            value: let_speak
+        text: 감사해요, 일단 들어주신다고 해서요. 길게 안 끌게요.
+        expression: neutral
+
       - speaker: junhyuk
         text: 도현이가 실종되기 2주 전에 미영이랑 크게 싸웠대요.
         expression: neutral
@@ -252,6 +363,21 @@ nodes:
       - speaker: junhyuk
         text: 미영은 끝까지 "그러지 마"라고 했대요. 미영 입장에선 도현이 망가지는 걸 원하지 않았거든요.
         expression: weary
+
+      - speaker: junhyuk
+        requires:
+          flagEquals:
+            key: c2_junhyuk_deal
+            value: promised
+        text: 그리고 이건 진짜 저만 아는 건데요. 도현이 그 "뭘 해야겠다"의 상대가, 저희 증권가 쪽 사람은 아니에요. 더 위예요.
+        expression: grim
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c2_junhyuk_deal
+            value: promised
+        text: '"더 위"라는 단어가 오늘 제일 큰 소득이다. 그리고 이 문장은 내가 약속을 지켜야만 남는 문장이다.'
+
       - speaker: pc
         text: 미영, 어디 가면 볼 수 있지?
       - speaker: junhyuk
@@ -315,8 +441,63 @@ nodes:
     lines:
       - speaker: narration
         text: 거실이 다시 조용해진다. 창 밖엔 강남의 수직 불빛.
+
+      # Closing summary — varies by what was actually learned this scene
       - speaker: thought
-        text: 세 가지가 분명해졌다. 도현은 뭔가를 계획했다. 계획은 문서로 존재했다. 그리고 누가 집을 정리했다.
+        requires:
+          flag: promised_junhyuk
+        text: 오늘 세 가지를 얻었다. 도현의 계획. 그 계획의 상대가 "더 위"라는 준혁의 귀띔. 그리고 내일 미영.
+
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c2_junhyuk_deal
+            value: half_out
+        text: 오늘 절반을 얻었다. 도현과 미영이 갈라선 이유. 그리고 내일 미영. 나머지 절반은 내가 약속을 안 해준 값이다.
+
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c2_junhyuk_deal
+            value: shut_out
+        text: 오늘 손에 쥔 건 거의 없다. 준혁은 문을 닫고 갔고, 나는 내일 미영 한 사람에 기대야 한다.
+
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: deferred_junhyuk
+            value: true
+        text: 준혁을 오늘 만나지 않았다. 빈 거실에 남은 나는 나와 이 집의 침묵뿐이다. 내일 미영.
+
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c2_junhyuk_open
+            value: let_speak
+        text: 준혁의 말을 바로 받았다. 그는 오늘 편했다. 그만큼 정보도 표면에서 멎었다.
+
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c2_junhyuk_open
+            value: challenged_miss
+        text: 준혁을 잠깐 흔들었는데 흔들리지 않았다. 오늘의 대화는 예상의 정 가운데에 있었다.
+
+      # Physical evidence layer — independent of junhyuk path
+      - speaker: thought
+        requires:
+          flag: saw_audit_paper
+        text: 감사 공시 한 줄과 공익제보 서적. 퍼즐 두 조각이 같은 상자에 있다.
+      - speaker: thought
+        requires:
+          flag: photo_glass
+        text: 위스키 잔 사진이 주머니에 있다. 다행이면서 불편한 증거.
+
+      - speaker: thought
+        requires:
+          flag: ghost_visitors
+        text: 새벽 2시의 손님들. 그들이 도현을 만났는지, 빈 방을 만났는지는 아직 모른다.
+
       - speaker: thought
         text: 내일 저녁 미영. 이 사람이 쥔 카드는, 내가 가진 것보다 훨씬 많다.
         effects:

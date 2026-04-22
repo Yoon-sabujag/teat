@@ -25,6 +25,10 @@ nodes:
       - id: agree
         label: 안 합니다. 제 원칙입니다.
         next: open-question
+        effects:
+          - kind: flag
+            key: c2_miyoung_record
+            value: principle
       - id: decline
         label: 상황에 따라 다릅니다. 지금은 안 합니다.
         check: { stat: yangsim, dc: 12 }
@@ -36,12 +40,41 @@ nodes:
             - kind: flag
               key: miyoung_on_guard
               value: true
+            - kind: flag
+              key: c2_miyoung_record
+              value: situational_honest
         failure:
           next: open-question
+          effects:
+            - kind: flag
+              key: c2_miyoung_record
+              value: situational_clumsy
 
   open-question:
     id: open-question
     lines:
+      - speaker: miyoung
+        requires:
+          flagEquals:
+            key: c2_miyoung_record
+            value: principle
+        text: 원칙. 좋아요. 저도 그 말이 편해요.
+        expression: neutral
+      - speaker: miyoung
+        requires:
+          flagEquals:
+            key: c2_miyoung_record
+            value: situational_honest
+        text: 솔직하시네요. 저는 그게 더 어렵고, 더 불편하고, 그래서 더 낫다고 생각해요.
+        expression: weary
+      - speaker: miyoung
+        requires:
+          flagEquals:
+            key: c2_miyoung_record
+            value: situational_clumsy
+        text: '"상황에 따라." 그 말씀 저도 자주 써요. 그 말씀엔 방어가 많죠.'
+        expression: tense
+
       - speaker: miyoung
         text: 준혁이한테 어디까지 들으셨어요.
         expression: tense
@@ -49,6 +82,10 @@ nodes:
       - id: honest
         label: 당신과 도현이 최근에 싸웠다. 도현이 뭘 하려고 했다. 거기까지.
         next: surface-truth
+        effects:
+          - kind: flag
+            key: c2_miyoung_probe
+            value: honest
       - id: downplay
         label: 별 얘기 없었습니다. 직접 듣는 게 나을 것 같아서요.
         check: { stat: gwonmo, dc: 12 }
@@ -63,12 +100,41 @@ nodes:
             - kind: flag
               key: miyoung_respects
               value: true
+            - kind: flag
+              key: c2_miyoung_probe
+              value: downplayed
         failure:
           next: surface-truth
+          effects:
+            - kind: flag
+              key: c2_miyoung_probe
+              value: downplay_missed
 
   surface-truth:
     id: surface-truth
     lines:
+      - speaker: miyoung
+        requires:
+          flagEquals:
+            key: c2_miyoung_probe
+            value: honest
+        text: 솔직히 말씀해 주셔서 감사해요. 저도 같은 수위로 돌려드릴게요.
+        expression: neutral
+      - speaker: miyoung
+        requires:
+          flagEquals:
+            key: c2_miyoung_probe
+            value: downplayed
+        text: …실장님이 준혁이한테 얼마나 들었는지 저는 아직 몰라요. 그래서 제가 먼저 덜 말할게요.
+        expression: weary
+      - speaker: miyoung
+        requires:
+          flagEquals:
+            key: c2_miyoung_probe
+            value: downplay_missed
+        text: '"별 얘기 없었다." 준혁이한테 안 어울리는 태도네요. 저, 실장님 말씀 그대로 받지는 않을게요.'
+        expression: tense
+
       - speaker: miyoung
         text: 그럼 제가 아는 만큼 말씀드릴게요. 기록 전제로 하신다면, 이 버전을 드립니다.
         expression: weary
@@ -135,6 +201,9 @@ nodes:
             - kind: flag
               key: miyoung_has_phone
               value: true
+            - kind: flag
+              key: c2_miyoung_reveal
+              value: phone
             - kind: memory
               text: 미영이 도현의 아이폰을 보관하고 있다. 본인이 직접은 아직 인정하지 않았지만 표정으로 드러냈다.
         - keyword: "[CAUGHT]"
@@ -143,6 +212,9 @@ nodes:
             - kind: flag
               key: miyoung_was_there
               value: true
+            - kind: flag
+              key: c2_miyoung_reveal
+              value: that_night
             - kind: memory
               text: 미영은 도현 실종 전날 밤 오피스텔에 있었다. 야근 알리바이는 거짓이다.
         - keyword: "[ALIVE]"
@@ -151,6 +223,9 @@ nodes:
             - kind: flag
               key: dohyun_probably_alive
               value: true
+            - kind: flag
+              key: c2_miyoung_reveal
+              value: alive_signal
             - kind: memory
               text: 미영은 도현이 살아있을 가능성을 믿고 있다. 익명 메시지 한 통이 근거다.
         - keyword: "[LEAVE]"
@@ -159,6 +234,9 @@ nodes:
             - kind: flag
               key: miyoung_walked_out
               value: true
+            - kind: flag
+              key: c2_miyoung_reveal
+              value: walked_out
 
   phone-admission:
     id: phone-admission
@@ -233,6 +311,10 @@ nodes:
         expression: neutral
       - speaker: narration
         text: 미영이 먼저 카페를 나간다. 두 번째 만남의 룰은 이미 세팅됐다.
+        effects:
+          - kind: flag
+            key: c2_miyoung_reveal
+            value: held_back
     next: scene-close
 
   close-with-info:
@@ -258,8 +340,53 @@ nodes:
     lines:
       - speaker: narration
         text: 창 밖으로 강남의 차가 길게 지나간다. 손에 쥔 스푼이 차가워져 있다.
+
+      # Reveal-specific summary
       - speaker: thought
-        text: 오늘 얻은 건 — 도현이 계획이 있었다. 미영이 일부를 안다. 그리고 어딘가에 아이폰이 있다.
+        requires:
+          flagEquals:
+            key: c2_miyoung_reveal
+            value: phone
+        text: 미영이 도현의 아이폰을 쥐고 있다. 오늘 이 카페에서 가장 무거운 정보다. 다만 물건은 내 손에 없다.
+
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c2_miyoung_reveal
+            value: that_night
+        text: 미영은 그날 밤 그 집에 있었다. 야근 알리바이를 스스로 꺾었다. 이 사람은 오늘 카드를 한 장 내놓은 것이다.
+
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c2_miyoung_reveal
+            value: alive_signal
+        text: 도현은 살아있을 가능성이 높다. 익명 문자 한 통이 근거라면 약하다. 그래도 오늘 나는 이 약한 근거에 기대야 한다.
+
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c2_miyoung_reveal
+            value: walked_out
+        text: 미영이 먼저 자리를 떴다. 오늘 얻은 건 오직 첫 번째 버전 한 줄. 두 번째 버전은 내가 벌어내야 한다.
+
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c2_miyoung_reveal
+            value: held_back
+        text: 오늘은 안 밀어붙였다. 미영의 다음 연락을 기다리는 것 — 이건 탐정의 자세가 아니라 상대의 자세다. 반대의 위치를 얻었다.
+
+      # Cross-cutting — what I already came in with
+      - speaker: thought
+        requires:
+          flag: saw_audit_paper
+        text: 오피스텔의 감사 공시 한 줄과, 오늘 미영의 말 한 줄. 둘이 같은 방향을 가리키는 게 보인다.
+      - speaker: thought
+        requires:
+          flag: ghost_visitors
+        text: 새벽 2시의 그 둘은, 오늘 미영이 말한 "그 이후"에 들어온 사람들이다.
+
       - speaker: thought
         text: 차 상무, 그리고 도현. 두 사람은 같은 회사의 같은 방을 향해 움직이고 있었다.
       - speaker: narration
