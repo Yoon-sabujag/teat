@@ -43,6 +43,7 @@ const backgrounds = {
   "eulji-ob": { hue: 20, name: "을지로 노포 OB맥주집 (밤)" },
   "euljiro-night-alley": { hue: 240, name: "을지로 뒷골목 (밤)" },
   "jugangji-backlot": { hue: 50, name: "주간지 편집국 뒷문 주차장 (아침)" },
+  "gwanghwamun-cafe": { hue: 190, name: "광화문 출근 라인 카페 (아침)" },
 };
 
 function charSvg({ hue, name, role, expression }) {
