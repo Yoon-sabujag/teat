@@ -36,3 +36,7 @@ chapters:
     title: "카페에서"
     scenes:
       - c7-cafe
+  - id: chapter-9
+    title: "다시 을지로 7층"
+    scenes:
+      - c9-office

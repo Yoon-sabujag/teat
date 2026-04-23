@@ -1,0 +1,247 @@
+id: c9-office
+title: "다시 을지로 7층"
+background: euljiro-office
+cast: []
+entry: morning
+
+nodes:
+  morning:
+    id: morning
+    lines:
+      - speaker: narration
+        text: 광화문 카페 자리 이후로 며칠이 지났다. 을지로 3가의 인쇄 골목 아침 공기는 같은 각도로 같은 온도로 돌아왔고, 빌딩 앞 공영주차장의 차 번호판은 오늘은 평범한 번호였다.
+      - speaker: narration
+        text: 7층 사무실 문을 열고 들어왔다. 창 블라인드 틈으로 지난 주 시점 그대로의 겨울 햇빛이 책상 위에 얹혀 있었고, 책상 위엔 재민이 지난주에 두고 간 포스트잇이 먼지가 얇게 덮인 채로 그 자리에 있었다.
+
+      # ─────────────────────────────────────────
+      # 엔딩 A — 폭로 (public)
+      # ─────────────────────────────────────────
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: public
+        text: 아침 여섯 시 반. 주간 <이북>이 일요일 특별호 1면에 단독 기사를 걸었다. 싱가포르 법인 1,800억, 차 상무와 오 감사 구속영장 청구, 장 전무는 아직 방어 라인. 주식 시장이 열리자마자 그룹 주가는 6퍼센트 구간을 무너뜨리며 내려갔다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: public
+        text: 오전 내내 휴대폰이 울었다. 검찰 쪽 라인 한 번, 국세청 쪽 한 번, 주요 일간지 세 곳. 이수연 본인은 오후 두 시에 사무실에 올라와 커피 한 잔도 안 받고 한 문장만 남기고 갔다. "도현 씨, 살아 있답니다. 남쪽 도시, 저희 쪽 사람이 어제 확인했고요."
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: public
+        text: 오후 늦게 민영에게서 짧은 문자 한 통. '오늘은 늦어도 들어와요.' 그리고 하진이가 학교에서 직접 보낸 줄 한 개. '아빠 뉴스 봤어. 괜찮아?' 내 답은 한 줄. '괜찮아. 오늘은 일찍 갈게.'
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c7_end
+            value: public
+        text: 오늘 밤은 혼자 있지 않아도 되는 밤이 됐다. 두 달 전 이 자리에서 혼자 사인한 합의서의 5년이, 오늘 이 자리에서 한 줄짜리 기사로 무너졌다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: public
+        text: 창 밖 간판 시트지 '백승재 리서치' 글자가 오후의 햇빛 아래에서 처음으로 자기 자신의 무게로 서 있어 보였다.
+        effects:
+          - kind: end
+            outcome: public
+
+      # ─────────────────────────────────────────
+      # 엔딩 B — 거래 (deal / deal_tainted)
+      # ─────────────────────────────────────────
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: deal
+        text: 그룹 공식 홈페이지 임원 동정 코너에 '백승재 부본부장 보직 복귀' 한 줄이 올라왔다. 오전 열 시. 본사 경영지원 쪽에서 새 사원증 발급 일정을 문자로 보내왔고, 기존 을지로 사무실 계약은 이번 주 안에 정리하라는 안내가 뒤에 붙었다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: deal_tainted
+        text: 그룹 사이트엔 아직 한 줄도 안 올라왔다. 차 상무 쪽에서 보내온 계약서 초안은 처음 구두로 들었던 선보다 한 단계 아래였고, 부본부장이 아닌 '본부장급 고문'이라는 낯선 직함이 문서 제목에 박혀 있었다.
+      - speaker: narration
+        requires:
+          flag: c7_end
+          flagNotEquals:
+            key: c7_end
+            value: public
+        text: 차 상무에게서 오후 한 통 전화. "승재씨, 잘 살고 계시죠." 그 한 마디. 다른 문장은 없었고, 저쪽에서 먼저 끊었다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: deal
+        text: 미영은 로펌 쪽 다른 건으로 해외 출장을 잡았다. 출국 전 짧은 문자. '도현 씨는 제가 기다리는 쪽으로 남겨 둘게요. 실장님 쪽은 실장님 쪽으로 잘 정리하세요.' 그 한 줄이 오늘 받을 마지막 한 줄이라는 감이 문자 앞에서 먼저 들었다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: deal_tainted
+        text: 미영은 연락이 닿지 않았다. 미영이 먼저 잡아 주겠다던 두 번째 자리는, 오늘 이후로 내 쪽 달력에 박히지 않는다.
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c7_end
+            value: deal
+        text: 녹음기는 사무실 소형 금고 안쪽에 한 번 더 옮겨 넣었다. 오늘 이후로 그 물건은 '내가 한 번은 가졌던 것'의 범주로만 남는다. 도현이라는 이름은 내 서랍 안쪽에 서류 철로 얹혔다.
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c7_end
+            value: deal_tainted
+        text: 조건 한 뼘이 저쪽으로 기운 채로 끝났다. 오늘 이후로 저쪽 문장이 내 문장보다 반 박자 먼저 내 서랍에 도착하는 날들이 올 거다.
+      - speaker: narration
+        requires:
+          flag: c7_end
+          flagNotEquals:
+            key: c7_end
+            value: public
+        text: 저녁 한강 대교 위에서 택시 창 너머로 강을 한 번 내려다 봤다. 두 달 전 이 그림의 시작점에서 오늘 이 그림의 끝점까지, 돈의 방향은 한 번도 바꾸지 않고 흘렀다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: deal
+        text: 집 현관문이 열렸을 때 하진이가 거실에서 고개 한 번만 들고 인사 한 자 없이 방으로 돌아갔다. 민영은 저녁 식탁을 차려 놓았고, 저녁 내내 오늘 있었던 그 일에 대해선 한 마디도 묻지 않았다.
+        effects:
+          - kind: end
+            outcome: deal
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: deal_tainted
+        text: 집에 들어가지 않았다. 을지로 사무실 책상 위에 코트를 덮고 그 위로 얼굴을 한 번 가렸다. 휴대폰은 책상 끝에 밀어 둔 채로, 오늘의 마지막 불빛은 재민이 떼어내지 않은 포스트잇 그 자리에만 얹혔다.
+        effects:
+          - kind: end
+            outcome: deal_tainted
+
+      # ─────────────────────────────────────────
+      # 엔딩 C — 침묵 (silence / silence_leak)
+      # ─────────────────────────────────────────
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: silence
+        text: 아무 일도 일어나지 않았다. 신문 1면엔 다른 뉴스가 올라왔고, 그룹 주가는 평소 변동 범위 안으로 움직였고, 차 상무 이름은 어느 지면에도 안 나왔다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: silence_leak
+        text: 공식적으론 아무 일도 일어나지 않았다. 다만 그룹 내부 감사 라인에서 '일부 보직 재정비' 한 줄이 사내 게시판에 뜬 것이, 그 뒷정리의 시작을 내 쪽에도 한 줄로 알려 주었다.
+      - speaker: narration
+        requires:
+          flag: c7_end
+          flagEquals:
+            key: c7_end
+            value: silence
+        text: 을지로 사무실엔 그 주 내내 의뢰 전화 한 통 들어오지 않았다. 재민이 수요일에 올라와서 커피 한 잔 마시고, '형, 그쪽 라인 조용히 정리 중이래요.' 한 마디만 남기고 다시 내려갔다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: silence_leak
+        text: 재민이 이틀에 한 번씩 올라왔다. '형, 그쪽에서 한 번 더 문의 오면 형 쪽에서 안 열어 주셔도 될 거예요.' 그 한 줄이 두 번째 왔을 때, 나는 오늘 이후로 그쪽 문을 한 번 더 안 열겠다는 쪽으로 의자에 한 번 더 기대 앉았다.
+      - speaker: narration
+        requires:
+          flag: c7_end
+          flagEquals:
+            key: c7_end
+            value: silence
+        text: 금요일 저녁, 로펌 쪽 주소가 찍힌 봉투 한 장이 우편함에 들어왔다. 미영의 글씨였다. '도현 씨가 남긴 편지 복사본 한 장 동봉합니다. 원본은 제 쪽에 있습니다.' 편지의 마지막 한 줄 — "저는 돌아옵니다. 단지 시간을 받으셔야 할 것 같아요."
+        effects:
+          - kind: flag
+            key: dohyun_letter
+            value: true
+      - speaker: narration
+        requires:
+          flag: c7_end
+          flagEquals:
+            key: c7_end
+            value: silence_leak
+        text: 우편함엔 아무것도 들어오지 않았다. 미영 쪽에서 전화도 문자도 오지 않았고, 편지 한 장도 책상 위에 얹히지 않았다.
+      - speaker: narration
+        requires:
+          flag: c7_end
+          flagEquals:
+            key: c7_end
+            value: silence
+        text: 어느 밤 공영주차장 쪽을 블라인드 틈으로 살폈더니 어제까지 없던 검은 세단 한 대가 다시 시동을 끈 채 서 있었다. 운전석 안쪽 담배 불빛이 느리게 밝아졌다 어두워졌다.
+      - speaker: thought
+        requires:
+          flag: c7_end
+          flagEquals:
+            key: c7_end
+            value: silence
+        text: 오늘 이후로 그 차는 한 번씩 같은 자리에 돌아온다. 내 쪽에서 문을 한 번 더 안 열더라도, 저쪽에서 문을 한 번씩 두드려 확인하러 오는 자리. 그 대칭이 오늘 이후의 기본값이다.
+      - speaker: narration
+        requires:
+          flag: c7_end
+          flagEquals:
+            key: c7_end
+            value: silence
+        text: 하진이 카톡 한 줄이 늦은 밤 다시 올라왔다. '아빠 잘 지내?' 답을 찍어 보냈다. '잘 지낸다. 너도 잘 자라.' 보낸 뒤 휴대폰을 책상 위에 엎어 두었다.
+        effects:
+          - kind: end
+            outcome: silence
+      - speaker: narration
+        requires:
+          flag: c7_end
+          flagEquals:
+            key: c7_end
+            value: silence_leak
+        text: 어느 밤 공영주차장 쪽으로 검은 세단 한 대가 먼저 도착해 있었고, 그 다음 날 사무실 문고리에 낯선 명함 한 장이 꽂혀 있었다. 이름은 없었다. 전화번호 하나. 02로 시작하는.
+        effects:
+          - kind: end
+            outcome: silence_leak
+
+      # ─────────────────────────────────────────
+      # 엔딩 D — 자멸 / 드리프트 (defer)
+      # ─────────────────────────────────────────
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: defer
+        text: 카페 자리 이후 '다음 자리 제가 정하겠다' 고 선언했지만, 그 다음 자리는 내 쪽에서 먼저 정해지지 않았다. 하루가 이틀로 늘어졌고, 일주일이 되자 이수연 쪽에서 한 번 '기다리고 있습니다' 라는 한 줄이 왔고, 그 한 줄에 대한 내 답은 '곧' 이라는 두 글자였다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: defer
+        text: 이 주 뒤, 이수연이 다른 데스크로 옮겨 갔다는 소식이 업계 메일링에 한 줄 올라왔다. 미영에게서 오던 연락은 세 번째 주부터 끊겼고, 재민은 여전히 올라왔지만 한 줄짜리 안부 외엔 더 이상 정보를 가져오지 않았다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: defer
+        text: 한 달이 지나자 민영한테서 법원 이혼 조정 일정 문자가 왔다. 법무법인 이름이 찍힌 공식 메일이 같이 날아왔고, 그 메일의 수신인에 나는 '피신청인'으로 분류되어 있었다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: defer
+        text: 하진이 카톡 프로필이 바뀌었다. 예전 강아지 사진 대신 검은 배경 한 장. 내 쪽에서 보낸 마지막 문자 — '아빠 오늘 늦어.' — 아래에 읽음 표시만 찍혀 있었고, 답은 그 이후 한 번도 오지 않았다.
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c7_end
+            value: defer
+        text: 녹음기는 아직 내 책상 서랍 안에 있다. 열 사람이 없는 물건은, 시간이 지나면 그 물건 자체가 사람을 알아보지 못하게 된다. 내가 오늘 이 서랍을 한 번 열지 않으면, 내일 이 서랍은 더 안 열린다.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: defer
+        text: 어느 겨울 저녁 사무실 간판 시트지 한 귀퉁이가 떨어진 걸 발견하고, 칼로 '백승재 리서치' 여섯 자를 정리해 벽에서 떼어 냈다. 벽엔 시트지 자국만 두 달 전 이전 세입자 간판 자국 옆에 한 줄 더 남았다.
+        effects:
+          - kind: end
+            outcome: damned
