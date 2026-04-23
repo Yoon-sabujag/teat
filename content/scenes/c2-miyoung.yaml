@@ -232,19 +232,33 @@ nodes:
           flagNotEquals:
             key: asked_usb
             value: true
-        next: usb-disclosure
-        effects:
-          - kind: flag
-            key: miyoung_knew_usb_plan
-            value: true
-          - kind: flag
-            key: asked_usb
-            value: true
-          - kind: flag
-            key: miyoung_turn_taken
-            value: true
-          - kind: memory
-            text: 미영은 도현의 외부 유출 계획과 그 상대방 이름을 안다. 상대 이름은 오늘은 꺼내지 않는다.
+        check: { stat: gwonmo, dc: 13 }
+        success:
+          next: usb-disclosure
+          effects:
+            - kind: flag
+              key: miyoung_knew_usb_plan
+              value: true
+            - kind: flag
+              key: asked_usb
+              value: true
+            - kind: flag
+              key: miyoung_turn_taken
+              value: true
+            - kind: memory
+              text: 미영은 도현의 외부 유출 계획과 그 상대방 이름을 안다. 상대 이름은 오늘은 꺼내지 않는다.
+        failure:
+          next: usb-deflect
+          effects:
+            - kind: flag
+              key: asked_usb
+              value: true
+            - kind: flag
+              key: miyoung_turn_taken
+              value: true
+            - kind: flag
+              key: miyoung_strike_usb
+              value: true
       - id: ask-alibi
         label: '"공식적으로"라고 하셨는데, 실제로 그날 밤 어디 계셨습니까.'
         requires:
@@ -252,19 +266,33 @@ nodes:
           flagNotEquals:
             key: asked_alibi
             value: true
-        next: caught-that-night
-        effects:
-          - kind: flag
-            key: miyoung_was_there
-            value: true
-          - kind: flag
-            key: asked_alibi
-            value: true
-          - kind: flag
-            key: miyoung_turn_taken
-            value: true
-          - kind: memory
-            text: 미영은 도현 실종 전날 밤 오피스텔에 있었다. 야근 알리바이는 본인이 직접 꺾었다.
+        check: { stat: jikgam, dc: 13 }
+        success:
+          next: caught-that-night
+          effects:
+            - kind: flag
+              key: miyoung_was_there
+              value: true
+            - kind: flag
+              key: asked_alibi
+              value: true
+            - kind: flag
+              key: miyoung_turn_taken
+              value: true
+            - kind: memory
+              text: 미영은 도현 실종 전날 밤 오피스텔에 있었다. 야근 알리바이는 본인이 직접 꺾었다.
+        failure:
+          next: alibi-holds
+          effects:
+            - kind: flag
+              key: asked_alibi
+              value: true
+            - kind: flag
+              key: miyoung_turn_taken
+              value: true
+            - kind: flag
+              key: miyoung_strike_alibi
+              value: true
       - id: ask-alive
         label: 도현 씨가 지금 살아 있다고 보십니까.
         requires:
@@ -272,41 +300,69 @@ nodes:
           flagNotEquals:
             key: asked_alive
             value: true
-        next: alive-signal
-        effects:
-          - kind: flag
-            key: dohyun_probably_alive
-            value: true
-          - kind: flag
-            key: asked_alive
-            value: true
-          - kind: flag
-            key: miyoung_turn_taken
-            value: true
-          - kind: memory
-            text: 미영은 도현이 살아있다고 본다. 실종 2주차에 본인에게 온 익명 문자 한 통이 근거.
+        check: { stat: yangsim, dc: 12 }
+        success:
+          next: alive-signal
+          effects:
+            - kind: flag
+              key: dohyun_probably_alive
+              value: true
+            - kind: flag
+              key: asked_alive
+              value: true
+            - kind: flag
+              key: miyoung_turn_taken
+              value: true
+            - kind: memory
+              text: 미영은 도현이 살아있다고 본다. 실종 2주차에 본인에게 온 익명 문자 한 통이 근거.
+        failure:
+          next: alive-deflect
+          effects:
+            - kind: flag
+              key: asked_alive
+              value: true
+            - kind: flag
+              key: miyoung_turn_taken
+              value: true
+            - kind: flag
+              key: miyoung_strike_alive
+              value: true
 
-      # ── Layer 3 (unlocks after the alibi crack) ──
+      # ── Layer 3 (unlocks only after the alibi has actually CRACKED — miyoung_was_there) ──
       - id: ask-phone
         label: 그럼 그날 밤, 도현 씨 휴대폰은 지금 어디에 있죠.
         requires:
-          flag: asked_alibi
+          flag: miyoung_was_there
           flagNotEquals:
             key: asked_phone
             value: true
-        next: phone-admission
-        effects:
-          - kind: flag
-            key: miyoung_has_phone
-            value: true
-          - kind: flag
-            key: asked_phone
-            value: true
-          - kind: flag
-            key: miyoung_turn_taken
-            value: true
-          - kind: memory
-            text: 미영이 도현의 아이폰을 보관하고 있다고 본인이 인정했다. 당장은 넘길 생각이 없다.
+        check: { stat: gwonmo, dc: 14 }
+        success:
+          next: phone-admission
+          effects:
+            - kind: flag
+              key: miyoung_has_phone
+              value: true
+            - kind: flag
+              key: asked_phone
+              value: true
+            - kind: flag
+              key: miyoung_turn_taken
+              value: true
+            - kind: memory
+              text: 미영이 도현의 아이폰을 보관하고 있다고 본인이 인정했다. 당장은 넘길 생각이 없다.
+        failure:
+          next: phone-deflect
+          effects:
+            - kind: flag
+              key: asked_phone
+              value: true
+            - kind: flag
+              key: miyoung_turn_taken
+              value: true
+            - kind: flag
+              key: miyoung_strike_phone
+              value: true
 
       # ── Exit routes ──
       - id: end-politely
@@ -478,6 +534,58 @@ nodes:
       - speaker: miyoung
         text: 나머지 물으실 거 있으세요. 오늘 자리에서만 드립니다.
         expression: weary
+    next: improv-node
+
+  alibi-holds:
+    id: alibi-holds
+    lines:
+      - speaker: miyoung
+        text: 실장님 질문 의도는 알겠습니다. 다만 그날 야근은 로펌 예약 로그와 파트너 세 분 증언으로 이미 깔려 있어요. 거기를 다시 파시면 오늘 자리는 여기서 끊어야 해요.
+        expression: grim
+      - speaker: thought
+        text: 표정 안쪽 근육 하나를 제대로 못 짚었다. 이 사람은 거짓말하는 중이 아니라, 거짓말을 깔끔하게 얹어 두는 중이다. 그 둘은 얼굴로는 구분이 잘 안 간다.
+      - speaker: miyoung
+        text: 다른 방향 질문은 받겠습니다.
+        expression: tense
+    next: improv-node
+
+  alive-deflect:
+    id: alive-deflect
+    lines:
+      - speaker: miyoung
+        text: 그 질문은 실장님이 저한테 물으실 자리가 아니에요. 그건 도현 씨 가족 쪽 자리이고, 저는 오늘 그 자리 대신 앉아 드릴 입장이 아닙니다.
+        expression: weary
+      - speaker: thought
+        text: 양심이라는 카드를 잘못 꺼냈다. 저 사람은 내가 이 질문을 진정성 있게 하는지를 봤고, 오늘 자리에선 그 진정성이 부족하다고 판정했다.
+      - speaker: miyoung
+        text: 다른 거 있으세요.
+        expression: neutral
+    next: improv-node
+
+  usb-deflect:
+    id: usb-deflect
+    lines:
+      - speaker: miyoung
+        text: 실장님, 그건 한 번 입에 올리는 순간 실장님 쪽 책임도 같이 들어가는 단어예요. 오늘 제가 실장님을 그 자리에 끌어넣지 않겠습니다.
+        expression: grim
+      - speaker: thought
+        text: 회사 언어가 덜 매끄럽게 나간 거다. 저 사람은 내가 이 카드를 들 수 있는 무게인지 이 자리에서 한 번 시험했고, 오늘은 아니라고 본 거다.
+      - speaker: miyoung
+        text: 다른 방향 질문 있으시면.
+        expression: tense
+    next: improv-node
+
+  phone-deflect:
+    id: phone-deflect
+    lines:
+      - speaker: miyoung
+        text: 휴대폰 얘기까지 가시는 건, 오늘 자리에서 저한테 너무 많이 들이대시는 겁니다. 그 답은 오늘 제 쪽에서 안 드려요.
+        expression: grim
+      - speaker: thought
+        text: 한 걸음 더 밟으려다 미영의 경계선에 정면으로 부딪쳤다. 알리바이를 깨고 얻은 자리를 내가 너무 빨리 써 버린 거다.
+      - speaker: miyoung
+        text: 남은 질문 있으시면.
+        expression: tense
     next: improv-node
 
   miyoung-leaves:
