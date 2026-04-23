@@ -11,11 +11,11 @@ nodes:
     id: lobby
     lines:
       - speaker: narration
-        text: 강남역 뒤편. 주상복합 오피스텔 27층. 김승기 부회장이 넘겨준 카드키가 주머니에서 무겁다.
+        text: 강남역 11번 출구에서 한 블록 뒤쪽. 저녁 아홉 시. 주상복합 오피스텔 로비는 카펫 깔린 호텔 로비 같았고, 27층짜리 유리 엘리베이터 세 대 중 두 대가 올라가는 중이었다. 김승기 부회장이 넘겨준 도현의 카드키가 코트 안주머니에서 한 번 손끝에 잡혔다.
       - speaker: narration
-        text: 로비 경비실에서 사복 경비원이 고개를 든다. 얼굴이 기억하는 얼굴이다.
+        text: 로비 경비실 유리창 너머로 사복 경비원이 CCTV 모니터를 들여다보고 있었다. 안경 너머로 고개를 든 얼굴은, 십구 년 전 광화문 본사 야간 경비실에서 담배 냄새를 풍기며 출입 기록을 찍어 주던 그 얼굴이었다.
       - speaker: thought
-        text: 20년 전 우리 회사 경비. 퇴직 후 이 건물로 옮겼구나.
+        text: 박씨 아저씨. 본사 퇴직 후 이쪽 라인으로 자리 옮긴 지가 한참 됐다고 누가 어깨너머로 말해 준 적이 있다. 이런 주상복합 경비실은 본사 출신들이 노후 몇 년을 버티는 자리다.
     choices:
       - id: greet-old
         label: 아저씨, 오래간만입니다.
@@ -49,21 +49,21 @@ nodes:
     id: guard-talks
     lines:
       - speaker: narration
-        text: 경비원이 웃으며 작은 냉장고에서 커피 한 캔을 건넨다.
+        text: 박씨 아저씨가 경비실 옆문을 열어 주었다. 좁은 안쪽 공간엔 폴딩 의자 두 개와 작은 냉장고 하나, 재떨이 하나. 아저씨는 냉장고에서 레쓰비 캔을 하나 꺼내 건네고는 한 박자 늦게 본인 몫을 하나 더 땄다.
       - speaker: narration
-        text: '"백 실장님은 내가 늘 기억하지." — 이런 반가움은 돈 주고 못 사는 것이다.'
+        text: 광화문 시절 얘기는 한두 문장으로 끝났다. 반가움 쪽보다 직업 쪽이 더 오래 남은 사람 특유의 말수였고, 내가 여기 왜 왔는지는 굳이 묻지 않았다. 몇 호 방이라는 말도 내가 먼저 꺼내지 않았는데도, 그는 2704호 얘기부터 시작했다.
       - speaker: narration
-        text: 도현이 마지막으로 집에 들어온 건 4주 전 목요일 밤 11시. 혼자였다.
+        text: 도현 씨가 이 방에 마지막으로 들어온 건 사 주 전 목요일 밤 열한 시 반 가까이. 혼자 엘리베이터를 탔고, 가벼운 에코백 하나 어깨에 걸쳐 있었다.
       - speaker: narration
-        text: 다음 날 새벽 2시경, 검은 정장의 남자 둘이 로비를 지나 27층으로 올라갔다. 출입 기록은 남지 않았다.
+        text: 그 다음 날 새벽 두 시쯤, 검은 정장 두 명이 로비 회전문을 지나 27층으로 올라갔다. 출입 기록엔 남지 않았다. 박씨 아저씨 본인 근무 교대 시간 사이에 들어간 그림이었고, 그 틈은 그 전날까지는 없던 틈이었다.
       - speaker: thought
-        text: 출입 기록이 없다. 누군가 CCTV와 출입 카드 로그를 손본 것이다.
+        text: 로그에 남지 않는 손님은 로그에 남지 않게 손본 사람이 있다는 뜻이다. 경비실 근무표까지 훑어야 내려가는 손이면 그룹 보안실 라인이거나, 그 위쪽이다.
         effects:
           - kind: flag
             key: ghost_visitors
             value: true
           - kind: memory
-            text: 도현 실종 전날 새벽 2시, 로그에 남지 않는 검은 정장 두 명이 오피스텔에 들어갔다.
+            text: 실종 전날 새벽 2시, 로그에 남지 않는 검은 정장 둘이 2704호 방향으로 올라갔다.
     next: elevator
 
   guard-cold:
@@ -74,49 +74,47 @@ nodes:
           flagEquals:
             key: c2_guard
             value: missed
-        text: 반가운 기색이 잠깐 스쳤다가 사라진다. 내가 먼저 다가갔는데, 그 거리를 그가 맞춰주지 않았다.
+        text: 박씨 아저씨는 내 인사에 눈은 마주쳐 주었지만 자리에서 일어나진 않았다. 반가움이 잠깐 턱 근처를 스쳤다가, 본사 퇴직 후 여러 건물의 경비실에서 몇 번이나 다듬은 표정으로 다시 내려앉았다.
       - speaker: narration
         requires:
           flagEquals:
             key: c2_guard
             value: flash
-        text: 경비원은 카드키 뒷면의 번호를 한 번 눈으로 찍고, 고개 한 번 끄덕이는 것으로 답을 끝낸다.
+        text: 박씨 아저씨는 카드키 뒷면의 세대주 번호를 한 번 눈으로 찍어 확인한 뒤, 고개 한 번 끄덕이는 것으로 답을 끝냈다. 2704호, 확인. 그 외엔 한 마디도 보태지 않았다.
       - speaker: thought
-        text: 이 아저씨는 뭔가 봤다. 그저 나에게 말할 이유를 못 찾았을 뿐이다.
+        text: 이 아저씨는 뭔가 봤다. 본사 18년 봉급을 받아 본 사람의 눈은, 보고도 말하지 않을 이유를 재는 쪽으로 먼저 움직인다.
     next: elevator
 
   elevator:
     id: elevator
     lines:
       - speaker: narration
-        text: 엘리베이터가 27층에서 조용히 멈춘다. 복도의 간접 조명이 밑에서 올라온다.
+        text: 엘리베이터가 27층에서 한 번의 딩 소리와 함께 멈췄다. 복도 카펫은 짙은 회색이었고, 바닥 쪽 간접 조명이 벽 밑단을 따라 부드럽게 올라오고 있었다. 좌우 양쪽 끝에 CCTV가 하나씩. 각도는 둘 다 엘리베이터 쪽을 향해 있었다.
       - speaker: thought
         requires:
           flag: ghost_visitors
-        text: 새벽 2시의 그 둘은 이 복도를 걸었다. CCTV 각도 한 번 보고, 그들이 어디서 멈췄을지 계산한다.
+        text: 이 복도를 새벽 두 시에 걸었던 그 둘은 저 CCTV 두 대의 각도를 알고 움직였다는 얘기다. 보안실 라인을 쓸 줄 아는 조직이거나, 그 라인을 잠시 빌린 사람들.
       - speaker: thought
         requires:
           flagEquals:
             key: c2_guard
             value: flash
-        text: 카드키 하나로 들어가는 공간. 이 키를 쥐었던 사람이 몇 명이었을까.
+        text: 카드키 하나로 이 복도 끝까지 걸어 들어가는 건 나만이 아니라는 얘기다. 이 키를 쥐어 본 사람이 지난 한 달 사이 몇이었을지 대충 감을 잡아 둔다.
       - speaker: narration
-        text: 27층 끝 방. 2704호. 문 앞에 배달 안내 스티커도 없다.
+        text: 복도 끝에서 두 번째 방. 2704호. 문 앞엔 배달 스티커도 우유 투입구 안내도 붙어 있지 않았다. 한 달쯤 전부터 아무도 이 문을 열지 않은 사람처럼.
     next: entry
 
   entry:
     id: entry
     lines:
       - speaker: narration
-        text: 카드키를 대자 잠금이 풀린다. 문을 연다.
-      - speaker: narration
-        text: 집안은 정돈되어 있다. 과하게 정돈되어 있다.
+        text: 카드키를 갖다 대자 한 박자 늦게 전자식 잠금이 풀렸다. 문을 열었다. 현관에서 거실까지 이어지는 선이 지나치게 깔끔했다. 신발장 위엔 열쇠 하나 걸려 있지 않았고, 현관 매트조차 방금 누가 각도를 맞춰 놓은 것처럼 벽과 평행했다.
       - speaker: thought
-        text: 잠수한 사람의 집이 이럴 수는 없다. 누가 치웠다.
+        text: 한 달 자리 비운 서른 살 부장 아들의 집은 이렇게 정돈돼 있을 수가 없다. 누군가 치우고 나갔다. 그것도 서두르지 않고, 시간을 들여서.
       - speaker: thought
         requires:
           flag: ghost_visitors
-        text: 새벽 2시의 그 둘이 여기까지 올라왔다면, 이 정돈은 그들의 서명이다.
+        text: 새벽 두 시의 그 둘이 여기까지 들어왔다면, 지금 이 집은 그들의 정리 결과물이다. 청소가 아니라 큐레이션.
     choices:
       - id: sweep-living
         label: 거실부터 훑어본다.
@@ -140,12 +138,12 @@ nodes:
     id: living-room
     lines:
       - speaker: narration
-        text: 거실은 호텔 방 같다. 유리 탁자 위에 위스키 잔 하나. 바닥에 마른 자국이 약하게 남아있다.
+        text: 거실은 비즈니스 호텔 스위트 같은 결이었다. 회색 러그, 각도까지 맞춰진 소파, 리모컨 두 개. 누가 쓰는 집이라기보다 누가 보여 주는 집. 다만 낮은 유리 탁자 위에 크리스털 잔 하나가 남아 있었고, 그 아래 바닥엔 마른 동그라미 자국이 두 개, 서로 다른 지름으로 찍혀 있었다.
       - speaker: narration
-        text: 잔 입술에 두 사람의 흔적. 립스틱은 닦이지 않았다.
+        text: 탁자 위 잔 쪽으로 몸을 낮췄다. 잔 테두리 한쪽에 립스틱 자국이 약하게 남아 있었다. 얕은 누드톤. 누군가 닦아내려 했던 흔적은 있었지만 끝까지 가진 않았다. 두 사람 분량의 무게가 바닥 동그라미 두 개로 남은 자리.
         effects:
           - kind: memory
-            text: 도현 집 거실 유리 탁자 위에 위스키 잔 두 개 분량의 흔적. 한 쪽에 닦이지 않은 립스틱.
+            text: '2704호 거실 유리 탁자: 크리스털 잔 하나, 잔 테두리에 누드톤 립스틱, 바닥엔 자국 두 개.'
     choices:
       - id: photo-jar
         label: (사진으로 남긴다.)
@@ -162,11 +160,11 @@ nodes:
     id: study-clue
     lines:
       - speaker: narration
-        text: 책상 서랍이 한 칸 어긋나 있다. 최근 누가 서둘러 여닫았다.
+        text: 서재 책상 오른쪽 서랍 한 칸이 미세하게 어긋나 있었다. 닫고 나간 쪽이 마지막 순간에 급해졌다는 증거. 손잡이에 지문은 살짝 닦인 자국. 조심은 했지만 끝까지 닦진 않았다.
       - speaker: narration
-        text: 서랍 안엔 A4 한 장. 모 대기업 감사 공시 요약. 한 항목 옆에 붉은 볼펜 표시.
+        text: 서랍 안쪽 제일 위에 A4 한 장이 반으로 접힌 채 놓여 있었다. 펼쳐 보니 모 대기업 감사 공시 요약본이었다. 날짜는 지난 3분기. 한 항목 옆에 붉은 볼펜으로 세 번 덧그어진 줄 하나. 그 옆 여백엔 누군가의 손글씨로 짧게 'SPC → 현지 법인'.
       - speaker: thought
-        text: 해외 법인 특수목적회사 편입분. 규모가 크다. 이게 USB의 일부일 수 있다.
+        text: 해외 법인 특수목적회사 편입 건. 그룹 쪽에서 본 적 있는 유형의 공시 구조다. 표면엔 구조조정으로 읽히지만 안쪽으로 들어가면 실체 없는 법인을 껴 넣어 자금 라인 하나를 돌리는 그림. 이게 김승기가 USB 안에 있다고 말한 내용의 한 조각일 수 있다.
         effects:
           - kind: flag
             key: saw_audit_paper
@@ -177,38 +175,38 @@ nodes:
     id: study
     lines:
       - speaker: narration
-        text: 서재. 벽면 책장의 책 절반이 빠져 있다.
+        text: 서재 벽면 책장은 바닥부터 천장까지 가득 찬 기성 가구였다. 다만 가운데 두 단이 반쯤 비어 있었다. 남은 책들은 나란히 서 있었고, 빠진 자리 옆엔 먼지 선 두 줄이 거기 있던 책 두께만큼 또렷이 남아 있었다.
       - speaker: narration
-        text: 누군가 특정 주제의 책만 골라 가져갔다는 뜻이다. 남은 건 일반 소설, 경영학, 법률 입문서.
+        text: 남은 책은 경영학 교과서 몇 권과 일본 추리 소설 시리즈, 변호사 시험 입문서 같은 것들. 말하자면 아무 집에나 있을 법한 진열용.
       - speaker: narration
-        text: 빠진 건 — 세무, 해외 회계, 언론 PR, 그리고 공익제보 관련 서적.
+        text: 빠진 책의 주제는 눈으로 쉽게 잡혔다. 세무, 해외 회계, 언론 대응, 그리고 공익제보자 보호법 관련서. 한 주제만 빠진 게 아니라 한 방향만 빠진 것이었다.
       - speaker: thought
         requires:
           flag: saw_audit_paper
-        text: 붉은 볼펜의 한 줄, 그리고 빠진 책장. 도현은 이 둘을 나란히 놓고 공부하고 있었다.
+        text: 서랍 안의 그 붉은 줄과, 이 책장에서 빠진 네 가지 주제. 도현이가 이 두 가지를 한 책상 위에 나란히 놓고 몇 달은 읽은 거다.
       - speaker: thought
         requires:
           flag: c2_missed_study
-        text: 책장이 이렇게 비어있는데 책상엔 아무것도 없다. 책상 쪽을 더 꼼꼼히 볼걸.
+        text: 책장이 이만큼 비어 있는데 책상 위가 이렇게 깔끔한 건 말이 안 된다. 책상 서랍 쪽을 아까 더 들쳐 봤어야 했다.
       - speaker: thought
-        text: 공익제보. 도현은 자기가 공익제보자가 될 가능성을 공부하고 있었다.
+        text: 공익제보자. 도현이가 공부한 자료는 자기가 그 쪽으로 갈 가능성을 계산한 자료였고, 그 자료 가운데 핵심 라인을 누가 밤 사이 들고 나갔다는 뜻이다.
         effects:
           - kind: flag
             key: disclosure_research
             value: true
           - kind: memory
-            text: 도현이 공익제보 관련 서적을 집중적으로 공부한 흔적.
+            text: 서재 책장에서 세무·해외 회계·언론 대응·공익제보자 보호 관련 서적만 빠져 나갔다.
     next: intercom
 
   intercom:
     id: intercom
     lines:
       - speaker: narration
-        text: 현관 인터폰이 울린다. 로비 경비다.
+        text: 현관 쪽 인터폰이 한 번 울렸다. 화면에 로비 경비실 내선 번호가 떴다. 수화기를 들자 박씨 아저씨의 목소리가 처음과 다르게 한 박자 조심스러웠다.
       - speaker: narration
-        text: '"백 실장님, 손님이 한 분 올라오시겠다는데요. 성함이… 준혁 씨."'
+        text: '"실장님, 위에 올라오시겠다는 분이 한 분 계신데요. 도현 씨 쪽 지인이라고 하시고요. 성함이 준혁 씨, 라네요."'
       - speaker: thought
-        text: 준혁. 도현의 대학 동창이자 증권맨. 내가 들어온 걸 알았다.
+        text: 준혁. 도현이 대학 동기이자 지금은 여의도 쪽 증권맨. 원래 이 집 드나들던 친구다. 다만 내가 이 집에 들어온 지 사십 분도 채 안 됐는데 올라오고 있다는 건 다른 얘기다.
     choices:
       - id: admit-junhyuk
         label: 올려 보내세요.
@@ -248,18 +246,18 @@ nodes:
           flagEquals:
             key: c2_junhyuk_entry
             value: refuse_failed
-        text: 거절했는데도 3분 뒤 준혁은 올라와 있다. 경비실에서 이름이 통했거나, 본인이 우겼다.
+        text: 거절했는데도 3분쯤 지나자 현관 밖에서 발걸음 소리가 들렸고, 벨이 먼저 한 번, 그 다음 노크 두 번이 이어졌다. 준혁은 경비실에 본인 이름 한 번 대 놓고 그냥 올라온 그림이었다.
       - speaker: narration
         requires:
           flagEquals:
             key: c2_junhyuk_entry
             value: admitted
-        text: 3분 뒤. 숨이 차서 올라온 준혁이 문턱에서 인사도 없이 들어선다.
+        text: 3분쯤 뒤 현관문이 열렸다. 준혁은 문턱에서 재킷 안주머니를 한 번 매만지고는, 인사도 없이 스스로 신발을 벗었다. 여의도에서 택시를 잡아 타고 강남까지 달려온 사람의 호흡이었다.
       - speaker: junhyuk
-        text: 실장님, 이거 진짜 찾으러 오신 거 맞죠.
+        text: 실장님. 도현이 이거 진짜 찾으러 오신 거 맞죠.
         expression: tense
       - speaker: junhyuk
-        text: 저 도현이 걱정돼서 왔어요. 그러니까… 알려드릴게 하나 있어요.
+        text: 저 오늘 장 끝나고 한 잔 하려다 형 번호 듣고 바로 달려온 거예요. 실장님한테, 저 말씀드려야 할 게 하나 있어서요.
         expression: weary
     choices:
       - id: let-speak
@@ -291,13 +289,13 @@ nodes:
     id: junhyuk-admits
     lines:
       - speaker: junhyuk
-        text: …진작 말했어야 했어요.
+        text: …진작 말씀드렸어야 했어요, 실장님.
         expression: grim
       - speaker: junhyuk
-        text: 저랑 도현이 같이 뭘 하기로 했었어요. 제가 마지막에 발을 뺐고요.
+        text: 저랑 도현이랑 올해 봄부터 같이 뭘 하기로 했었어요. 저는 자금 흐름 쪽, 도현이는 안쪽 자료. 근데 제가 지난 달 말에 먼저 발을 뺐어요. 솔직히 말씀드리면 쫄았어요.
         expression: weary
       - speaker: junhyuk
-        text: 이거 말씀드리는 대가로 제 이름은 어디에도 나가면 안 돼요. 약속해 주세요.
+        text: 대신 한 가지만 약속해 주세요. 제 이름은 어디에도 안 나가요. 회사 보고서든 기자한테든, 실장님 일지에든. 그거 하나만.
         expression: tense
     choices:
       - id: promise
@@ -337,31 +335,31 @@ nodes:
           flagEquals:
             key: c2_junhyuk_deal
             value: promised
-        text: 실장님이 약속해 주시니까 말씀드릴게요. 저는 이 얘기 집에 가서도 잊어야 해요.
+        text: 실장님이 약속해 주시니까 저도 편하게 말씀드릴게요. 저는 이 얘기, 오늘 이 방 나가는 순간 집에 가서도 잊을 겁니다.
         expression: weary
       - speaker: junhyuk
         requires:
           flagEquals:
             key: c2_junhyuk_open
             value: challenged_miss
-        text: 실장님, 저 안 숨기는데요… 뭐 물어보시면 답은 드릴게요. 저 그렇게 계산 많은 애는 아니에요.
+        text: 실장님. 저 안 숨겨요, 진짜. 물어보시면 답은 드려요. 저 그렇게 계산 많은 애는 아니에요, 그거 증권판 다녀 본 분들은 아시잖아요.
         expression: tense
       - speaker: junhyuk
         requires:
           flagEquals:
             key: c2_junhyuk_open
             value: let_speak
-        text: 감사해요, 일단 들어주신다고 해서요. 길게 안 끌게요.
+        text: 일단 들어 주신다고 해 주셔서, 감사합니다. 길게 끌진 않을게요.
         expression: neutral
 
       - speaker: junhyuk
-        text: 도현이가 실종되기 2주 전에 미영이랑 크게 싸웠대요.
+        text: 도현이가 실종 이 주 전쯤, 미영이랑 크게 한 번 했어요.
         expression: neutral
       - speaker: junhyuk
-        text: 원래 약혼까지 얘기 나왔던 사이잖아요. 근데 도현이가 "뭘 해야겠다"고 미영한테 말한 뒤로 사이가 깨졌어요.
+        text: 둘이 원래 양쪽 집안 인사까지 간 사이고요. 근데 도현이가 미영한테 '나 뭘 좀 해야겠다'고 털어놓은 다음부터 관계 쪽이 빠르게 식었어요. 그 한마디가 관계에 선 하나 긋고 들어갔어요.
         expression: tense
       - speaker: junhyuk
-        text: 미영은 끝까지 "그러지 마"라고 했대요. 미영 입장에선 도현이 망가지는 걸 원하지 않았거든요.
+        text: 미영은 끝까지 하지 말라고 했대요. 도현이가 그 길로 가면 도현이만 망가지지, 미영은 그걸 누구보다 먼저 계산하는 친구니까요.
         expression: weary
 
       - speaker: junhyuk
@@ -369,68 +367,68 @@ nodes:
           flagEquals:
             key: c2_junhyuk_deal
             value: promised
-        text: 그리고 이건 진짜 저만 아는 건데요. 도현이 그 "뭘 해야겠다"의 상대가, 저희 증권가 쪽 사람은 아니에요. 더 위예요.
+        text: 그리고 이건 진짜 저만 아는 얘기인데요. 도현이가 '뭘 해야겠다'고 말한 그 상대, 우리 증권가 쪽 아닙니다. 본사 훨씬 위쪽이에요. 이름 안 말씀드려요. 다만 위쪽입니다.
         expression: grim
       - speaker: thought
         requires:
           flagEquals:
             key: c2_junhyuk_deal
             value: promised
-        text: '"더 위"라는 단어가 오늘 제일 큰 소득이다. 그리고 이 문장은 내가 약속을 지켜야만 남는 문장이다.'
+        text: 본사 위쪽. 현 회장 아니면 그 주변 라인. 준혁이가 지금 앉아서 이 말을 꺼낼 수 있는 건 내가 자기 이름을 안 팔 거라고 판단했기 때문이다. 그 판단 하나를 지켜 주는 건 내 몫이 된다.
 
       - speaker: pc
-        text: 미영, 어디 가면 볼 수 있지?
+        text: 미영이는 어디 가면 볼 수 있지.
       - speaker: junhyuk
-        text: 내일 저녁 청담 OO카페요. 제가 약속 잡아드릴게요. 미영이 만나자고는 할 거예요.
+        text: 내일 저녁 청담에 미영이 자주 가는 카페 하나 있어요. 거기서 여덟 시 예약 잡아 드리면, 미영이 한 시간 안쪽으로 나올 거예요. 만남 자체를 거부할 친구는 아니에요.
         expression: neutral
       - speaker: junhyuk
-        text: 단, 미영이 실장님한테 진실 다 얘기할 거라 기대는 마세요. 걔는 일단 덜 말하는 쪽이거든요.
+        text: 다만 미영이가 실장님한테 그날 밤 이야기까지 전부 풀어놓을 거라고 기대하진 마세요. 걔는 원래 덜 말하는 쪽이고, 지금은 본인도 본인 몫을 계산하고 있는 시점이에요.
         expression: grim
         effects:
           - kind: flag
             key: miyoung_meeting
             value: true
           - kind: memory
-            text: 준혁을 통해 미영 약속을 잡았다. 미영은 도현의 계획에 반대했다.
+            text: 준혁이 미영 자리 잡아 줬다. 내일 저녁 여덟 시 청담 카페. 미영은 도현의 계획 반대 쪽.
     next: junhyuk-exit
 
   junhyuk-leaves-partial:
     id: junhyuk-leaves-partial
     lines:
       - speaker: junhyuk
-        text: …그래요. 실장님 그런 분이긴 하죠.
+        text: …그러시군요. 실장님 원래 그런 분이긴 하죠. 저도 회사에서 그쪽 라인 분들 뵐 때 그거 한 번 느꼈고요.
         expression: weary
       - speaker: junhyuk
-        text: 그래도 이건 말씀드릴게요. 미영이요. 내일 저녁 청담에서 만날 수 있어요.
+        text: 그래도 이 한 개는 드릴게요. 미영이. 내일 저녁 여덟 시 청담 카페. 자리 자체는 잡아 드려요.
         expression: grim
       - speaker: junhyuk
-        text: 나머지는 미영한테 물어보세요. 저는 빠질게요.
+        text: 나머지는 미영이한테 물어보세요. 저는 여기까지만, 실장님.
         expression: tense
         effects:
           - kind: flag
             key: miyoung_meeting
             value: true
           - kind: memory
-            text: 준혁은 자기 이름을 약속받지 못하자 정보 절반만 남기고 물러섰다.
+            text: 준혁, 자기 이름 보장 못 받자 미영 자리만 남기고 정보 절반은 거둠.
     next: junhyuk-exit
 
   junhyuk-leaves-empty:
     id: junhyuk-leaves-empty
     lines:
       - speaker: junhyuk
-        text: 그럼 저 그냥 갈게요. 실장님, 저 모른 척 해주세요.
+        text: 알겠습니다, 실장님. 저 그냥 갈게요. 오늘 저 여기 안 왔던 걸로 부탁드려요.
         expression: tense
       - speaker: narration
-        text: 문이 닫힌다. 그가 가진 정보도 같이 닫혔다.
+        text: 준혁은 신발을 다시 신었다. 신발 끈을 고쳐 매지도 않았고, 문턱을 지나면서 고개도 돌리지 않았다. 현관문이 닫히는 소리는 처음 열릴 때보다 조용했다.
     next: junhyuk-exit
 
   junhyuk-later:
     id: junhyuk-later
     lines:
       - speaker: narration
-        text: 인터폰 너머로 준혁은 잠시 말이 없다가 끊는다. 아마 다시는 이렇게 쉽게 오지 않을 것이다.
+        text: 인터폰 수화기 너머로 준혁은 한 박자 말이 없다가 '알겠습니다, 다음에요' 한 마디로 끊었다. 숨이 아직 고르지 않은 목소리였다. 오늘 올라오려고 여의도에서 달려온 호흡이 수화기 너머까지 남아 있었다.
       - speaker: thought
-        text: 이 사람은 지금 말하고 싶어서 올라왔다. 내가 그 순간을 놓쳤다.
+        text: 저 친구는 오늘 말하고 싶어서 올라온 사람이었다. 그 순간을 내가 밀어냈다. 다음엔 저쪽이 먼저 나에게 말을 걸지 않는다.
     next: junhyuk-exit
 
   junhyuk-exit:
@@ -440,66 +438,64 @@ nodes:
         position: offscreen
     lines:
       - speaker: narration
-        text: 거실이 다시 조용해진다. 창 밖엔 강남의 수직 불빛.
+        text: 준혁의 뒤로 문이 닫힌 뒤 한동안 거실이 그 자체의 소리로 다시 가득 찼다. 냉장고 실외기 팬 소리, 복도에서 엘리베이터가 한 번 올라가는 소리, 창 밖 강남의 수직 불빛이 23층 높이쯤에서 천천히 깜빡이는 광고판 불빛 하나. 소파 옆 탁상시계는 밤 열한 시를 조금 넘어 있었다.
 
-      # Closing summary — varies by what was actually learned this scene
       - speaker: thought
         requires:
           flag: promised_junhyuk
-        text: 오늘 세 가지를 얻었다. 도현의 계획. 그 계획의 상대가 "더 위"라는 준혁의 귀띔. 그리고 내일 미영.
+        text: 오늘 얻은 건 세 덩어리다. 도현이가 실제로 판을 짰다는 것, 그 판의 상대가 본사 위쪽이라는 준혁이의 한 문장, 그리고 내일 저녁 여덟 시 청담. 그 세 번째가 오늘의 교환 조건이었다.
 
       - speaker: thought
         requires:
           flagEquals:
             key: c2_junhyuk_deal
             value: half_out
-        text: 오늘 절반을 얻었다. 도현과 미영이 갈라선 이유. 그리고 내일 미영. 나머지 절반은 내가 약속을 안 해준 값이다.
+        text: 오늘 얻은 건 절반이었다. 도현이와 미영이 갈라선 이유, 그리고 내일 여덟 시. 나머지 절반은 내가 이 친구 이름을 값으로 안 지불한 대가로 같이 따라나가 버렸다.
 
       - speaker: thought
         requires:
           flagEquals:
             key: c2_junhyuk_deal
             value: shut_out
-        text: 오늘 손에 쥔 건 거의 없다. 준혁은 문을 닫고 갔고, 나는 내일 미영 한 사람에 기대야 한다.
+        text: 오늘 손에 들어온 건 사실상 없었다. 준혁이 가져온 정보 한 덩어리는 현관문이 닫힐 때 같이 빠져나갔고, 내일 여덟 시 미영 한 사람에 오늘보다 더 많이 기대야 하는 그림이 됐다.
 
       - speaker: thought
         requires:
           flagEquals:
             key: deferred_junhyuk
             value: true
-        text: 준혁을 오늘 만나지 않았다. 빈 거실에 남은 나는 나와 이 집의 침묵뿐이다. 내일 미영.
+        text: 준혁이는 오늘 못 만났다. 그 친구가 택시비 들여 여의도에서 여기까지 올라오게 만든 이유를 나는 문 뒤에서 그대로 놓쳤다. 내일 여덟 시가 오늘의 빈자리를 얼마나 채워 줄 수 있을지는 내일 저녁 봐야 안다.
 
       - speaker: thought
         requires:
           flagEquals:
             key: c2_junhyuk_open
             value: let_speak
-        text: 준혁의 말을 바로 받았다. 그는 오늘 편했다. 그만큼 정보도 표면에서 멎었다.
+        text: 준혁이를 바로 앉혔던 건 그 친구 쪽을 편하게 해 주려는 선택이기도 했다. 덕분에 얘기는 매끄럽게 풀렸지만, 매끄러운 자리에서 정보는 표면에서 멎는다.
 
       - speaker: thought
         requires:
           flagEquals:
             key: c2_junhyuk_open
             value: challenged_miss
-        text: 준혁을 잠깐 흔들었는데 흔들리지 않았다. 오늘의 대화는 예상의 정 가운데에 있었다.
+        text: 첫 질문으로 준혁이를 한 번 흔들어 봤는데 흔들리지 않았다. 오늘의 대화는 준혁이 머릿속에서 이미 몇 번 연습을 끝낸 대화였다.
 
-      # Physical evidence layer — independent of junhyuk path
       - speaker: thought
         requires:
           flag: saw_audit_paper
-        text: 감사 공시 한 줄과 공익제보 서적. 퍼즐 두 조각이 같은 상자에 있다.
+        text: 서랍의 붉은 줄과 책장의 빠진 네 주제. 두 개가 한 상자 안의 퍼즐 조각이라는 건, 이 집에 들어와 본 누구든 이 방향으로 자료를 모아 들고 나갔다는 뜻이다.
       - speaker: thought
         requires:
           flag: photo_glass
-        text: 위스키 잔 사진이 주머니에 있다. 다행이면서 불편한 증거.
+        text: 유리 탁자 위 잔 사진이 휴대폰 갤러리 한 자리를 차지하고 있다. 필요해지는 자료이지만 그만큼 내 쪽의 위험 쪽으로도 한 칸 들어와 앉는 자료다.
 
       - speaker: thought
         requires:
           flag: ghost_visitors
-        text: 새벽 2시의 손님들. 그들이 도현을 만났는지, 빈 방을 만났는지는 아직 모른다.
+        text: 새벽 두 시의 그 둘이 도현이를 여기서 만났는지, 빈 방 하나만 보고 나갔는지는 오늘 밤엔 답이 안 나온다. 다만 누가 언제 이 카드키를 만지고 나갔는지에 대한 후보군은 서너 명으로 좁혀졌다.
 
-      - speaker: thought
-        text: 내일 저녁 미영. 이 사람이 쥔 카드는, 내가 가진 것보다 훨씬 많다.
+      - speaker: narration
+        text: 현관을 나오기 전 한 번 더 거실을 돌아봤다. 불을 끄고 나가는 게 이 집의 규칙이었지만, 나는 간접 조명 한 줄을 일부러 남겨 두고 문을 닫았다. 누가 이 방에 다음에 들어오는지가, 그 불빛에 한 번은 걸리기를.
         effects:
           - kind: goto
             scene: c2-miyoung
