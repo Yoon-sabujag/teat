@@ -1,4 +1,8 @@
-import { GoogleGenAI } from "@google/genai";
+import {
+  GoogleGenAI,
+  HarmBlockThreshold,
+  HarmCategory,
+} from "@google/genai";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -60,6 +64,19 @@ function parseGeminiError(err: unknown): GeminiError {
   return { status, message };
 }
 
+// Game is an adult Korean noir CRPG. Configurable safety filters are
+// turned all the way down so Gemini will let through explicit violence,
+// profanity, adult sexual content, and morally dark choices. Note: Gemini
+// still enforces a hard-coded floor for CSAM and some extreme categories
+// regardless of these settings — that's intentional and aligns with the
+// project's "minors never in sexual scenarios" authoring rule.
+const SAFETY_SETTINGS = [
+  { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+];
+
 async function callGemini(
   systemPrompt: string,
   contents: Array<{ role: string; parts: Array<{ text: string }> }>,
@@ -71,6 +88,7 @@ async function callGemini(
       systemInstruction: systemPrompt,
       maxOutputTokens: 512,
       thinkingConfig: { thinkingBudget: 0 },
+      safetySettings: SAFETY_SETTINGS,
     },
   });
 }
