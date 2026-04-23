@@ -73,6 +73,7 @@ export function useSceneRunner({ scene, onEvent }: Args) {
   });
   const [busy, setBusy] = useState(false);
   const [lastCheck, setLastCheck] = useState<CheckResult | null>(null);
+  const [improvError, setImprovError] = useState<string | null>(null);
   const appliedRef = useRef<Set<string>>(new Set());
 
   const pc = useSave((s) => s.pc);
@@ -193,22 +194,28 @@ export function useSceneRunner({ scene, onEvent }: Args) {
   const runImprov = useCallback(
     async (playerLine: string) => {
       if (!node.improv) return;
+      const improv = node.improv;
       setBusy(true);
+      setImprovError(null);
       try {
         const res = await fetch("/api/dialogue", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
-            npcId: node.improv.npc,
-            systemPrompt: node.improv.systemPrompt,
+            npcId: improv.npc,
+            systemPrompt: improv.systemPrompt,
             history: [],
             playerLine,
           }),
         });
+        if (!res.ok) {
+          const body = await res.text().catch(() => "");
+          throw new Error(`LLM ${res.status}${body ? `: ${body.slice(0, 120)}` : ""}`);
+        }
         const { reply } = (await res.json()) as { reply: string };
         setState((s) => ({ ...s, improvText: reply }));
 
-        const trigger = node.improv.triggers.find((t) =>
+        const trigger = improv.triggers.find((t) =>
           reply.includes(t.keyword),
         );
         if (trigger) {
@@ -218,6 +225,10 @@ export function useSceneRunner({ scene, onEvent }: Args) {
             setState({ nodeId: trigger.next, lineIndex: 0 });
           }, 2000);
         }
+      } catch (err) {
+        setImprovError(
+          err instanceof Error ? err.message : "응답 실패",
+        );
       } finally {
         setBusy(false);
       }
@@ -253,5 +264,7 @@ export function useSceneRunner({ scene, onEvent }: Args) {
     suggestions,
     busy,
     lastCheck,
+    improvError,
+    dismissImprovError: () => setImprovError(null),
   };
 }

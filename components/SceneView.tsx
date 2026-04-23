@@ -40,6 +40,8 @@ export function SceneView({ scene, npcs, backgrounds, onEvent }: Props) {
     suggestions,
     busy,
     lastCheck,
+    improvError,
+    dismissImprovError,
   } = runner;
 
   const bg = backgrounds[background];
@@ -185,8 +187,28 @@ export function SceneView({ scene, npcs, backgrounds, onEvent }: Props) {
                 : "text-neutral-100"
           }`}
         >
-          {currentLine.text}
+          {busy && isImprovNode ? (
+            <span className="inline-flex items-center gap-2 text-neutral-500">
+              <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-amber-400" />
+              응답 받는 중…
+            </span>
+          ) : (
+            currentLine.text
+          )}
         </p>
+
+        {improvError && (
+          <div className="flex items-center justify-between rounded-lg border border-rose-800 bg-rose-950/60 px-3 py-2 text-xs text-rose-200">
+            <span>오류: {improvError}</span>
+            <button
+              type="button"
+              onClick={dismissImprovError}
+              className="ml-2 text-rose-300 underline"
+            >
+              닫기
+            </button>
+          </div>
+        )}
 
         {choices.length > 0 ? (
           <ul className="flex flex-col gap-2">
@@ -209,20 +231,25 @@ export function SceneView({ scene, npcs, backgrounds, onEvent }: Props) {
             ))}
           </ul>
         ) : isImprovNode ? (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             {suggestions.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {suggestions.map((s, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    disabled={busy}
-                    onClick={() => runImprov(s)}
-                    className="rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-1.5 text-xs text-neutral-300 disabled:opacity-50 active:bg-neutral-800"
-                  >
-                    {s}
-                  </button>
-                ))}
+              <div className="flex flex-col gap-2">
+                <div className="text-[10px] uppercase tracking-widest text-neutral-500">
+                  물어볼 거리
+                </div>
+                <div className="flex flex-col gap-2">
+                  {suggestions.map((s, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      disabled={busy}
+                      onClick={() => runImprov(s)}
+                      className="w-full rounded-xl border border-amber-700/60 bg-amber-900/10 px-4 py-3 text-left text-sm text-amber-100 transition disabled:opacity-40 active:scale-[0.98] active:bg-amber-900/30"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
             <form
