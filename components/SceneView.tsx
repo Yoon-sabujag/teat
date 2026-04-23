@@ -42,6 +42,8 @@ export function SceneView({ scene, npcs, backgrounds, onEvent }: Props) {
     lastCheck,
     improvError,
     dismissImprovError,
+    canRetryImprov,
+    retryImprov,
   } = runner;
 
   const bg = backgrounds[background];
@@ -198,15 +200,27 @@ export function SceneView({ scene, npcs, backgrounds, onEvent }: Props) {
         </p>
 
         {improvError && (
-          <div className="flex items-center justify-between rounded-lg border border-rose-800 bg-rose-950/60 px-3 py-2 text-xs text-rose-200">
-            <span>오류: {improvError}</span>
-            <button
-              type="button"
-              onClick={dismissImprovError}
-              className="ml-2 text-rose-300 underline"
-            >
-              닫기
-            </button>
+          <div className="flex flex-col gap-2 rounded-lg border border-rose-800 bg-rose-950/60 px-3 py-2 text-xs text-rose-200">
+            <div>오류: {improvError}</div>
+            <div className="flex gap-2">
+              {canRetryImprov && (
+                <button
+                  type="button"
+                  onClick={retryImprov}
+                  disabled={busy}
+                  className="rounded-md bg-rose-900/70 px-3 py-1 text-[11px] font-semibold text-rose-100 disabled:opacity-50"
+                >
+                  다시 시도
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={dismissImprovError}
+                className="text-rose-300 underline"
+              >
+                닫기
+              </button>
+            </div>
           </div>
         )}
 

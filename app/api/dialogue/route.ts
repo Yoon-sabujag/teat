@@ -21,23 +21,43 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 type GeminiError = { status?: number; message?: string };
 
 function parseGeminiError(err: unknown): GeminiError {
-  if (err && typeof err === "object") {
-    const e = err as Record<string, unknown>;
-    const status =
-      typeof e.status === "number"
-        ? e.status
-        : typeof e.code === "number"
-          ? e.code
-          : undefined;
-    const message =
-      typeof e.message === "string"
-        ? e.message
-        : typeof e.error === "string"
-          ? e.error
-          : undefined;
-    return { status, message };
+  const raw =
+    err && typeof err === "object"
+      ? (err as Record<string, unknown>)
+      : { message: String(err) };
+
+  let status =
+    typeof raw.status === "number"
+      ? raw.status
+      : typeof raw.code === "number"
+        ? raw.code
+        : undefined;
+  let message =
+    typeof raw.message === "string"
+      ? raw.message
+      : typeof raw.error === "string"
+        ? raw.error
+        : undefined;
+
+  // The @google/genai SDK frequently wraps upstream HTTP errors as a
+  // JSON-stringified message like
+  //   {"error":{"code":503,"message":"This model is currently…"}}
+  // Unwrap one level so the client sees something readable.
+  if (message) {
+    try {
+      const inner = JSON.parse(message) as {
+        error?: { code?: number; message?: string };
+      };
+      if (inner?.error) {
+        status = inner.error.code ?? status;
+        message = inner.error.message ?? message;
+      }
+    } catch {
+      // Not JSON, keep the raw message.
+    }
   }
-  return { message: String(err) };
+
+  return { status, message };
 }
 
 async function callGemini(
@@ -53,6 +73,30 @@ async function callGemini(
       thinkingConfig: { thinkingBudget: 0 },
     },
   });
+}
+
+const RETRY_DELAYS_MS = [500, 1500, 3000];
+
+async function callWithRetry(
+  systemPrompt: string,
+  contents: Array<{ role: string; parts: Array<{ text: string }> }>,
+) {
+  let lastErr: unknown;
+  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+    try {
+      return await callGemini(systemPrompt, contents);
+    } catch (err) {
+      lastErr = err;
+      const { status } = parseGeminiError(err);
+      const transient =
+        status === 503 || status === 502 || status === 504 || status === 500;
+      if (!transient || attempt === RETRY_DELAYS_MS.length) {
+        throw err;
+      }
+      await new Promise((r) => setTimeout(r, RETRY_DELAYS_MS[attempt]));
+    }
+  }
+  throw lastErr;
 }
 
 export async function POST(req: Request) {
@@ -72,52 +116,47 @@ export async function POST(req: Request) {
 
   let response;
   try {
-    response = await callGemini(systemPrompt, contents);
+    response = await callWithRetry(systemPrompt, contents);
   } catch (err) {
     const { status, message } = parseGeminiError(err);
-    // Retry once on transient server errors.
-    if (status && status >= 500 && status < 600) {
-      try {
-        response = await callGemini(systemPrompt, contents);
-      } catch (err2) {
-        const second = parseGeminiError(err2);
-        return NextResponse.json(
-          {
-            error: "LLM 호출 실패 (재시도 후에도)",
-            detail: second.message ?? message,
-            geminiStatus: second.status ?? status,
-          },
-          { status: 502 },
-        );
-      }
-    } else if (status === 429) {
+    if (status === 429) {
       return NextResponse.json(
         {
-          error: "요청이 너무 잦습니다 (Gemini rate limit).",
-          detail: message,
+          error: "요청이 너무 잦습니다",
+          detail: "잠시 후 다시 시도해주세요 (Gemini 분당 한도 초과).",
           geminiStatus: 429,
         },
         { status: 429 },
       );
-    } else if (status === 400) {
+    }
+    if (status === 503) {
+      return NextResponse.json(
+        {
+          error: "Gemini 서버 과부하",
+          detail: "수 초 후 다시 시도해주세요. 재시도 3회 모두 실패했습니다.",
+          geminiStatus: 503,
+        },
+        { status: 503 },
+      );
+    }
+    if (status === 400) {
       return NextResponse.json(
         {
           error: "프롬프트 형식 문제",
-          detail: message,
+          detail: message ?? "",
           geminiStatus: 400,
         },
         { status: 400 },
       );
-    } else {
-      return NextResponse.json(
-        {
-          error: "LLM 호출 실패",
-          detail: message,
-          geminiStatus: status,
-        },
-        { status: 502 },
-      );
     }
+    return NextResponse.json(
+      {
+        error: "LLM 호출 실패",
+        detail: message ?? "",
+        geminiStatus: status,
+      },
+      { status: 502 },
+    );
   }
 
   const text = response.text ?? "";

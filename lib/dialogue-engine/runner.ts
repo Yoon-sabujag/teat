@@ -74,6 +74,7 @@ export function useSceneRunner({ scene, onEvent }: Args) {
   const [busy, setBusy] = useState(false);
   const [lastCheck, setLastCheck] = useState<CheckResult | null>(null);
   const [improvError, setImprovError] = useState<string | null>(null);
+  const [lastImprovInput, setLastImprovInput] = useState<string | null>(null);
   const [pendingTrigger, setPendingTrigger] = useState<string | null>(null);
   const appliedRef = useRef<Set<string>>(new Set());
 
@@ -205,6 +206,7 @@ export function useSceneRunner({ scene, onEvent }: Args) {
       const improv = node.improv;
       setBusy(true);
       setImprovError(null);
+      setLastImprovInput(playerLine);
       try {
         const res = await fetch("/api/dialogue", {
           method: "POST",
@@ -279,6 +281,10 @@ export function useSceneRunner({ scene, onEvent }: Args) {
 
   const suggestions = isImprovNode ? (node.improv?.suggestions ?? []) : [];
 
+  const retryImprov = useCallback(() => {
+    if (lastImprovInput) runImprov(lastImprovInput);
+  }, [lastImprovInput, runImprov]);
+
   return {
     background,
     cast,
@@ -293,5 +299,7 @@ export function useSceneRunner({ scene, onEvent }: Args) {
     lastCheck,
     improvError,
     dismissImprovError: () => setImprovError(null),
+    canRetryImprov: !!lastImprovInput && !busy,
+    retryImprov,
   };
 }
