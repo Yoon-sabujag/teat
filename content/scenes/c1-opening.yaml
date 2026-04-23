@@ -12,31 +12,31 @@ nodes:
     id: arrive
     lines:
       - speaker: narration
-        text: 을지로 3가. 인쇄 골목 끝자락, 낡은 빌딩 7층.
+        text: 을지로3가 인쇄 골목 끝자락. 1980년대에 올린 게 마지막 리모델링이었던 7층짜리 빌딩, 6층 절반은 영세 인쇄소가 차지하고 있고, 7층 한 칸을 지난주에 보증금 천오백 월세 백오십에 잡았다. 엘리베이터는 지난주 점검 표시 그대로 멎어 있었다.
       - speaker: narration
-        text: 20평도 안 되는 사무실. 책상 두 개, 의자 네 개, 어제 뗀 이전 세입자 간판 자국.
+        text: 사무실은 스무 평이 안 됐다. 책상 두 개, 의자 네 개, 어제 떼어 낸 이전 세입자 간판 자국이 벽에 그대로 남아 있었다. 환기구에서 가끔 인쇄용 잉크 냄새가 한 줄씩 올라왔다.
       - speaker: narration
-        text: '간판: "백승재 리서치". 간판 밑에는 내 회사 이름과 전화번호만.'
+        text: 새 간판은 출입문 옆에 붙여 두었다. 시트지로 한 줄, '백승재 리서치'. 그 밑엔 회사명도 업종도 안 적혔다. 휴대폰 번호 한 줄과 명함 양식 견본이 들어간 작은 액자만 책상 위에 올려져 있었다.
       - speaker: thought
-        text: 리서치. 시장조사도 리서치고, 사람 찾는 것도 리서치다.
+        text: 리서치라는 단어는 시장조사도 되고, 사람 찾는 일도 된다. 지난 달 명함업체 사장이 18년치 직함을 지우고 그 두 글자만 남기는 데 한참을 머뭇거렸다.
     next: jaemin-arrives
 
   jaemin-arrives:
     id: jaemin-arrives
     lines:
       - speaker: narration
-        text: 문이 열린다. 노크는 없다.
+        text: 출입문이 한쪽 경첩 소리를 내며 열렸다. 노크는 없었다. 검은색 가벼운 점퍼에 청바지, 손목에 시계 하나, 신발은 흰색 운동화로 한쪽 끈이 풀린 채였다.
       - speaker: jaemin
-        text: 형! 드디어 간판 붙였네요. 이게 얼마 만이야.
+        text: 형, 드디어 간판 거셨네. 이게 얼마 만이야.
         expression: smile
       - speaker: jaemin
-        text: 근데 이 층 엘리베이터 안 돼요. 알죠?
+        text: 아 근데 이 층 엘리베이터 아직 안 됐던데, 그거 아셨죠.
         expression: amused
       - speaker: thought
-        text: 재민이. 을지로 뒷골목에서 "뭐든 찾아드림"이라는 명함으로 먹고 사는 애.
+        text: 재민이. 마지막으로 본 게 4년 전 회사 회식 자리에서였다. 당시엔 본사 옆 빌딩 작은 흥신소에서 일했고, 지금은 본인 명함을 들고 다닌다. '심부름 일체, 사람·재산·시간'.
     choices:
       - id: hi-warmly
-        label: 오랜만이다. 잘 지냈어?
+        label: 오랜만이다. 잘 지냈어.
         next: catch-up
         effects:
           - kind: stat
@@ -46,20 +46,20 @@ nodes:
             key: c1_greeting
             value: warm
       - id: hi-business
-        label: 바로 일 얘기 하자.
+        label: 인사는 됐고, 무슨 일이지.
         next: business-fast
         effects:
           - kind: flag
             key: c1_greeting
             value: business
       - id: probe-jaemin
-        label: 너 소문 어디서 듣고 왔어.
+        label: 너 내가 여기 자리 잡은 거 어디서 들었어.
         check: { stat: jikgam, dc: 12 }
         success:
           next: probe-jaemin-success
           effects:
             - kind: memory
-              text: 재민이는 내가 간판 붙인 지 이틀 만에 알고 찾아왔다. 그런 정보는 공짜로 흐르지 않는다.
+              text: 재민이는 내가 간판 단 지 이틀 만에 알고 찾아왔다. 누군가 그한테 정보를 흘렸다.
             - kind: flag
               key: c1_greeting
               value: probed
@@ -74,17 +74,17 @@ nodes:
     id: catch-up
     lines:
       - speaker: jaemin
-        text: 저야 뭐, 늘 그렇죠. 그쪽 업계에선 요즘 재미있는 소문 있어요.
+        text: 저야 뭐 늘 그렇죠. 지난달엔 인천에서 두 건 정리했고, 이번 달엔 형 동네까지 왔네요.
         expression: amused
       - speaker: jaemin
-        text: 형도 곧 듣게 될 거예요. 어쩌면 이미 듣고 있고.
+        text: 아 그리고 형, 그쪽 업계에서 요즘 재미있는 소문 좀 돌아요. 형도 곧 듣게 되실 거고요. 어쩌면 이미 듣고 계시고요.
         expression: smile
       - speaker: jaemin
         requires:
           flagEquals:
             key: c1_greeting
             value: probe_missed
-        text: (혼자 속으로) 형이 오늘은 제 편인지 아닌지 감이 잘 안 오네.
+        text: (혼잣말) 형이 오늘 제 편인지 아닌지가 좀 안 잡히네 진짜.
         expression: neutral
     next: offer-job
 
@@ -92,29 +92,26 @@ nodes:
     id: business-fast
     lines:
       - speaker: jaemin
-        text: 좋아요. 형, 저도 시간 없어요.
-        expression: neutral
-      - speaker: jaemin
-        text: 지금 형 간판 붙었다는 얘기 본사 쪽에서도 알아요. 빠르죠?
+        text: 오케이, 깔끔. 저도 시간 없어요. 형 간판 단 거, 본사 쪽에서도 알아요. 빠르죠.
         expression: tense
       - speaker: thought
-        text: 재민이가 웃는 얼굴을 버렸다. 이 친구가 웃음을 아낀다는 건, 들을 얘기가 진짜 있다는 뜻이다.
+        text: 재민이가 웃음을 치웠다. 이 친구가 농담을 줄였다는 건 받을 정보가 단단하다는 뜻이다.
     next: offer-job
 
   probe-jaemin-success:
     id: probe-jaemin-success
     lines:
       - speaker: jaemin
-        text: 아 형, 저 원래 소문이 직업이잖아요.
+        text: 아 형. 저 원래 소문이 직업이긴 한데요.
         expression: amused
       - speaker: jaemin
-        text: 근데 형 간판 얘기는… 제가 찾은 거 아니에요. 누가 저한테 흘렸어요.
+        text: 형 간판 얘기는 제가 직접 발로 뛰어서 잡은 게 아니에요. 누가 저한테 흘렸어요.
         expression: tense
       - speaker: jaemin
-        text: '"백승재가 을지로에 사무실 낸다"고. 그래서 저도 좀 일찍 왔어요.'
+        text: '"백승재가 을지로에 자리 잡는다." 이렇게 한 줄. 그래서 저도 좀 일찍 와 본 거예요.'
         expression: neutral
       - speaker: thought
-        text: 누군가 내 간판 소식을 흥신소에 뿌렸다. 왜?
+        text: 누군가 내 간판 소식을 골라서 흥신소 라인에 흘렸다. 이쪽 동네에 내가 자리 잡는 걸 알고 싶은 누군가가 있었다는 뜻이다.
         effects:
           - kind: flag
             key: leaked_to_jaemin
@@ -129,66 +126,57 @@ nodes:
           flagEquals:
             key: c1_greeting
             value: warm
-        text: 형 오늘 기분 좋아 보여서 저도 편해요. 근데 편하게만 듣진 마세요.
+        text: 형 오늘 인상이 편하네요. 저도 편하게 말씀드릴게요. 다만 편하게만 들으시진 마시고요.
         expression: smile
       - speaker: jaemin
         requires:
           flagEquals:
             key: c1_greeting
             value: business
-        text: 빨리 갈게요. 오늘 오후에 형한테 전화 한 통 올 거예요.
+        text: 빨리 본론 갈게요. 오늘 오후 안에 형한테 전화 한 통이 옵니다.
         expression: neutral
       - speaker: jaemin
         requires:
           flagEquals:
             key: c1_greeting
             value: probed
-        text: 뭐 이왕 제가 반쯤 실토했으니까, 알려드릴 건 더 드릴게요.
+        text: 이왕 제가 반쯤 카드 깠으니까 한 장 더 까 드릴게요. 오늘 오후 안에 형한테 전화 한 통이 옵니다.
         expression: tense
       - speaker: jaemin
         requires:
           flagEquals:
             key: c1_greeting
             value: probe_missed
-        text: 암튼 형 하나 알려드릴게요. 눈치 못 채셨어도 상관없고.
+        text: 암튼 형, 하나 알려드릴게요. 눈치 못 채셨어도 상관없고요. 오늘 오후 안에 형한테 전화 한 통이 옵니다.
         expression: amused
       - speaker: jaemin
-        text: 오늘 오후에 형한테 전화 한 통 올 거예요.
-        expression: neutral
-        requires:
-          flagNotEquals:
-            key: c1_greeting
-            value: business
-      - speaker: jaemin
-        text: 받으면 큰 건이에요. 안 받으면 더 큰일 나고.
+        text: 받으시면 큰 건이에요. 안 받으시면 더 큰일 나고요.
         expression: amused
       - speaker: pc
-        text: 어느 쪽이야.
+        text: 어느 쪽이지.
       - speaker: jaemin
         requires:
           flagEquals:
             key: c1_greeting
             value: probed
-        text: 그 답을 형한테 다 드리면 제 몫이 없잖아요. 받으시고 나서 저한테 한 번 더 물어보세요.
+        text: 그 답을 형한테 다 드리면 제 몫이 사라지죠. 받아 보시고 나서 저한테 한 번 더 전화 주세요.
         expression: tense
       - speaker: jaemin
-        text: 그게 포인트예요 형. 받으시면 알아요. 저는 일단 커피 한 잔 시켜놓을게요.
-        expression: smile
         requires:
           flagNotEquals:
             key: c1_greeting
             value: probed
+        text: 그게 포인트예요 형. 받아 보시면 알아요. 저는 일단 길 건너 카페에서 커피 한 잔 시켜놓고 있을게요.
+        expression: smile
     next: phone-rings
 
   phone-rings:
     id: phone-rings
     lines:
       - speaker: narration
-        text: 재민의 말이 끝나기 전에 책상 위 휴대폰이 울린다.
-      - speaker: narration
-        text: 모르는 번호. 02 앞자리. 누가 봐도 본사 내선을 돌린 흔적.
+        text: 재민이의 마지막 음절이 끝나기도 전에 책상 위 휴대폰이 울렸다. 발신번호엔 02 앞자리. 누구든 본사 내선을 외선으로 한 번 돌린 흔적이었다.
       - speaker: jaemin
-        text: 빠르다, 빠르다. 받으세요 형.
+        text: 빠르네요 진짜. 받으세요 형.
         expression: amused
     choices:
       - id: pick-up
@@ -199,7 +187,7 @@ nodes:
             key: c1_pickup
             value: immediate
       - id: let-it-ring
-        label: 일부러 안 받는다.
+        label: 한 번 흘려 보낸다.
         check: { stat: ttuksim, dc: 13 }
         success:
           next: let-it-ring-success
@@ -208,7 +196,7 @@ nodes:
               target: gwonmo
               delta: 1
             - kind: memory
-              text: 첫 전화를 일부러 놓쳤다. 상대는 다시 걸어와야 한다. 이게 협상의 시작이다.
+              text: 첫 통화를 일부러 한 번 놓쳤다. 상대가 두 번 걸어야 하는 자리.
             - kind: flag
               key: c1_pickup
               value: delayed
@@ -226,14 +214,14 @@ nodes:
     id: let-it-ring-success
     lines:
       - speaker: narration
-        text: 벨이 여덟 번 울리고 끊긴다. 재민은 웃는다.
+        text: 휴대폰 진동이 책상을 여덟 번 흔들고 끊겼다. 재민이가 다리를 꼬며 천장을 한 번 봤다. 입가에 작게 웃음이 걸렸다.
       - speaker: jaemin
-        text: 형, 형 진짜 이 판 재미있게 하려고 하네요.
+        text: 형, 형 진짜 이 판 재미있게 하실라고 하시네.
         expression: amused
       - speaker: narration
-        text: 30초 뒤. 같은 번호. 다시 울린다.
+        text: 30초가 채 안 돼서 같은 번호가 다시 떴다.
       - speaker: thought
-        text: 상대가 두 번 걸어야 했다. 첫 라운드는 이겼다.
+        text: 상대가 두 번 걸었다. 첫 번째 라운드는 가져갔다.
     next: pick-up
 
   pick-up:
@@ -242,31 +230,31 @@ nodes:
       - speaker: pc
         text: 여보세요.
       - speaker: narration
-        text: 전화 너머, 매너 좋게 절제된 중년 남자 목소리.
+        text: 전화 너머에서 매너 있게 절제된 중년 남자 목소리가 한 박자 늦게 흘러나왔다. 술자리에서도, 결산 보고에서도 같은 톤을 지킬 줄 아는 사람의 목소리.
       - speaker: kim-sunggi
         requires:
           flagEquals:
             key: c1_pickup
             value: delayed
-        text: 백승재 실장님 되시죠? 두 번 걸었습니다. 김승기입니다.
+        text: 백승재 실장님 되시죠. 두 번째 전화입니다. 김승기예요.
       - speaker: kim-sunggi
         requires:
           flagEquals:
             key: c1_pickup
             value: fumbled
-        text: 아… 지금 받으셨네요. 김승기입니다. 잠시 바쁘셨죠?
+        text: 아, 받으셨네요. 김승기예요. 잠깐 바쁘셨죠.
       - speaker: kim-sunggi
         requires:
           flagEquals:
             key: c1_pickup
             value: immediate
-        text: 백승재 실장님 되시죠? 김승기입니다.
+        text: 백승재 실장님 되시죠. 김승기입니다.
       - speaker: thought
-        text: 김승기 부회장. 내 전직 그룹의 2대 형. 이 사람이 직접 전화를 건다.
+        text: 김승기. 내가 18년 다닌 그룹의 부회장이고, 현 회장의 친형이다. 그 사람이 본인 이름을 직접 말하면서 외선으로 전화를 걸었다.
       - speaker: kim-sunggi
-        text: 오늘 저녁, 본사 VIP 상담실에서 잠시 뵈실 수 있을까요? 긴한 의뢰가 있습니다.
+        text: 오늘 저녁에 잠깐 시간 좀 내 주실 수 있을까요. 본사 27층 VIP 상담실에 자리 잡아 두겠습니다. 긴한 의뢰 한 건이 있어서요.
       - speaker: narration
-        text: 문장이 다 끝나기 전에 이미 어딘가에서 시계가 맞춰지고 있다.
+        text: 27층은 두 달 전 차 상무 임원실에서 봤던 그 층이었다. 한 박자 사이에 그 사실이 떠올랐고, 약속 시간이 정해지는 동안 그 사실은 다시 한 번 더 떠올랐다.
         effects:
           - kind: goto
             scene: c1-kim-sunggi
