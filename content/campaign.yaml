@@ -28,3 +28,7 @@ chapters:
     title: "그날 밤 을지로"
     scenes:
       - c5-night
+  - id: chapter-6
+    title: "복제본"
+    scenes:
+      - c6-morning

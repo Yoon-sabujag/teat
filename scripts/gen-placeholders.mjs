@@ -19,6 +19,7 @@ const characters = {
   junhyuk: { hue: 110, name: "준혁", role: "증권맨 · 도현 동창" },
   wonjang: { hue: 75, name: "원장 스님", role: "북한산 암자 주지" },
   "soo-yeon": { hue: 10, name: "이수연", role: "시사주간지 기자" },
+  dohyun: { hue: 300, name: "김도현", role: "실종자 (녹음만)" },
 };
 
 const expressions = [
@@ -41,6 +42,7 @@ const backgrounds = {
   "bukhansan-amja": { hue: 80, name: "북한산 자락 암자 (저녁)" },
   "eulji-ob": { hue: 20, name: "을지로 노포 OB맥주집 (밤)" },
   "euljiro-night-alley": { hue: 240, name: "을지로 뒷골목 (밤)" },
+  "jugangji-backlot": { hue: 50, name: "주간지 편집국 뒷문 주차장 (아침)" },
 };
 
 function charSvg({ hue, name, role, expression }) {
