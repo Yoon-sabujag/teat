@@ -217,9 +217,18 @@ export function useSceneRunner({ scene, onEvent }: Args) {
           }),
         });
         if (!res.ok) {
-          const body = await res.text().catch(() => "");
+          let detail = "";
+          try {
+            const body = (await res.json()) as {
+              error?: string;
+              detail?: string;
+            };
+            detail = [body.error, body.detail].filter(Boolean).join(" — ");
+          } catch {
+            detail = await res.text().catch(() => "");
+          }
           throw new Error(
-            `LLM ${res.status}${body ? `: ${body.slice(0, 120)}` : ""}`,
+            detail ? `${res.status}: ${detail.slice(0, 160)}` : `${res.status}`,
           );
         }
         const { reply } = (await res.json()) as { reply: string };
