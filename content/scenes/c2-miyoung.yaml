@@ -168,67 +168,118 @@ nodes:
     id: improv-node
     lines:
       - speaker: miyoung
+        requires:
+          flagNotEquals:
+            key: miyoung_turn_taken
+            value: true
         text: 더 물어보실 거죠. 편하게 하세요.
         expression: tense
+      - speaker: miyoung
+        requires:
+          flag: miyoung_turn_taken
+        text: 또 뭐 있으세요. 오늘 자리에서 나오는 질문은 오늘 자리에서 끝내는 걸로 하죠.
+        expression: weary
     choices:
       - id: ask-phone
         label: 도현 씨 아이폰, 지금 어디 있어요?
+        requires:
+          flagNotEquals:
+            key: asked_phone
+            value: true
         next: phone-admission
         effects:
           - kind: flag
             key: miyoung_has_phone
             value: true
           - kind: flag
-            key: c2_miyoung_reveal
-            value: phone
+            key: asked_phone
+            value: true
+          - kind: flag
+            key: miyoung_turn_taken
+            value: true
           - kind: memory
             text: 미영이 도현의 아이폰을 보관하고 있다고 본인이 인정했다. 당장은 넘길 생각이 없다.
       - id: ask-alibi
         label: 실종 전날 밤, 정말 야근하셨습니까.
+        requires:
+          flagNotEquals:
+            key: asked_alibi
+            value: true
         next: caught-that-night
         effects:
           - kind: flag
             key: miyoung_was_there
             value: true
           - kind: flag
-            key: c2_miyoung_reveal
-            value: that_night
+            key: asked_alibi
+            value: true
+          - kind: flag
+            key: miyoung_turn_taken
+            value: true
           - kind: memory
             text: 미영은 도현 실종 전날 밤 오피스텔에 있었다. 야근 알리바이는 본인이 직접 꺾었다.
       - id: ask-alive
         label: 도현이 살아있다고 생각하세요.
+        requires:
+          flagNotEquals:
+            key: asked_alive
+            value: true
         next: alive-signal
         effects:
           - kind: flag
             key: dohyun_probably_alive
             value: true
           - kind: flag
-            key: c2_miyoung_reveal
-            value: alive_signal
+            key: asked_alive
+            value: true
+          - kind: flag
+            key: miyoung_turn_taken
+            value: true
           - kind: memory
             text: 미영은 도현이 살아있다고 본다. 실종 2주차에 본인에게 온 익명 문자 한 통이 근거.
       - id: ask-usb-plan
         label: 도현이 뭘 외부에 넘기려고 했는지 아십니까.
+        requires:
+          flagNotEquals:
+            key: asked_usb
+            value: true
         next: usb-disclosure
         effects:
           - kind: flag
             key: miyoung_knew_usb_plan
             value: true
           - kind: flag
-            key: c2_miyoung_reveal
-            value: usb_plan
-          - kind: memory
-            text: 미영은 도현의 외부 유출 계획과 그 상대방 이름을 안다. 상대 이름은 오늘은 꺼내지 않는다.
-      - id: ask-leave
-        label: (더 묻지 않고 자리를 정리한다.)
-        next: miyoung-leaves
-        effects:
-          - kind: flag
-            key: miyoung_walked_out
+            key: asked_usb
             value: true
           - kind: flag
-            key: c2_miyoung_reveal
-            value: walked_out
+            key: miyoung_turn_taken
+            value: true
+          - kind: memory
+            text: 미영은 도현의 외부 유출 계획과 그 상대방 이름을 안다. 상대 이름은 오늘은 꺼내지 않는다.
+      - id: end-politely
+        label: (오늘은 여기까지 하겠다고 정중히 마무리한다.)
+        next: close-with-info
+        effects:
+          - kind: flag
+            key: ended_politely
+            value: true
+      - id: end-hard
+        label: (의자를 한 번 더 끌어당기며) 오늘 끝까지 다 말씀하셔야겠는데요.
+        check: { stat: gwonmo, dc: 14 }
+        requires:
+          flag: miyoung_turn_taken
+        success:
+          next: hard-push-success
+          effects:
+            - kind: flag
+              key: pushed_hard_with_miyoung
+              value: true
+        failure:
+          next: miyoung-leaves
+          effects:
+            - kind: flag
+              key: miyoung_walked_out
+              value: true
 
   phone-admission:
     id: phone-admission
@@ -241,7 +292,10 @@ nodes:
         expression: tense
       - speaker: thought
         text: '"잘 지켜 주시면"이라는 표현을 저 사람이 바로 꺼낸 건, 오늘 여기서 더 파 들어오지 말라는 공식 경고다. 동시에 두 번째 자리를 본인 쪽에서 먼저 열어 주는 말이기도 했다. 이 두 가지가 한 문장 안에 같이 있는 법조인의 화법이 낯설지 않았다.'
-    next: close-with-info
+      - speaker: miyoung
+        text: 다른 것도 있으세요.
+        expression: neutral
+    next: improv-node
 
   caught-that-night:
     id: caught-that-night
@@ -254,7 +308,10 @@ nodes:
         expression: weary
       - speaker: thought
         text: 로펌 회의실 2호 예약, 카드키 로그, 파트너 세 명 증언까지 깔아 두었던 알리바이를 본인 손으로 한 번에 꺾었다. 이런 종류의 자백은 법조인이 하는 자백 중 가장 위험한 자백이고, 그래서 가장 계산된 자백이기도 하다.
-    next: close-with-info
+      - speaker: miyoung
+        text: 더 물으실 거 있으시면 지금 물으시는 게 편하실 거예요.
+        expression: tense
+    next: improv-node
 
   alive-signal:
     id: alive-signal
@@ -268,7 +325,10 @@ nodes:
       - speaker: miyoung
         text: 그 문장은 저랑 도현 씨만 알 수 있는 문장이에요. 오 년쯤 전 어떤 자리에서 둘이 같이 지어낸 문장이고요. 도현 씨가 어디 있는지는 저도 모릅니다. 다만 죽은 사람이 그 문장은 못 씁니다.
         expression: grim
-    next: close-with-info
+      - speaker: miyoung
+        text: 더 물으실 거 남았으면 말씀하시죠. 이 자리, 저도 한 번에 끝내는 쪽이 낫습니다.
+        expression: tense
+    next: improv-node
 
   usb-disclosure:
     id: usb-disclosure
@@ -284,7 +344,34 @@ nodes:
         expression: grim
       - speaker: thought
         text: 저 사람은 지금 내 준비 상태를 평가하고 있다. 평가 기준은 오늘 이 카페를 나간 이후 내가 며칠을 어떻게 움직이느냐일 거고, 그 며칠 동안 나는 저 사람의 다음 호출을 기다리는 쪽으로 밀려난다.
-    next: close-with-info
+      - speaker: miyoung
+        text: 다른 방향 질문 있으세요.
+        expression: neutral
+    next: improv-node
+
+  hard-push-success:
+    id: hard-push-success
+    lines:
+      - speaker: narration
+        text: 의자를 한 뼘 앞으로 당기자 탁자 다리 한쪽이 카펫 위를 짧게 긁었다. 창가 자리의 커플이 잠깐 고개를 돌렸다 다시 자기 얘기로 돌아갔다. 미영은 눈을 깔지 않고 내 쪽을 한 박자 더 오래 응시했다.
+      - speaker: miyoung
+        text: …실장님, 오늘 이 자리 끝까지 갈 수 있는 체력 있으세요.
+        expression: tense
+      - speaker: miyoung
+        text: 그러시면 저도 오늘은 한 번에 정리해 드리죠. 다만 정리한 내용은, 이 카페 문 닫고 나가는 순간부터 실장님 쪽 책임이에요.
+        expression: grim
+      - speaker: thought
+        text: 이 사람이 방어를 푸는 이유는 내 압박이 통해서가 아니다. 오늘 자리에서 한 번에 털어내고 깨끗이 끊는 쪽이 본인한테 더 이득이라고 계산한 거다. 한 번에 다 가져가는 건 편한 일이지만, 그 정보의 무게도 한 번에 다 가져가는 거다.
+        effects:
+          - kind: flag
+            key: miyoung_full_disclosure
+            value: true
+          - kind: memory
+            text: 강하게 밀어붙여 미영이 남은 정보까지 이 자리에서 풀었다. 대신 이후의 움직임과 책임은 전부 내 쪽.
+      - speaker: miyoung
+        text: 나머지 물으실 거 있으세요. 오늘 자리에서만 드립니다.
+        expression: weary
+    next: improv-node
 
   miyoung-leaves:
     id: miyoung-leaves
@@ -316,10 +403,6 @@ nodes:
         expression: neutral
       - speaker: narration
         text: 미영이 먼저 일어나 나갔다. 나간 자리에 아직 온기가 있는 잔 하나, 아이폰이 뒤집혀 놓인 자리 한 칸. 두 번째 만남의 룰을 오늘의 내 침묵이 반쯤 짜 주었다.
-        effects:
-          - kind: flag
-            key: c2_miyoung_reveal
-            value: held_back
     next: scene-close
 
   close-with-info:
@@ -348,44 +431,37 @@ nodes:
 
       - speaker: thought
         requires:
-          flagEquals:
-            key: c2_miyoung_reveal
-            value: phone
+          flag: miyoung_has_phone
         text: 도현이의 아이폰이 오늘 저녁 이 로펌 변호사 가방 안 어딘가에 들어 있었다. 이 카페에서 가장 무거운 정보가 오늘 내 손엔 오지 않고 저 사람의 손에 남았다. 다만 그게 내 손에 와야 할 시점이 언제인지, 그건 저 사람이 스스로 먼저 열어 둔 일정이다.
 
       - speaker: thought
         requires:
-          flagEquals:
-            key: c2_miyoung_reveal
-            value: that_night
+          flag: miyoung_was_there
         text: 로펌 야근 알리바이를 본인 손으로 꺾은 사람은 오늘 자리에서 큰 카드 한 장을 기꺼이 버렸다. 그런 자백은 계산 없이는 나오지 않는다. 저 카드의 다음 페이지에 무엇이 적혀 있는지, 그건 나에게 보여 주려고 오늘 버린 카드였다.
 
       - speaker: thought
         requires:
-          flagEquals:
-            key: c2_miyoung_reveal
-            value: alive_signal
+          flag: dohyun_probably_alive
         text: 도현이가 살아 있을 가능성이 오늘 저녁 소폭 올라갔다. 익명 문자 한 통이라는 근거는 법정에 못 서는 근거이지만, 이 방향으로 몇 걸음 더 나아갈 수 있는 방향타는 된다.
 
       - speaker: thought
         requires:
-          flagEquals:
-            key: c2_miyoung_reveal
-            value: walked_out
-        text: 미영이 먼저 일어났고, 남은 건 오늘 들은 '이 버전' 한 줄뿐이었다. 두 번째 버전은 오늘의 나머지 침묵 값으로 내가 따로 벌어 와야 한다.
-
-      - speaker: thought
-        requires:
-          flagEquals:
-            key: c2_miyoung_reveal
-            value: usb_plan
+          flag: miyoung_knew_usb_plan
         text: 도현이가 준비했던 외부 유출 계획의 상대방 이름이 한 줄짜리 카드로 저 사람 쪽에 남았다. 그 카드를 꺼내 주는 조건이 앞으로 며칠간 내 움직임이라는 건, 오늘 이 자리의 진짜 무게가 오히려 나에게로 건너온 쪽이라는 뜻이기도 하다.
 
       - speaker: thought
         requires:
-          flagEquals:
-            key: c2_miyoung_reveal
-            value: held_back
+          flag: miyoung_full_disclosure
+        text: 오늘 한 자리에서 미영이 남은 카드를 다 내놓게 만든 건 내 압박이라기보다 이 사람의 계산이었다. 정보는 한 뭉치로 건너왔고, 그 뭉치의 다음 수 하나하나가 내 쪽의 책임으로 같이 얹혔다.
+
+      - speaker: thought
+        requires:
+          flag: miyoung_walked_out
+        text: 미영이 먼저 일어났고, 남은 건 오늘 들은 것까지 한 장뿐이었다. 이 자리가 이렇게 끝난 건 내 쪽 잘못이라고 하기엔 애매했고, 저 사람 잘못이라고 하기엔 더 애매했다.
+
+      - speaker: thought
+        requires:
+          flag: held_back_with_miyoung
         text: 오늘 나는 평소보다 이르게 손을 뗐다. 다음 연락을 저 사람이 먼저 잡아 주는 그림을 만들어 둔 셈이고, 이 그림에서 두 번째 자리의 주도권은 이 카페 의자와 함께 저 쪽에 남은 게 아니다.
 
       - speaker: thought
