@@ -24,3 +24,7 @@ chapters:
     title: "을지 OB"
     scenes:
       - c4-soo-yeon
+  - id: chapter-5
+    title: "그날 밤 을지로"
+    scenes:
+      - c5-night

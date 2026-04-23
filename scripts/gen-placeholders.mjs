@@ -40,6 +40,7 @@ const backgrounds = {
   "cheongdam-cafe": { hue: 330, name: "청담 카페 (저녁)" },
   "bukhansan-amja": { hue: 80, name: "북한산 자락 암자 (저녁)" },
   "eulji-ob": { hue: 20, name: "을지로 노포 OB맥주집 (밤)" },
+  "euljiro-night-alley": { hue: 240, name: "을지로 뒷골목 (밤)" },
 };
 
 function charSvg({ hue, name, role, expression }) {
