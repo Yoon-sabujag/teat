@@ -74,6 +74,7 @@ export function useSceneRunner({ scene, onEvent }: Args) {
   const [busy, setBusy] = useState(false);
   const [lastCheck, setLastCheck] = useState<CheckResult | null>(null);
   const [improvError, setImprovError] = useState<string | null>(null);
+  const [pendingTrigger, setPendingTrigger] = useState<string | null>(null);
   const appliedRef = useRef<Set<string>>(new Set());
 
   const pc = useSave((s) => s.pc);
@@ -140,7 +141,13 @@ export function useSceneRunner({ scene, onEvent }: Args) {
 
   const advance = useCallback(() => {
     if (state.improvText) {
-      setState((s) => ({ ...s, improvText: undefined }));
+      if (pendingTrigger) {
+        appliedRef.current.clear();
+        setState({ nodeId: pendingTrigger, lineIndex: 0 });
+        setPendingTrigger(null);
+      } else {
+        setState((s) => ({ ...s, improvText: undefined }));
+      }
       return;
     }
     applyCurrentLineEffectsOnce();
@@ -159,6 +166,7 @@ export function useSceneRunner({ scene, onEvent }: Args) {
     });
   }, [
     state.improvText,
+    pendingTrigger,
     applyCurrentLineEffectsOnce,
     scene,
     displayIndex,
@@ -210,25 +218,35 @@ export function useSceneRunner({ scene, onEvent }: Args) {
         });
         if (!res.ok) {
           const body = await res.text().catch(() => "");
-          throw new Error(`LLM ${res.status}${body ? `: ${body.slice(0, 120)}` : ""}`);
+          throw new Error(
+            `LLM ${res.status}${body ? `: ${body.slice(0, 120)}` : ""}`,
+          );
         }
         const { reply } = (await res.json()) as { reply: string };
-        setState((s) => ({ ...s, improvText: reply }));
+
+        // Strip every configured trigger keyword before showing the line.
+        // The raw reply is still checked for routing so the keyword never
+        // leaks to the player.
+        let display = reply;
+        for (const t of improv.triggers) {
+          display = display.split(t.keyword).join("");
+        }
+        display = display.trim();
+
+        setState((s) => ({ ...s, improvText: display }));
 
         const trigger = improv.triggers.find((t) =>
           reply.includes(t.keyword),
         );
         if (trigger) {
           applyEffects(trigger.effects);
-          setTimeout(() => {
-            appliedRef.current.clear();
-            setState({ nodeId: trigger.next, lineIndex: 0 });
-          }, 2000);
+          // Do not auto-advance. Store the pending trigger; the next
+          // "다음 ▶" tap transitions to trigger.next so the player sets
+          // the reading pace.
+          setPendingTrigger(trigger.next);
         }
       } catch (err) {
-        setImprovError(
-          err instanceof Error ? err.message : "응답 실패",
-        );
+        setImprovError(err instanceof Error ? err.message : "응답 실패");
       } finally {
         setBusy(false);
       }
