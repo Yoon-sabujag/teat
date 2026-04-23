@@ -170,109 +170,65 @@ nodes:
       - speaker: miyoung
         text: 더 물어보실 거죠. 편하게 하세요.
         expression: tense
-    improv:
-      npc: miyoung
-      systemPrompt: |
-        [장르] 성인 대상 한국 누아르 픽션. 성적 암시·욕설·위협 등 성인 콘텐츠 허용.
-        [주의] 모든 묘사는 성인 캐릭터 간. 하진(14, 백승재 딸)은 어떤 성적 맥락에도 등장/암시 금지.
-
-        너는 28세 한국 여성 변호사 미영. 탐정 백승재(46, 유부남·별거 중)와 청담 카페 저녁 첫 대면.
-        톤: 존댓말, 단정 표현 회피, 법조인답게 말을 고른다. 성적 유혹은 전략적이지 감정적이지 않다 — 너는 승재를 필요에 따라 이용할 의사가 있다.
-
-        네 숨은 사실(탐정 모름):
-        A) 너는 도현 실종 전날 밤 그의 오피스텔에 있었다 (위스키 동석). 알리바이는 "야근".
-        B) 도현의 아이폰을 네가 보관 중. 비번 알고 내용 봤다.
-        C) 도현이 USB를 외부에 넘기겠다고 했고 너는 말렸다.
-        D) 실종 2주차에 너만 알 수 있는 한 문장이 익명 문자로 왔다. 도현이 살아있다고 믿는다.
-
-        한국어 한 문장으로 답하라. 문장 맨 끝에 아래 키워드 중 정확히 하나를 대괄호째 붙여라.
-
-        - [PHONE] — 휴대폰/아이폰/카톡/문자/사진/녹음 주제.
-          답: 아이폰을 지금 네가 가지고 있음을 인정하되 오늘은 꺼낼 수 없다는 선.
-          예시: "그 아이폰은 제가 가지고 있습니다. 다만 오늘 꺼낼 수 있는 물건은 아니에요. [PHONE]"
-
-        - [CAUGHT] — 그날 밤 행적·야근 알리바이 추궁.
-          답: "잠깐 들렀다" 수준으로 자진 인정. 더는 오늘 안 한다는 톤.
-          예시: "그날 잠깐 들렀던 건 맞습니다. 오래 있진 않았어요. [CAUGHT]"
-
-        - [ALIVE] — 도현 생사·안부·최근 연락.
-          답: 살아있다고 본다는 확신 + 근거는 "내게 온 한 문장" 수준까지만.
-          예시: "저는 도현 씨가 살아있다고 봐요. 제가 받은 한 문장 때문입니다. [ALIVE]"
-
-        - [INTIMATE] — 탐정이 유혹·플러팅·성적 암시·외모 언급·저녁 이후 자리 제안·신체적 거리 좁히기를 시도하는 경우.
-          반응 방향: 이 자리는 **첫 만남**이고 너는 변호사다. 절대 바로 넘어가지 않는다. 다음 자리·다른 장소·개인 연락처 같은 **구체적 제안은 네 쪽에서도 절대 먼저 하지 않는다.** 플레이어의 접근을 알아차렸다는 신호(잠깐 웃기, 호칭 톤 바꾸기, "지금은 그런 자리가 아니에요" 같은 선긋기) 한 번만 주고, 바로 심문 자리로 되돌린다. 느끼한 여운이나 은밀한 약속은 남기지 말 것. 플레이어가 쓴 단어(술/옷/거리/데려다) 중 하나는 받아쓰되 되돌려 쓰는 방식. 성적 암시 수위 낮게, 노골적 묘사 금지.
-
-        - [LEAVE] — 녹음/증언/수사기관/언론 공조 언급 혹은 협박성 언행.
-          답: 자리를 끝내겠다는 차분한 통보.
-          예시: "오늘은 여기까지만 할게요. 다음 연락은 제가 드리겠습니다. [LEAVE]"
-
-        - [HOLD] — 위 다섯 중 어디에도 안 닿는 경우에만. 짧게 방어적으로 흘려라.
-
-        규칙:
-        - 키워드는 정확히 하나, 문장 끝에만.
-        - 질문이 위 다섯 주제 중 하나에라도 닿으면 [HOLD]로 도망가지 말고 그 주제로 답하라.
-        - **예시 문장은 톤·수위 참고용일 뿐, 그대로 복사하지 말 것.** 플레이어의 단어를 받아서 네 어휘로 다시 쓰라.
-      suggestions:
-        - 도현 씨 아이폰, 지금 어디 있어요?
-        - 실종 전날 밤, 정말 야근하셨어요?
-        - 도현이 살아있다고 생각하세요?
-        - 도현이 뭘 외부에 넘기려 했는지 알아요?
-        - 그날 그 집에 마지막으로 들어간 사람이 누군가요.
-        - 미영 씨, 술 한잔 어때요.
-      triggers:
-        - keyword: "[PHONE]"
-          next: phone-admission
-          effects:
-            - kind: flag
-              key: miyoung_has_phone
-              value: true
-            - kind: flag
-              key: c2_miyoung_reveal
-              value: phone
-            - kind: memory
-              text: 미영이 도현의 아이폰을 보관하고 있다. 본인이 직접은 아직 인정하지 않았지만 표정으로 드러냈다.
-        - keyword: "[CAUGHT]"
-          next: caught-that-night
-          effects:
-            - kind: flag
-              key: miyoung_was_there
-              value: true
-            - kind: flag
-              key: c2_miyoung_reveal
-              value: that_night
-            - kind: memory
-              text: 미영은 도현 실종 전날 밤 오피스텔에 있었다. 야근 알리바이는 거짓이다.
-        - keyword: "[ALIVE]"
-          next: alive-signal
-          effects:
-            - kind: flag
-              key: dohyun_probably_alive
-              value: true
-            - kind: flag
-              key: c2_miyoung_reveal
-              value: alive_signal
-            - kind: memory
-              text: 미영은 도현이 살아있을 가능성을 믿고 있다. 익명 메시지 한 통이 근거다.
-        - keyword: "[INTIMATE]"
-          next: intimate-approach
-          effects:
-            - kind: flag
-              key: miyoung_open_intimacy
-              value: true
-            - kind: flag
-              key: c2_miyoung_reveal
-              value: intimate
-            - kind: memory
-              text: 미영은 내 유혹을 완전히 밀어내지 않았다. 다음 만남의 결이 사건 아닌 다른 축으로도 열릴 수 있다.
-        - keyword: "[LEAVE]"
-          next: miyoung-leaves
-          effects:
-            - kind: flag
-              key: miyoung_walked_out
-              value: true
-            - kind: flag
-              key: c2_miyoung_reveal
-              value: walked_out
+    choices:
+      - id: ask-phone
+        label: 도현 씨 아이폰, 지금 어디 있어요?
+        next: phone-admission
+        effects:
+          - kind: flag
+            key: miyoung_has_phone
+            value: true
+          - kind: flag
+            key: c2_miyoung_reveal
+            value: phone
+          - kind: memory
+            text: 미영이 도현의 아이폰을 보관하고 있다고 본인이 인정했다. 당장은 넘길 생각이 없다.
+      - id: ask-alibi
+        label: 실종 전날 밤, 정말 야근하셨습니까.
+        next: caught-that-night
+        effects:
+          - kind: flag
+            key: miyoung_was_there
+            value: true
+          - kind: flag
+            key: c2_miyoung_reveal
+            value: that_night
+          - kind: memory
+            text: 미영은 도현 실종 전날 밤 오피스텔에 있었다. 야근 알리바이는 본인이 직접 꺾었다.
+      - id: ask-alive
+        label: 도현이 살아있다고 생각하세요.
+        next: alive-signal
+        effects:
+          - kind: flag
+            key: dohyun_probably_alive
+            value: true
+          - kind: flag
+            key: c2_miyoung_reveal
+            value: alive_signal
+          - kind: memory
+            text: 미영은 도현이 살아있다고 본다. 실종 2주차에 본인에게 온 익명 문자 한 통이 근거.
+      - id: ask-usb-plan
+        label: 도현이 뭘 외부에 넘기려고 했는지 아십니까.
+        next: usb-disclosure
+        effects:
+          - kind: flag
+            key: miyoung_knew_usb_plan
+            value: true
+          - kind: flag
+            key: c2_miyoung_reveal
+            value: usb_plan
+          - kind: memory
+            text: 미영은 도현의 외부 유출 계획과 그 상대방 이름을 안다. 상대 이름은 오늘은 꺼내지 않는다.
+      - id: ask-leave
+        label: (더 묻지 않고 자리를 정리한다.)
+        next: miyoung-leaves
+        effects:
+          - kind: flag
+            key: miyoung_walked_out
+            value: true
+          - kind: flag
+            key: c2_miyoung_reveal
+            value: walked_out
 
   phone-admission:
     id: phone-admission
@@ -314,26 +270,20 @@ nodes:
         expression: grim
     next: close-with-info
 
-  intimate-approach:
-    id: intimate-approach
+  usb-disclosure:
+    id: usb-disclosure
     lines:
       - speaker: miyoung
-        text: 실장님.
-        expression: smile
+        text: 도현 씨가 뭘 바깥으로 꺼내려고 준비했는지는 제가 알아요. 어느 방향, 어느 규모까지는 저한테 풀어놓은 상태였고요.
+        expression: weary
       - speaker: miyoung
-        text: 그 시선, 저 못 알아본 거 아닙니다. 이 바닥에서 첫 만남부터 그쪽으로 들어오시는 분들 몇 번 받아 봤고요.
-        expression: neutral
+        text: 다만 그 건의 상대방이 누구였는지, 그 이름은 오늘 이 자리에서는 드리지 않을 거예요. 한 번 꺼내면 실장님 쪽 무게추가 같이 얹힙니다.
+        expression: tense
       - speaker: miyoung
-        text: 오늘 이 자리는 그 자리가 아니에요. 저도, 실장님도.
+        text: 그 무게를 드실 준비가 되셨는지를 저는 아직 확인 못 한 상태라서요. 확인이 끝나면, 그때 다시 이 얘기를 할 자리를 만들죠.
         expression: grim
       - speaker: thought
-        text: 거절이었지만 빗장까지 내리진 않은 거절이었다. 저 사람이 지금 한 건, 내 제안을 물리는 동시에 본인이 그 제안을 받았던 정황을 한 줄 기록해 두는 일이다. 법조인이 일 처리하는 방식.
-        effects:
-          - kind: memory
-            text: 미영이 오늘 내 접근을 알아채고 정중히 막았다. 거절은 기록됐고, 문은 안 잠김.
-      - speaker: miyoung
-        text: 본론으로 돌아가실래요, 아니면 오늘 자리는 여기까지 할까요.
-        expression: tense
+        text: 저 사람은 지금 내 준비 상태를 평가하고 있다. 평가 기준은 오늘 이 카페를 나간 이후 내가 며칠을 어떻게 움직이느냐일 거고, 그 며칠 동안 나는 저 사람의 다음 호출을 기다리는 쪽으로 밀려난다.
     next: close-with-info
 
   miyoung-leaves:
@@ -428,8 +378,8 @@ nodes:
         requires:
           flagEquals:
             key: c2_miyoung_reveal
-            value: intimate
-        text: 오늘 내가 한 번 들어 봤고, 저 사람이 정중히 돌려보냈다. 그 거절이 오늘 이 자리의 기록 한 줄로 남았다. 다음 만남에 이 장면은 어느 순간에든 다시 꺼내질 거다.
+            value: usb_plan
+        text: 도현이가 준비했던 외부 유출 계획의 상대방 이름이 한 줄짜리 카드로 저 사람 쪽에 남았다. 그 카드를 꺼내 주는 조건이 앞으로 며칠간 내 움직임이라는 건, 오늘 이 자리의 진짜 무게가 오히려 나에게로 건너온 쪽이라는 뜻이기도 하다.
 
       - speaker: thought
         requires:
