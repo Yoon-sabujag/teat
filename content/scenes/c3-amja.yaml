@@ -426,3 +426,4 @@ nodes:
         effects:
           - kind: chapterComplete
             chapter: chapter-3
+            nextChapter: chapter-4

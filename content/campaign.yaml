@@ -20,3 +20,7 @@ chapters:
     title: "북한산 암자"
     scenes:
       - c3-amja
+  - id: chapter-4
+    title: "을지 OB"
+    scenes:
+      - c4-soo-yeon

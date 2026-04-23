@@ -1,0 +1,384 @@
+id: c4-soo-yeon
+title: "을지 OB"
+background: eulji-ob
+cast:
+  - npc: soo-yeon
+    position: center
+    expression: neutral
+entry: arrive
+
+nodes:
+  arrive:
+    id: arrive
+    lines:
+      - speaker: narration
+        text: 을지로3가역 3번 출구에서 두 블록 걸어 들어간 노포 골목. 간판에 페인트가 벗겨진 'OB 맥주'가 있었고, 입구부터 연탄불에 구워지는 돼지껍데기 냄새가 반 미터쯤 밖으로 삐져나와 있었다. 회식 2차 자리가 테이블 절반을 메웠고, 주방 쪽 선풍기 한 대가 천장 형광등 케이스를 한 번씩 덜컹 두드렸다.
+      - speaker: narration
+        text: 가장 안쪽 구석 2인석. 이수연은 이미 소주 한 병을 따 놓고 앞자리에 녹색 병뚜껑 세 개를 나란히 세워 두고 있었다. 취재 수첩이 탁자 한구석에 접혀 있었고, 그 위에 담뱃갑 한 개 — 에쎄 수. 말보로 건달이 아니라 기자 브랜드.
+      - speaker: soo-yeon
+        text: 실장님. 앉으세요. 오는 길 멀었죠.
+        expression: amused
+      - speaker: soo-yeon
+        text: 북한산 다녀오신 거, 차 번호로 지금 확인 됐어요. 등산로 주차장 CCTV 돌려보고요. 그림이 돼요.
+        expression: neutral
+      - speaker: thought
+        text: 기자 라인이 북한산 주차장 CCTV까지 닿는다. 이 사람은 내가 을지로에 자리 잡은 이틀째에 이미 나한테 명함을 두고 갔던 사람이다. 오늘 자리에서의 포지션은 일방적으로 저쪽이 위에 있다.
+    next: warmup
+  warmup:
+    id: warmup
+    lines:
+      - speaker: soo-yeon
+        text: 오늘 자리 제가 먼저 잡은 건 한 가지 얘기부터 정리하려고예요.
+        expression: neutral
+      - speaker: soo-yeon
+        requires:
+          flag: reserved_channel
+        text: 실장님이 김 부회장님과 계약서에 '생명 위협 감지 시 외부 채널 한 곳 공조' 조항 박으신 거, 저 압니다. 그 한 곳이 저예요. 공식화 하지는 않고요, 운영 라인만 깔아 둘게요.
+        expression: grim
+      - speaker: soo-yeon
+        requires:
+          flagNotEquals:
+            key: reserved_channel
+            value: true
+        text: 실장님 계약서에는 저 같은 라인 박혀 있지 않다는 거, 저도 알아요. 그래서 오늘 자리는 비공식이에요. 저도 기사 전제로 움직이지 않고요, 실장님도 오늘 자리에서 하신 말씀은 어디에도 안 나간다는 전제로 가요.
+        expression: neutral
+      - speaker: soo-yeon
+        text: 룰 한 줄만요. 한 장 내놓으시면, 한 장 돌려드립니다. 그냥 묻기만 하시면, 저도 그냥 답 안 해요. 오, 참 네.
+        expression: amused
+      - speaker: thought
+        text: 명함 한 장 무게로 사람을 앉히는 기자의 자리 설계. 오늘 여기서 내가 덜 꺼내면 덜 받고, 더 꺼내면 더 받는다. 그 교환이 이 사람의 기본 화폐다.
+    next: hub
+
+  hub:
+    id: hub
+    lines:
+      - speaker: soo-yeon
+        requires:
+          flagNotEquals:
+            key: c4_turn_taken
+            value: true
+        text: 어느 장부터 가실래요.
+        expression: neutral
+      - speaker: soo-yeon
+        requires:
+          flag: c4_turn_taken
+        text: 또 있으시면요.
+        expression: amused
+    choices:
+      - id: give-client
+        label: 김승기 부회장이 저한테 개인 명의로 의뢰를 맡겼습니다.
+        requires:
+          flag: accepted_case
+          flagNotEquals:
+            key: gave_client
+            value: true
+        next: got-client
+        effects:
+          - kind: flag
+            key: gave_client
+            value: true
+          - kind: flag
+            key: c4_turn_taken
+            value: true
+      - id: give-audit
+        label: 도현 집에서 해외 법인 특수목적회사 편입분 감사 공시 한 장을 봤습니다.
+        requires:
+          flag: saw_audit_paper
+          flagNotEquals:
+            key: gave_audit
+            value: true
+        next: got-audit
+        effects:
+          - kind: flag
+            key: gave_audit
+            value: true
+          - kind: flag
+            key: c4_turn_taken
+            value: true
+      - id: give-ghost
+        label: 도현 실종 전날 새벽 두 시에 검은 정장 둘이 오피스텔에 들어갔습니다. 로그는 안 남았고요.
+        requires:
+          flag: ghost_visitors
+          flagNotEquals:
+            key: gave_ghost
+            value: true
+        next: got-ghost
+        effects:
+          - kind: flag
+            key: gave_ghost
+            value: true
+          - kind: flag
+            key: c4_turn_taken
+            value: true
+      - id: give-miyoung
+        label: 미영 변호사가 도현 씨 아이폰을 보관 중이고, 실종 전날 밤엔 도현 집에 있었습니다.
+        requires:
+          flag: miyoung_was_there
+          flagNotEquals:
+            key: gave_miyoung
+            value: true
+        next: got-miyoung
+        effects:
+          - kind: flag
+            key: gave_miyoung
+            value: true
+          - kind: flag
+            key: c4_turn_taken
+            value: true
+      - id: give-tape
+        label: 도현이 북한산 암자에 녹음기 한 대를 남기고 갔습니다. 저한테 전해 달라는 말씀과 함께.
+        requires:
+          flag: got_tape
+          flagNotEquals:
+            key: gave_tape
+            value: true
+        next: got-tape
+        effects:
+          - kind: flag
+            key: gave_tape
+            value: true
+          - kind: flag
+            key: c4_turn_taken
+            value: true
+      - id: ask-suspects
+        label: 본사 임원 후보 좁혀 주실 수 있습니까.
+        requires:
+          flag: c4_turn_taken
+          flagNotEquals:
+            key: asked_suspects
+            value: true
+        check: { stat: gwonmo, dc: 14 }
+        success:
+          next: suspects-answer
+          effects:
+            - kind: flag
+              key: asked_suspects
+              value: true
+            - kind: flag
+              key: got_shortlist
+              value: true
+            - kind: memory
+              text: 이수연이 본사 임원 후보 세 명 이름을 넘겼다. 한 명은 차 상무.
+        failure:
+          next: suspects-deflect
+          effects:
+            - kind: flag
+              key: asked_suspects
+              value: true
+      - id: ask-cha
+        label: 차 상무에 대해 기자님 쪽 라인에서 뭘 보고 계십니까.
+        requires:
+          flag: c4_turn_taken
+          flagNotEquals:
+            key: asked_cha
+            value: true
+        check: { stat: jikgam, dc: 13 }
+        success:
+          next: cha-answer
+          effects:
+            - kind: flag
+              key: asked_cha
+              value: true
+            - kind: flag
+              key: cha_under_watch
+              value: true
+            - kind: memory
+              text: 이수연 기자 라인에서도 차 상무가 '감시 중' 명단에 있다. 파이낸셜 기자 둘이 병렬로 추적 중.
+        failure:
+          next: cha-deflect
+          effects:
+            - kind: flag
+              key: asked_cha
+              value: true
+      - id: end-done
+        label: (잔을 비우고 자리를 정리한다.)
+        next: close
+
+  got-client:
+    id: got-client
+    lines:
+      - speaker: soo-yeon
+        text: 좋아요. 그럼 제 쪽 확인 하나 얹어드릴게요. 김 부회장님이 실장님 고르신 건, 실장님이 차 상무 손에 잘린 분이라는 라인 하나가 결정타였어요.
+        expression: grim
+      - speaker: soo-yeon
+        text: 차 상무가 부회장님 라인 사람이 아니라는 건, 그룹 안에서 꽤 알려진 얘기예요. 실장님 이름이 그 교차로에 박힌 거고요.
+        expression: neutral
+      - speaker: thought
+        text: 내가 퇴직 자리에 앉은 순간부터 김승기의 카드로 전환되어 있었다는 얘기다. 두 달 전의 합의서가 오늘 저녁 이 테이블 위에서 처음으로 제 모양으로 배치됐다.
+        effects:
+          - kind: flag
+            key: learned_why_chosen
+            value: true
+          - kind: memory
+            text: 내 해고가 김승기 라인의 카드 세팅으로 쓰였다. 차 상무와 부회장은 그룹 내 반대 라인.
+    next: hub
+
+  got-audit:
+    id: got-audit
+    lines:
+      - speaker: soo-yeon
+        text: 그 한 장 자체로는 그림 안 나와요. 근데 제가 파이낸셜 쪽에서 따로 보고 있는 서류들하고 붙이면, 그림이 돼요.
+        expression: amused
+      - speaker: soo-yeon
+        text: 그룹이 싱가포르 법인 하나 껴서 자금 라인 한 바퀴 돌리는 구조예요. 그 라인 중간에 감사실 책임자 이름 하나가 반복해서 찍혀요.
+        expression: grim
+      - speaker: soo-yeon
+        text: 이름은 아직 드리지 않고요. 오늘은 구조까지만이에요.
+        expression: neutral
+      - speaker: thought
+        text: 싱가포르 SPC. 도현이 책상에 두고 간 붉은 줄과, 기자 쪽이 파이낸셜 라인으로 따로 좇던 그림이 여기서 한 점으로 붙었다.
+        effects:
+          - kind: flag
+            key: learned_spc_structure
+            value: true
+          - kind: memory
+            text: 그룹의 싱가포르 SPC 자금 라인 구조 확인. 감사실 책임자 이름은 이수연이 아직 유보.
+    next: hub
+
+  got-ghost:
+    id: got-ghost
+    lines:
+      - speaker: soo-yeon
+        text: 새벽 두 시에 로그 없는 방문이면, 보안실장 사인 하나로 정리된 거예요. 보안실장이 누구 라인 사람인지는 제가 이미 알고 있고요.
+        expression: grim
+      - speaker: soo-yeon
+        text: 이름은 오늘 안 드리고요. 대신 한 줄만 드릴게요. 그 라인은 차 상무 쪽이 아니에요.
+        expression: neutral
+      - speaker: thought
+        text: 차 상무 쪽이 아니라는 건, 새벽 두 시에 도현 집에 들어간 사람들이 차 상무와는 다른 방향의 손이라는 뜻이다. 그룹 안의 전선이 내가 생각했던 것보다 여러 겹이다.
+        effects:
+          - kind: flag
+            key: ghost_not_cha
+            value: true
+          - kind: memory
+            text: 새벽 2시 오피스텔 방문자는 차 상무 라인이 아니다. 다른 축의 손.
+    next: hub
+
+  got-miyoung:
+    id: got-miyoung
+    lines:
+      - speaker: soo-yeon
+        text: 참 네. 미영 변호사 얘기 제가 오늘 먼저 꺼내지 않은 건, 실장님이 거기까지 가셨는지 확인이 안 됐기 때문이에요. 가셨네요.
+        expression: amused
+      - speaker: soo-yeon
+        text: 미영 씨는 본인 쪽 살길 한 개, 도현 씨 쪽 살길 한 개, 그리고 본인 로펌 쪽 살길 한 개 — 이렇게 세 개를 동시에 잡고 있어요. 그 세 개가 서로 어긋나는 순간이 언젠간 와요.
+        expression: grim
+      - speaker: soo-yeon
+        text: 그 순간에 실장님이 어느 개를 붙잡으실지는, 오늘 제가 묻지 않을게요.
+        expression: neutral
+      - speaker: thought
+        text: 미영이 동시에 들고 있는 세 개의 끈. 그 중 어느 하나가 끊어지는 방향을 내가 결정할 수 있게 된다는 말이기도 하다. 그 무게는 오늘 이 소주잔보다 훨씬 무겁게 내려앉는다.
+        effects:
+          - kind: flag
+            key: learned_miyoung_triangle
+            value: true
+          - kind: memory
+            text: 미영은 본인·도현·로펌 셋의 살길을 동시에 쥐고 있다. 세 개가 어긋나는 순간이 오면 내 선택이 결과를 가른다.
+    next: hub
+
+  got-tape:
+    id: got-tape
+    lines:
+      - speaker: soo-yeon
+        text: 그 녹음기, 오늘 이 자리에서 꺼내지 마세요. 가방 속에 계속 두세요.
+        expression: tense
+      - speaker: soo-yeon
+        text: 내일 오전에 저희 쪽 엔지니어 통해서 무손실 복제본 한 개 만들어드릴게요. 원본은 실장님 손에, 복제본 두 개는 금고 두 군데에 따로.
+        expression: grim
+      - speaker: soo-yeon
+        text: 도현 씨가 실장님 앞으로 남기신 거면, 그 안에 누군가 이름이 있어요. 그 이름이 밖으로 나가는 순간, 실장님 앞에도 누군가 와 앉아요. 저는 그 누군가를 실장님 쪽에 한 줄 미리 알려드릴 수 있는 자리에 있고요.
+        expression: weary
+      - speaker: thought
+        text: 기자가 녹음기 복제본을 만들겠다는 제안은 친절이자 체인이다. 오늘 이후로 이수연은 이 녹음의 존재를 안다는 걸로 내 옆 자리에 고정된다.
+        effects:
+          - kind: flag
+            key: tape_duplicated_plan
+            value: true
+          - kind: memory
+            text: 이수연이 내일 오전 무손실 복제본 한 개 만들어 주기로 했다. 원본은 내 손, 복제본은 두 곳 금고 분산.
+    next: hub
+
+  suspects-answer:
+    id: suspects-answer
+    lines:
+      - speaker: soo-yeon
+        text: 세 명이에요. 한 명은 실장님이 오늘 벌써 아시는 분이고요. 차 상무.
+        expression: grim
+      - speaker: soo-yeon
+        text: 두 번째는 감사실장. 세 번째는 이름만 드릴게요. 장 전무. 그룹 지주 쪽.
+        expression: neutral
+      - speaker: soo-yeon
+        text: 이 셋 중 둘이 붙어 있고, 한 명이 바깥에 있어요. 누가 안에 있고 누가 바깥에 있는지는, 오늘 드리지 않을게요.
+        expression: amused
+      - speaker: thought
+        text: 세 이름이 테이블 위에 올라왔다. 두 명은 한 패, 한 명은 혼자. 그 구분선이 오늘 밤엔 안 보이지만, 내일 오전 복제본이 나오는 순간 선이 그어질 가능성이 있다.
+    next: hub
+
+  suspects-deflect:
+    id: suspects-deflect
+    lines:
+      - speaker: soo-yeon
+        text: 명단은 오늘 못 드려요. 제 쪽 데스크하고 먼저 정리해야 해요.
+        expression: neutral
+      - speaker: thought
+        text: 기자의 내부 심의 라인까지 고려한 거절이다. 오늘 자리의 권모 쪽 화폐가 부족했다. 이 카드는 다음 자리에서 다시 사야 한다.
+    next: hub
+
+  cha-answer:
+    id: cha-answer
+    lines:
+      - speaker: soo-yeon
+        text: 차 상무 이름은 저희 쪽 파이낸셜 기자 둘이 병렬로 쫓고 있어요. 감시 중 명단에 오른 지 한 달 됐고요.
+        expression: grim
+      - speaker: soo-yeon
+        text: 실장님이 그 분한테서 직접 해고 통보 받으신 건, 저희 쪽 시간선하고 정확히 겹쳐요. 그 겹침이 제가 오늘 실장님 만나는 이유 중 하나고요.
+        expression: neutral
+      - speaker: thought
+        text: 나의 퇴직 타이밍과 기자의 감시 개시 타이밍이 겹쳤다. 그 겹침이 기자 쪽에선 가설의 재료였고, 내 쪽에선 한 달 동안 아무 모양도 없던 그냥 해고였다.
+    next: hub
+
+  cha-deflect:
+    id: cha-deflect
+    lines:
+      - speaker: soo-yeon
+        text: 그 이름은 오늘 제가 받는 쪽이지 드리는 쪽이 아니에요. 실장님 쪽이 먼저 몇 장 더 얹어 주셔야 저도 얹을 수 있고요.
+        expression: neutral
+      - speaker: thought
+        text: 직감의 각도가 빗나갔다. 이수연은 차 상무에 대한 본인의 카드를 내 쪽 합보다 한 수 높은 가격으로 매겨 놓고 있었다.
+    next: hub
+
+  close:
+    id: close
+    lines:
+      - speaker: narration
+        text: 이수연이 소주잔 바닥을 한 번 더 뒤집어 흔들어 마지막 한 방울을 털어냈다. 탁자 위 녹색 병뚜껑 세 개가 네 개로 늘어 있었다. 에쎄 수 한 대는 결국 입에 안 물고 담뱃갑 위에 그냥 얹혀 있었다.
+      - speaker: soo-yeon
+        requires:
+          flag: tape_duplicated_plan
+        text: 내일 아침 아홉 시, 주간지 편집국 뒷문 쪽 주차장. 엔지니어 한 명만 나와 있을 거예요. 차 번호만 맞추고 들여보내세요.
+        expression: grim
+      - speaker: soo-yeon
+        requires:
+          flag: got_shortlist
+        text: 그 세 이름, 오늘 밤엔 실장님 머릿속에서만 굴리세요. 휴대폰 메모에도 찍지 마시고요.
+        expression: neutral
+      - speaker: soo-yeon
+        requires:
+          flag: learned_miyoung_triangle
+        text: 미영 씨 세 개의 끈 말씀드린 거, 오늘 저한테서 들으신 걸로는 안 남겨요. 실장님 쪽에서 판단하신 걸로 정리해 주세요.
+        expression: weary
+      - speaker: soo-yeon
+        text: 조심히 다니세요. 오늘 이후로 실장님 차 뒤에 달라붙는 차 한 대 정도는 예상하시고요.
+        expression: grim
+      - speaker: narration
+        text: 이수연이 먼저 자리에서 일어나 계산대 쪽으로 걸어갔다. 자리 계산은 본인이 끝냈고, 내 자리엔 에쎄 수 담뱃갑 위에 올려 둔 취재 수첩 대신 본인 명함 한 장과 손글씨 한 줄 — '내일 9시. 뒷문.'
+        effects:
+          - kind: memory
+            text: 이수연과 을지 OB에서 카드 교환 마침. 다음 접선은 내일 오전 아홉 시 주간지 뒷문.
+      - speaker: thought
+        text: 을지로 사무실까지 걸어서 십 분. 오늘 밤 안에 내 쪽에서 정리해야 할 것이 두 덩어리다. 첫째, 녹음기를 어디 둘지. 둘째, 차 뒤에 붙을 차의 번호판을 어떻게 처음 한 번에 확인할지.
+      - speaker: narration
+        text: 노포 밖으로 나오자 을지로 골목의 겨울 공기가 정면으로 목을 쳤다. 회식 3차 찾아가는 양복 무리 한 팀이 스쳐 지나갔고, 그 뒤로 길 건너편 편의점 간판 불빛이 한 번 깜빡였다 다시 돌아왔다.
+        effects:
+          - kind: chapterComplete
+            chapter: chapter-4
