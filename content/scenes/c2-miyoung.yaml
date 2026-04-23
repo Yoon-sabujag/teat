@@ -180,28 +180,75 @@ nodes:
         text: 또 뭐 있으세요. 오늘 자리에서 나오는 질문은 오늘 자리에서 끝내는 걸로 하죠.
         expression: weary
     choices:
-      - id: ask-phone
-        label: 도현 씨 아이폰, 지금 어디 있어요?
+      # ── Layer 1 (always available until asked): general opening questions ──
+      - id: ask-relation
+        label: 도현 씨와는 어떤 사이이셨습니까.
         requires:
           flagNotEquals:
-            key: asked_phone
+            key: asked_relation
             value: true
-        next: phone-admission
+        next: relationship-answer
         effects:
           - kind: flag
-            key: miyoung_has_phone
+            key: asked_relation
             value: true
           - kind: flag
-            key: asked_phone
+            key: miyoung_turn_taken
+            value: true
+      - id: ask-last-contact
+        label: 실종 전에 마지막으로 언제 통화하셨습니까.
+        requires:
+          flagNotEquals:
+            key: asked_last
+            value: true
+        next: last-contact-answer
+        effects:
+          - kind: flag
+            key: asked_last
+            value: true
+          - kind: flag
+            key: miyoung_turn_taken
+            value: true
+      - id: ask-state
+        label: 도현 씨 요즘 상태가 어땠습니까.
+        requires:
+          flagNotEquals:
+            key: asked_state
+            value: true
+        next: state-answer
+        effects:
+          - kind: flag
+            key: asked_state
+            value: true
+          - kind: flag
+            key: miyoung_turn_taken
+            value: true
+
+      # ── Layer 2 (unlock by L1 hints or prior-scene apartment flags) ──
+      - id: ask-usb-plan
+        label: 그 '다른 방향'이, 회사 자료 외부 유출 쪽이었습니까.
+        requires:
+          flag: asked_relation
+          flagNotEquals:
+            key: asked_usb
+            value: true
+        next: usb-disclosure
+        effects:
+          - kind: flag
+            key: miyoung_knew_usb_plan
+            value: true
+          - kind: flag
+            key: asked_usb
             value: true
           - kind: flag
             key: miyoung_turn_taken
             value: true
           - kind: memory
-            text: 미영이 도현의 아이폰을 보관하고 있다고 본인이 인정했다. 당장은 넘길 생각이 없다.
+            text: 미영은 도현의 외부 유출 계획과 그 상대방 이름을 안다. 상대 이름은 오늘은 꺼내지 않는다.
       - id: ask-alibi
-        label: 실종 전날 밤, 정말 야근하셨습니까.
+        label: '"공식적으로"라고 하셨는데, 실제로 그날 밤 어디 계셨습니까.'
         requires:
+          flag: asked_last
           flagNotEquals:
             key: asked_alibi
             value: true
@@ -219,8 +266,9 @@ nodes:
           - kind: memory
             text: 미영은 도현 실종 전날 밤 오피스텔에 있었다. 야근 알리바이는 본인이 직접 꺾었다.
       - id: ask-alive
-        label: 도현이 살아있다고 생각하세요.
+        label: 도현 씨가 지금 살아 있다고 보십니까.
         requires:
+          flag: asked_state
           flagNotEquals:
             key: asked_alive
             value: true
@@ -237,25 +285,30 @@ nodes:
             value: true
           - kind: memory
             text: 미영은 도현이 살아있다고 본다. 실종 2주차에 본인에게 온 익명 문자 한 통이 근거.
-      - id: ask-usb-plan
-        label: 도현이 뭘 외부에 넘기려고 했는지 아십니까.
+
+      # ── Layer 3 (unlocks after the alibi crack) ──
+      - id: ask-phone
+        label: 그럼 그날 밤, 도현 씨 휴대폰은 지금 어디에 있죠.
         requires:
+          flag: asked_alibi
           flagNotEquals:
-            key: asked_usb
+            key: asked_phone
             value: true
-        next: usb-disclosure
+        next: phone-admission
         effects:
           - kind: flag
-            key: miyoung_knew_usb_plan
+            key: miyoung_has_phone
             value: true
           - kind: flag
-            key: asked_usb
+            key: asked_phone
             value: true
           - kind: flag
             key: miyoung_turn_taken
             value: true
           - kind: memory
-            text: 미영은 도현의 외부 유출 계획과 그 상대방 이름을 안다. 상대 이름은 오늘은 꺼내지 않는다.
+            text: 미영이 도현의 아이폰을 보관하고 있다고 본인이 인정했다. 당장은 넘길 생각이 없다.
+
+      # ── Exit routes ──
       - id: end-politely
         label: (오늘은 여기까지 하겠다고 정중히 마무리한다.)
         next: close-with-info
@@ -280,6 +333,60 @@ nodes:
             - kind: flag
               key: miyoung_walked_out
               value: true
+
+  relationship-answer:
+    id: relationship-answer
+    lines:
+      - speaker: miyoung
+        text: 도현 씨와 저는 양쪽 집안 인사까지 갔던 사이입니다. 결혼 얘기까지 오간 적도 있고요.
+        expression: weary
+      - speaker: miyoung
+        text: 최근 두어 달은 관계 정리 쪽으로 얘기가 오가던 중이었습니다. 쌍방 합의 쪽에 가까웠어요.
+        expression: neutral
+      - speaker: miyoung
+        text: 정리의 직접적인 원인은 도현 씨가 회사에서 어떤 '다른 방향'을 잡으려고 했고, 그 방향에 대해 저는 반대했기 때문입니다.
+        expression: grim
+      - speaker: thought
+        text: 그 '다른 방향'이 오늘 이 자리에 나를 앉힌 이유일 거다. 지금 바로 묻지 않으면 저 사람이 스스로 다시 꺼내진 않는다.
+      - speaker: miyoung
+        text: 다른 것도 있으세요.
+        expression: neutral
+    next: improv-node
+
+  last-contact-answer:
+    id: last-contact-answer
+    lines:
+      - speaker: miyoung
+        text: 공식적으로 마지막 통화는 실종 전날 저녁 일곱 시 십오 분이었습니다. 약 삼 분 정도. 내용은 다음 주 저녁 약속 조정 건이었고요.
+        expression: neutral
+      - speaker: miyoung
+        text: 그게 제가 수사기관에 낼 수 있는 버전이고, 저희 파트너들이 알고 있는 버전입니다.
+        expression: tense
+      - speaker: thought
+        text: '"공식적으로" 라고 토씨까지 맞춘 건 법조인이 본인 진술에 여지를 남겨 두는 버릇이다. 저 단어 뒤에 다른 버전이 한 장 더 있다는 뜻이고, 그 다른 버전에 오늘 이 자리의 진짜 대답이 들어 있다.'
+      - speaker: miyoung
+        text: 다른 물으실 거 있으세요.
+        expression: tense
+    next: improv-node
+
+  state-answer:
+    id: state-answer
+    lines:
+      - speaker: miyoung
+        text: 요즘 도현 씨는 결정을 앞둔 사람 특유의 분위기였어요. 밤늦은 통화도 잦았고, 말을 고르는 결이 평소보다 무거워졌어요.
+        expression: weary
+      - speaker: miyoung
+        text: 결정 내용은 저한테 공유 안 하는 쪽으로 본인이 선을 긋기 시작했고요. 그 선이 그어진 날부터 저는 이 결정이 저를 포함하지 않는다는 걸 알았어요.
+        expression: grim
+      - speaker: miyoung
+        text: 실종 이후에 저도 연락 시도는 해 봤어요. 다만 그때쯤엔 저도 도현 씨가 어디에 있는지보다, 살아 있는지부터 의심하고 있던 상태였습니다.
+        expression: tense
+      - speaker: thought
+        text: 저 사람이 지금 깔아 준 건 본인이 먼저 걱정했던 방향이다. 그걸 내가 받으면 저 사람은 한 박자 덜 방어해도 되는 자리를 얻는다.
+      - speaker: miyoung
+        text: 다른 것도 있으세요.
+        expression: neutral
+    next: improv-node
 
   phone-admission:
     id: phone-admission
