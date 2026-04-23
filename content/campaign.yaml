@@ -16,3 +16,7 @@ chapters:
     scenes:
       - c2-apartment
       - c2-miyoung
+  - id: chapter-3
+    title: "북한산 암자"
+    scenes:
+      - c3-amja

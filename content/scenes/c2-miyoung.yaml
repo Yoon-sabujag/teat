@@ -695,3 +695,4 @@ nodes:
         effects:
           - kind: chapterComplete
             chapter: chapter-2
+            nextChapter: chapter-3

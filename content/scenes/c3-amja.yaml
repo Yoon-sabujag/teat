@@ -1,0 +1,428 @@
+id: c3-amja
+title: "북한산 암자"
+background: bukhansan-amja
+cast:
+  - npc: wonjang
+    position: center
+    expression: neutral
+entry: climb
+
+nodes:
+  climb:
+    id: climb
+    lines:
+      - speaker: narration
+        text: 북한산 우이동 쪽 등산로 입구에서 차를 세운 뒤로 사십 분쯤 걸었다. 미영이 준 지도상의 점은 큰 절이 아니라 능선 하나 뒤쪽으로 숨겨진 작은 암자였고, 최근까지 그 이름을 들어 본 적이 없었다. 도현이 실종 전 삼 일간 머물렀다는 자리.
+      - speaker: narration
+        text: 저녁 여섯 시를 조금 넘기자 등산로의 발길이 거의 끊겼다. 단풍은 아직 아래쪽에만 남아 있었고, 암자로 들어가는 쪽 능선은 이미 이른 초겨울 바람이 목을 스쳤다. 암자 입구의 오래된 은행나무 한 그루 아래에 낡은 고무신 두 켤레가 나란히 놓여 있었다.
+      - speaker: thought
+        text: 도현 같은 재벌 삼 세가 삼 일을 이런 자리에 와서 뭘 했을지부터 떠올려 봤다. 도시 언어로는 쉽게 잡히지 않는 결단이 있었을 거다. 나는 오늘 그 결단의 형상을 한 조각이라도 들고 내려가야 한다.
+    next: greet
+  greet:
+    id: greet
+    lines:
+      - speaker: narration
+        text: 암자 대웅전 앞마당엔 기왓장 몇 개가 정리돼 쌓여 있었고, 법당 안쪽 문이 한 뼘 열려 있었다. 원장 스님은 법복을 걸친 채 마당 한쪽 평상에 앉아 곶감 몇 개를 작은 접시에 담고 있었다. 내 발소리에 고개는 들지 않고 손만 잠시 멎었다.
+      - speaker: wonjang
+        text: 먼 길 오셨네요.
+        expression: neutral
+      - speaker: wonjang
+        text: 부회장님 쪽에서 오신 건지, 본인 걸음인지는 굳이 여쭙지 않을게요. 우선 앉으시고요.
+        expression: weary
+      - speaker: thought
+        text: 이 자리는 내가 누구인지부터 먼저 정리하고 들어가는 자리가 아니구나. 스님은 이미 내 등 뒤 어디쯤에 놓인 짐의 무게를 본 사람 같다.
+    choices:
+      - id: intro-detective
+        label: 백승재 리서치에서 왔습니다. 도현 씨 건으로 몇 가지 여쭙고 싶어서요.
+        next: opening-exchange
+        effects:
+          - kind: flag
+            key: c3_intro
+            value: detective
+      - id: intro-friend
+        label: 도현 씨 집안에서 걱정이 많아 저를 보냈습니다.
+        next: opening-exchange
+        effects:
+          - kind: flag
+            key: c3_intro
+            value: family
+      - id: intro-silent
+        label: (고개만 숙여 인사하고 스님 맞은편에 앉는다.)
+        check: { stat: ttuksim, dc: 12 }
+        success:
+          next: opening-exchange
+          effects:
+            - kind: flag
+              key: c3_intro
+              value: silent
+            - kind: memory
+              text: 암자 대웅전 앞, 원장 스님 앞에 이름을 말하지 않고 앉았다. 스님이 먼저 입을 열었다.
+        failure:
+          next: opening-exchange
+          effects:
+            - kind: flag
+              key: c3_intro
+              value: silent_flinch
+
+  opening-exchange:
+    id: opening-exchange
+    lines:
+      - speaker: wonjang
+        requires:
+          flagEquals:
+            key: c3_intro
+            value: detective
+        text: 리서치라는 말은 참 편한 말이네요. 사람 찾는 쪽도 리서치고, 사람 숨기는 쪽도 리서치고.
+        expression: amused
+      - speaker: wonjang
+        requires:
+          flagEquals:
+            key: c3_intro
+            value: family
+        text: 도현이 집안이라. 그 집안이 큰 집안이라, 본인 걸음으로 오신 분도 집안 걸음이 되시는 모양이지요.
+        expression: weary
+      - speaker: wonjang
+        requires:
+          flagEquals:
+            key: c3_intro
+            value: silent
+        text: 침묵으로 앉으시는 분은, 오늘 이 자리에서 말이 늘어야 돈을 버시는 분은 아니시겠네요. 저는 그런 분이 좀 편합니다.
+        expression: neutral
+      - speaker: wonjang
+        requires:
+          flagEquals:
+            key: c3_intro
+            value: silent_flinch
+        text: 앉으시는 사이 한 번 흔들리셨죠. 괜찮습니다. 이 자리에 들어오실 땐 다들 한 번은 흔들리세요.
+        expression: weary
+      - speaker: wonjang
+        text: 곶감 드시면서 물으세요. 저는 답할 수 있는 것만 답해 드리고, 답 못 드리는 건 돌려드리는 편입니다.
+        expression: neutral
+      - speaker: thought
+        text: 돌려드린다는 말은, 내가 질문을 돌려받아 내 쪽에서 다시 풀어야 한다는 뜻이다. 선문답의 기본형 한 줄을 스님이 먼저 깔아 두셨다.
+    next: hub
+
+  hub:
+    id: hub
+    lines:
+      - speaker: wonjang
+        requires:
+          flagNotEquals:
+            key: amja_turn_taken
+            value: true
+        text: 편히 물으세요.
+        expression: neutral
+      - speaker: wonjang
+        requires:
+          flag: amja_turn_taken
+        text: 또 남은 게 있으시면.
+        expression: weary
+    choices:
+      - id: ask-why
+        label: 도현 씨는 왜 여기 왔던 겁니까.
+        requires:
+          flagNotEquals:
+            key: asked_amja_why
+            value: true
+        check: { stat: yangsim, dc: 12 }
+        success:
+          next: why-answer
+          effects:
+            - kind: flag
+              key: asked_amja_why
+              value: true
+            - kind: flag
+              key: amja_turn_taken
+              value: true
+            - kind: flag
+              key: dohyun_came_to_confirm
+              value: true
+            - kind: memory
+              text: 도현은 암자에 결단을 점검하러 왔다. 이미 준비된 결정을 한 번 더 자기 앞에 놓아 보려고.
+        failure:
+          next: why-deflect
+          effects:
+            - kind: flag
+              key: asked_amja_why
+              value: true
+            - kind: flag
+              key: amja_turn_taken
+              value: true
+            - kind: flag
+              key: amja_miss_why
+              value: true
+      - id: ask-left
+        label: 도현 씨가 이 자리에 뭔가 두고 가셨습니까.
+        requires:
+          flagNotEquals:
+            key: asked_amja_left
+            value: true
+        check: { stat: ttuksim, dc: 13 }
+        success:
+          next: left-answer
+          effects:
+            - kind: flag
+              key: asked_amja_left
+              value: true
+            - kind: flag
+              key: amja_turn_taken
+              value: true
+            - kind: flag
+              key: got_tape
+              value: true
+            - kind: memory
+              text: 원장 스님이 도현이 남기고 간 작은 디지털 녹음기 한 대를 넘겨주었다. 재생은 아직 안 해봤다.
+        failure:
+          next: left-deflect
+          effects:
+            - kind: flag
+              key: asked_amja_left
+              value: true
+            - kind: flag
+              key: amja_turn_taken
+              value: true
+            - kind: flag
+              key: amja_miss_left
+              value: true
+      - id: ask-state
+        label: 삼 일 뒤 내려가실 때 도현 씨는 어떤 분이셨습니까.
+        requires:
+          flagNotEquals:
+            key: asked_amja_state
+            value: true
+        check: { stat: jikgam, dc: 13 }
+        success:
+          next: state-answer
+          effects:
+            - kind: flag
+              key: asked_amja_state
+              value: true
+            - kind: flag
+              key: amja_turn_taken
+              value: true
+            - kind: flag
+              key: dohyun_left_resolved
+              value: true
+            - kind: memory
+              text: 도현이 내려갈 때는 들어올 때보다 조용했다. 결정한 사람의 조용함.
+        failure:
+          next: state-deflect
+          effects:
+            - kind: flag
+              key: asked_amja_state
+              value: true
+            - kind: flag
+              key: amja_turn_taken
+              value: true
+            - kind: flag
+              key: amja_miss_state
+              value: true
+      - id: ask-advice
+        label: 도현 씨한테 스님이 하신 말씀 한 줄이 있으셨다면.
+        requires:
+          flagNotEquals:
+            key: asked_amja_advice
+            value: true
+        check: { stat: yangsim, dc: 11 }
+        success:
+          next: advice-answer
+          effects:
+            - kind: flag
+              key: asked_amja_advice
+              value: true
+            - kind: flag
+              key: amja_turn_taken
+              value: true
+            - kind: flag
+              key: heard_monk_line
+              value: true
+            - kind: memory
+              text: 원장 스님이 도현에게 건넨 한 줄 — "피해도 오게 되어 있다."
+        failure:
+          next: advice-deflect
+          effects:
+            - kind: flag
+              key: asked_amja_advice
+              value: true
+            - kind: flag
+              key: amja_turn_taken
+              value: true
+            - kind: flag
+              key: amja_miss_advice
+              value: true
+      - id: end-bow
+        label: (합장하고 물러난다.)
+        next: descent
+
+  why-answer:
+    id: why-answer
+    lines:
+      - speaker: wonjang
+        text: 그 분은 결정하러 오신 게 아니었어요. 이미 결정을 손에 쥐고, 그 결정을 한 번 더 본인 앞에 내려놓아 보려고 오셨지요.
+        expression: weary
+      - speaker: wonjang
+        text: 마당에 앉으셔서 사흘을 거의 말씀 없이 지내셨고요. 떠나시는 날 아침에야 한 말씀 하셨어요. "이게 제 몫인지 확인하러 왔는데, 제 몫이 맞네요."
+        expression: grim
+      - speaker: thought
+        text: 자기 결정이 자기 몫이라는 걸 확인하러 올 정도의 결정이라는 얘기다. 가볍게 무른 결정이 아니다.
+      - speaker: wonjang
+        text: 다른 것도 궁금하세요.
+        expression: neutral
+    next: hub
+
+  why-deflect:
+    id: why-deflect
+    lines:
+      - speaker: wonjang
+        text: 그 분이 왜 오셨는지는 그 분한테 여쭙는 게 맞지요. 저한테 오시는 걸 그쪽이 답할 이유가 없어요.
+        expression: neutral
+      - speaker: thought
+        text: 진정성 한 뼘이 부족했다. 양심이라는 자리에서 나는 오늘 탐정의 자세였지 친구의 자세는 아니었다.
+      - speaker: wonjang
+        text: 다른 방향 질문 있으세요.
+        expression: weary
+    next: hub
+
+  left-answer:
+    id: left-answer
+    lines:
+      - speaker: narration
+        text: 원장 스님이 평상 밑 작은 궤짝을 한 번 두드리시더니, 손바닥만 한 봉투 하나를 꺼내 내 앞에 놓았다. 봉투 안에는 작은 디지털 녹음기 한 대. 배터리 커버가 약간 벌어져 있었고, 붉은 라벨에 숫자 세 자리가 연필로 적혀 있었다.
+      - speaker: wonjang
+        text: 도현 씨가 맡기고 가셨어요. '저한테 일이 생기면 백승재 씨한테 전해 주세요' 라고 하셨고요.
+        expression: grim
+      - speaker: thought
+        text: 이 사람이 내 이름을 스님께 남기고 갔다는 건, 그 사람이 내가 언젠가 이 자리에 올 것을 미리 계산했다는 뜻이다. 두 달 전 내 퇴직이 도현의 자료 라인 위에 있었다는 그 예감이 한 뼘 더 두꺼워졌다.
+      - speaker: wonjang
+        text: 열어 보시는 건 여기 말고 아래에 내려가신 뒤에 하세요. 이 자리에서 들으실 내용이 아니에요.
+        expression: weary
+    next: hub
+
+  left-deflect:
+    id: left-deflect
+    lines:
+      - speaker: wonjang
+        text: 물건은 사람을 따라다니는 법입니다. 그 분 물건은 그 분한테 있지요.
+        expression: neutral
+      - speaker: thought
+        text: 뚝심이라는 자리에서 내가 조금 서둘렀다. 기다림이 부족한 사람한테는 물건이 가지 않는다 — 스님의 문장이 아니라 내 문장으로 정리되는 한 줄이다.
+      - speaker: wonjang
+        text: 다른 질문 있으시면.
+        expression: weary
+    next: hub
+
+  state-answer:
+    id: state-answer
+    lines:
+      - speaker: wonjang
+        text: 들어오실 땐 혼잣말을 많이 하셨고요, 내려가실 땐 혼잣말을 안 하셨어요.
+        expression: neutral
+      - speaker: wonjang
+        text: 그 차이를 제가 말씀드릴 수 있는 범위에서 말하자면, 두려움과 결단은 같은 얼굴 위에서도 결이 다릅니다. 그 분은 두려움 쪽에서 결단 쪽으로 넘어가신 채로 내려가셨어요.
+        expression: grim
+      - speaker: thought
+        text: 결단한 사람이 조용해진다는 얘기다. 그 조용함이 살아 있는 사람의 조용함인지, 각오한 사람의 조용함인지는 오늘 안엔 모른다.
+      - speaker: wonjang
+        text: 더 있으세요.
+        expression: weary
+    next: hub
+
+  state-deflect:
+    id: state-deflect
+    lines:
+      - speaker: wonjang
+        text: 사람 상태는 사람한테 들으셔야지요. 제가 법복 입고 본 건 뒷모습이었고, 뒷모습은 늘 앞모습보다 적게 말합니다.
+        expression: neutral
+      - speaker: thought
+        text: 직감의 칼끝이 미세하게 어긋났다. 스님이 돌려준 문장 안에 답이 있었는데, 오늘은 그 안까지 못 들어갔다.
+      - speaker: wonjang
+        text: 다음 질문으로 넘어가시죠.
+        expression: weary
+    next: hub
+
+  advice-answer:
+    id: advice-answer
+    lines:
+      - speaker: wonjang
+        text: 한 줄 드렸지요. "피해도 오게 되어 있다."
+        expression: grim
+      - speaker: wonjang
+        text: 제가 법복으로 드리는 말씀이 아니라, 반백 년 사람 뒤에 서서 본 사람으로서 드린 말씀이에요. 그 분도 그 결로 받으셨고요.
+        expression: weary
+      - speaker: thought
+        text: 피해도 온다. 도현이 그 문장을 짐처럼 들고 내려간 것도, 그 문장을 각오로 삼아 내려간 것도 다 가능한 그림이다.
+      - speaker: wonjang
+        text: 남은 것 있으시면.
+        expression: neutral
+    next: hub
+
+  advice-deflect:
+    id: advice-deflect
+    lines:
+      - speaker: wonjang
+        text: 제가 드린 말씀은 그 분을 위한 말씀입니다. 그 쪽 몫은 그 쪽이 가시는 길 끝에서 받으실 거고요.
+        expression: neutral
+      - speaker: thought
+        text: 양심 쪽으로 한 걸음 더 기울였어야 했다. 스님은 말씀을 가진 자리이지, 말씀을 나눠 주시는 자리가 아니었다.
+      - speaker: wonjang
+        text: 다른 것 있으시면.
+        expression: weary
+    next: hub
+
+  descent:
+    id: descent
+    cast:
+      - npc: wonjang
+        position: offscreen
+    lines:
+      - speaker: narration
+        text: 합장으로 인사를 올리고 자리에서 일어섰다. 스님은 곶감 접시를 다시 무릎 위로 내리시고는 고개 한 번만 가볍게 끄덕이셨다. 암자 마당을 나오자 은행나무 아래의 고무신 두 켤레는 처음 볼 때와 정확히 같은 각도로 놓여 있었다.
+
+      - speaker: thought
+        requires:
+          flag: got_tape
+        text: 코트 안주머니 안쪽에 작은 디지털 녹음기 한 대가 얹혀 있다. 무게 자체는 휴대폰보다 가볍지만, 내려가는 걸음의 무게추는 오늘 이 한 덩어리 쪽으로 완전히 기울었다.
+
+      - speaker: thought
+        requires:
+          flag: dohyun_came_to_confirm
+        text: 도현이 이 자리에 온 이유가 분명해졌다. 결정을 새로 하려던 게 아니라, 결정을 한 번 더 자기 손으로 만져 보러 왔던 거다.
+      - speaker: thought
+        requires:
+          flag: dohyun_left_resolved
+        text: 그 사람이 내려갈 때의 조용함이 오늘 저녁 내 걸음 속도 안에 들어와 있다. 그 조용함을 읽는 게 앞으로의 일이 되겠지.
+      - speaker: thought
+        requires:
+          flag: heard_monk_line
+        text: '"피해도 오게 되어 있다"는 문장은 오늘 내 쪽에도 앉았다. 오늘 이후로는 내가 이 사건에서 걸음을 돌려도, 이 사건이 나를 다시 찾아온다.'
+
+      - speaker: thought
+        requires:
+          flag: amja_miss_why
+        text: 왜 왔는지를 끝내 못 받았다. 양심 쪽으로 한 뼘만 더 기울였어도 되는 자리였는데, 오늘은 도시 언어가 너무 앞섰다.
+      - speaker: thought
+        requires:
+          flag: amja_miss_left
+        text: 도현이 뭘 남겼는지는 오늘 안엔 못 받았다. 스님이 열지 않은 궤짝이 한 칸 남았고, 그 한 칸은 오늘 밤 내 쪽 기억으로만 남는다.
+      - speaker: thought
+        requires:
+          flag: amja_miss_state
+        text: 내려갈 때 어떤 분이셨는지는 오늘 못 읽어냈다. 뒷모습이라는 표현만 한 줄 손에 쥐고 내려간다.
+      - speaker: thought
+        requires:
+          flag: amja_miss_advice
+        text: 스님의 그 한 줄은 오늘 내 것이 아니었다. 도현이 들고 간 문장 하나가 아직 내 귀에 없다.
+
+      - speaker: narration
+        text: 능선을 반쯤 내려왔을 때 코트 주머니에서 휴대폰이 짧게 한 번 울렸다. 잠금 화면에 저장된 이름이 떴다. 이수연. 지난주 을지로 사무실 문 앞에 본인 명함을 두고 간 그 시사주간지 기자.
+        effects:
+          - kind: flag
+            key: soo_yeon_calling
+            value: true
+          - kind: memory
+            text: 하산 길에 이수연 기자에게 전화가 걸려 왔다. 다음 자리가 저 쪽에서 먼저 잡힌다.
+      - speaker: narration
+        text: 등산로 초입의 주차장 불빛이 멀리서 한 번 깜빡였다. 차 문을 열고 시동을 걸기 전에 한 박자 앉아 녹음기를 꺼낼지, 내일 아침 을지로 사무실에서 꺼낼지 잠시 저울질했다.
+        effects:
+          - kind: chapterComplete
+            chapter: chapter-3
