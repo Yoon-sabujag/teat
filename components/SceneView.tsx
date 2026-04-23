@@ -25,7 +25,7 @@ const POSITION_CLASS = {
 export function SceneView({ scene, npcs, backgrounds, onEvent }: Props) {
   const runner = useSceneRunner({ scene, onEvent });
   const [playerInput, setPlayerInput] = useState("");
-  const [showStats, setShowStats] = useState(false);
+  const [hud, setHud] = useState<null | "stats" | "memory">(null);
   const pc = useSave((s) => s.pc);
 
   const {
@@ -37,6 +37,7 @@ export function SceneView({ scene, npcs, backgrounds, onEvent }: Props) {
     runChoice,
     runImprov,
     isImprovNode,
+    suggestions,
     busy,
     lastCheck,
   } = runner;
@@ -98,15 +99,32 @@ export function SceneView({ scene, npcs, backgrounds, onEvent }: Props) {
           );
         })}
 
-        <button
-          type="button"
-          onClick={() => setShowStats((v) => !v)}
-          className="absolute right-3 top-3 rounded-full border border-neutral-600 bg-black/60 px-3 py-1 text-xs backdrop-blur"
-        >
-          {showStats ? "닫기" : "스탯"}
-        </button>
+        <div className="absolute right-3 top-3 flex gap-2">
+          <button
+            type="button"
+            onClick={() => setHud((v) => (v === "stats" ? null : "stats"))}
+            className={`rounded-full border px-3 py-1 text-xs backdrop-blur ${
+              hud === "stats"
+                ? "border-amber-400 bg-amber-500/20 text-amber-200"
+                : "border-neutral-600 bg-black/60"
+            }`}
+          >
+            스탯
+          </button>
+          <button
+            type="button"
+            onClick={() => setHud((v) => (v === "memory" ? null : "memory"))}
+            className={`rounded-full border px-3 py-1 text-xs backdrop-blur ${
+              hud === "memory"
+                ? "border-amber-400 bg-amber-500/20 text-amber-200"
+                : "border-neutral-600 bg-black/60"
+            }`}
+          >
+            기억 {pc.memory.length > 0 && `(${pc.memory.length})`}
+          </button>
+        </div>
 
-        {showStats && (
+        {hud === "stats" && (
           <div className="absolute right-3 top-12 w-56 rounded-xl border border-neutral-700 bg-neutral-950/90 p-3 text-xs backdrop-blur">
             <div className="mb-2 text-neutral-400">{pc.name}</div>
             <ul className="space-y-1">
@@ -117,6 +135,26 @@ export function SceneView({ scene, npcs, backgrounds, onEvent }: Props) {
                 </li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {hud === "memory" && (
+          <div className="absolute right-3 top-12 max-h-[60dvh] w-72 overflow-y-auto rounded-xl border border-neutral-700 bg-neutral-950/95 p-3 text-xs backdrop-blur">
+            <div className="mb-2 text-neutral-400">지금까지 알아낸 것</div>
+            {pc.memory.length === 0 ? (
+              <p className="text-neutral-600">아직 기억할 것이 없다.</p>
+            ) : (
+              <ul className="space-y-2">
+                {[...pc.memory].reverse().map((m, i) => (
+                  <li
+                    key={`${i}-${m.slice(0, 8)}`}
+                    className="border-l-2 border-neutral-700 pl-2 leading-relaxed text-neutral-300"
+                  >
+                    {m}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
 
@@ -171,30 +209,47 @@ export function SceneView({ scene, npcs, backgrounds, onEvent }: Props) {
             ))}
           </ul>
         ) : isImprovNode ? (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (!playerInput.trim() || busy) return;
-              runImprov(playerInput);
-              setPlayerInput("");
-            }}
-            className="flex gap-2"
-          >
-            <input
-              value={playerInput}
-              onChange={(e) => setPlayerInput(e.target.value)}
-              placeholder="자유롭게 말하기…"
-              disabled={busy}
-              className="flex-1 rounded-xl border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm"
-            />
-            <button
-              type="submit"
-              disabled={busy}
-              className="rounded-xl bg-amber-500 px-4 py-2 text-sm font-semibold text-black disabled:opacity-50"
+          <div className="flex flex-col gap-2">
+            {suggestions.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {suggestions.map((s, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    disabled={busy}
+                    onClick={() => runImprov(s)}
+                    className="rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-1.5 text-xs text-neutral-300 disabled:opacity-50 active:bg-neutral-800"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!playerInput.trim() || busy) return;
+                runImprov(playerInput);
+                setPlayerInput("");
+              }}
+              className="flex gap-2"
             >
-              {busy ? "…" : "전달"}
-            </button>
-          </form>
+              <input
+                value={playerInput}
+                onChange={(e) => setPlayerInput(e.target.value)}
+                placeholder="자유롭게 말하기…"
+                disabled={busy}
+                className="flex-1 rounded-xl border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm"
+              />
+              <button
+                type="submit"
+                disabled={busy || !playerInput.trim()}
+                className="rounded-xl bg-amber-500 px-4 py-2 text-sm font-semibold text-black disabled:opacity-50"
+              >
+                {busy ? "…" : "전달"}
+              </button>
+            </form>
+          </div>
         ) : (
           <button
             type="button"

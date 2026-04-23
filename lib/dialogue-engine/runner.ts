@@ -239,6 +239,8 @@ export function useSceneRunner({ scene, onEvent }: Args) {
     !node.choices?.length &&
     !!node.improv;
 
+  const suggestions = isImprovNode ? (node.improv?.suggestions ?? []) : [];
+
   return {
     background,
     cast,
@@ -248,6 +250,7 @@ export function useSceneRunner({ scene, onEvent }: Args) {
     runChoice,
     runImprov,
     isImprovNode,
+    suggestions,
     busy,
     lastCheck,
   };

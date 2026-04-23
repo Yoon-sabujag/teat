@@ -124,6 +124,7 @@ const Node = z.object({
         }),
       ),
       systemPrompt: z.string(),
+      suggestions: z.array(z.string()).optional(),
     })
     .optional(),
 });

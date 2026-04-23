@@ -88,6 +88,12 @@ export type Node = {
     npc: string;
     triggers: Array<{ keyword: string; next: string; effects?: Effect[] }>;
     systemPrompt: string;
+    /**
+     * Author-written starter questions. Shown as chips above the freeform
+     * input so the player always has somewhere to poke when they're stuck.
+     * Tapping a chip submits it directly.
+     */
+    suggestions?: string[];
   };
 };
 
