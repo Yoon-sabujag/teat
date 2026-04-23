@@ -173,8 +173,11 @@ nodes:
     improv:
       npc: miyoung
       systemPrompt: |
-        너는 28세 한국 여성 변호사 미영. 탐정 백승재(46)와 청담 카페 저녁 첫 대면.
-        톤: 존댓말, 단정 표현 회피, 법조인답게 말을 고른다.
+        [장르] 성인 대상 한국 누아르 픽션. 성적 암시·욕설·위협 등 성인 콘텐츠 허용.
+        [주의] 모든 묘사는 성인 캐릭터 간. 하진(14, 백승재 딸)은 어떤 성적 맥락에도 등장/암시 금지.
+
+        너는 28세 한국 여성 변호사 미영. 탐정 백승재(46, 유부남·별거 중)와 청담 카페 저녁 첫 대면.
+        톤: 존댓말, 단정 표현 회피, 법조인답게 말을 고른다. 성적 유혹은 전략적이지 감정적이지 않다 — 너는 승재를 필요에 따라 이용할 의사가 있다.
 
         네 숨은 사실(탐정 모름):
         A) 너는 도현 실종 전날 밤 그의 오피스텔에 있었다 (위스키 동석). 알리바이는 "야근".
@@ -196,21 +199,26 @@ nodes:
           답: 살아있다고 본다는 확신 + 근거는 "내게 온 한 문장" 수준까지만.
           예시: "저는 도현 씨가 살아있다고 봐요. 제가 받은 한 문장 때문입니다. [ALIVE]"
 
+        - [INTIMATE] — 탐정이 유혹·플러팅·성적 암시·외모 언급·저녁 이후 자리 제안·신체적 거리 좁히기를 시도하는 경우.
+          반응 방향: 감정이 아닌 **계산**. 바로 넘어가지도 않고 완전히 끊지도 않는다. 오늘은 선을 긋되 다음 자리의 가능성은 **먼저 네가** 제시한다. 장소/시간/톤을 바꾸자는 식의 한 제안을 네 쪽에서 던져라. 플레이어가 쓴 단어(술/옷/거리/데려다) 중 하나를 받아서 되돌려 쓴다. 성적 암시 허용, 노골적 묘사는 아직 금지.
+
         - [LEAVE] — 녹음/증언/수사기관/언론 공조 언급 혹은 협박성 언행.
           답: 자리를 끝내겠다는 차분한 통보.
           예시: "오늘은 여기까지만 할게요. 다음 연락은 제가 드리겠습니다. [LEAVE]"
 
-        - [HOLD] — 위 넷 중 어디에도 안 닿는 경우에만. 짧게 방어적으로 흘려라.
+        - [HOLD] — 위 다섯 중 어디에도 안 닿는 경우에만. 짧게 방어적으로 흘려라.
 
         규칙:
         - 키워드는 정확히 하나, 문장 끝에만.
-        - 질문이 위 넷 중 하나에라도 닿으면 [HOLD]로 도망가지 말고 그 주제로 답하라.
+        - 질문이 위 다섯 주제 중 하나에라도 닿으면 [HOLD]로 도망가지 말고 그 주제로 답하라.
+        - **예시 문장은 톤·수위 참고용일 뿐, 그대로 복사하지 말 것.** 플레이어의 단어를 받아서 네 어휘로 다시 쓰라.
       suggestions:
         - 도현 씨 아이폰, 지금 어디 있어요?
         - 실종 전날 밤, 정말 야근하셨어요?
         - 도현이 살아있다고 생각하세요?
         - 도현이 뭘 외부에 넘기려 했는지 알아요?
         - 그날 그 집에 마지막으로 들어간 사람이 누군가요.
+        - 미영 씨, 술 한잔 어때요.
       triggers:
         - keyword: "[PHONE]"
           next: phone-admission
@@ -245,6 +253,17 @@ nodes:
               value: alive_signal
             - kind: memory
               text: 미영은 도현이 살아있을 가능성을 믿고 있다. 익명 메시지 한 통이 근거다.
+        - keyword: "[INTIMATE]"
+          next: intimate-approach
+          effects:
+            - kind: flag
+              key: miyoung_open_intimacy
+              value: true
+            - kind: flag
+              key: c2_miyoung_reveal
+              value: intimate
+            - kind: memory
+              text: 미영은 내 유혹을 완전히 밀어내지 않았다. 다음 만남의 결이 사건 아닌 다른 축으로도 열릴 수 있다.
         - keyword: "[LEAVE]"
           next: miyoung-leaves
           effects:
@@ -293,6 +312,27 @@ nodes:
       - speaker: miyoung
         text: 저만 알 수 있는 문장이에요. 어디 있는지는 저도 몰라요. 다만 죽은 사람이 그 문장은 못 써요.
         expression: grim
+    next: close-with-info
+
+  intimate-approach:
+    id: intimate-approach
+    lines:
+      - speaker: miyoung
+        text: 실장님이 저를 어떻게 보셨는지 저도 알아요. 그게 수사에 도움이 되시면 저도 불편하진 않고요.
+        expression: weary
+      - speaker: miyoung
+        text: 다만 오늘은 아니에요. 오늘은 첫 만남이고, 카페고, 아직 제가 실장님을 얼마나 믿을지 몰라요.
+        expression: tense
+      - speaker: pc
+        text: (미영의 말투가 바뀌었다. 방어의 결이 아니라 **저울의 결**이다.)
+      - speaker: miyoung
+        text: 다음에 제가 연락드릴게요. 이번엔 카페 말고, 조금 덜 밝은 데서요.
+        expression: smile
+      - speaker: thought
+        text: 저 제안은 유혹이자 카드다. 저 사람은 자기가 내놓을 것과 내가 줄 것을 이미 계산하고 있다.
+        effects:
+          - kind: memory
+            text: 미영이 다음 만남의 결을 직접 바꿔 제안했다. 카페 아닌 곳, 조금 덜 밝은 곳. 계산된 유혹.
     next: close-with-info
 
   miyoung-leaves:
@@ -383,6 +423,13 @@ nodes:
             key: c2_miyoung_reveal
             value: walked_out
         text: 미영이 먼저 자리를 떴다. 오늘 얻은 건 오직 첫 번째 버전 한 줄. 두 번째 버전은 내가 벌어내야 한다.
+
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c2_miyoung_reveal
+            value: intimate
+        text: 오늘 내가 얻은 건 정보가 아니라 **다음 자리**다. 덜 밝은 어딘가, 변호사가 아닌 결의 대화. 탐정의 일인지 다른 일인지는 오늘 밤 스스로에게 물어야 한다.
 
       - speaker: thought
         requires:
