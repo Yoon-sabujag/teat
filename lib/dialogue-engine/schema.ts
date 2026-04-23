@@ -85,6 +85,12 @@ const Choice = z.object({
           value: z.union([z.boolean(), z.string(), z.number()]),
         })
         .optional(),
+      flagNotEquals: z
+        .object({
+          key: z.string(),
+          value: z.union([z.boolean(), z.string(), z.number()]),
+        })
+        .optional(),
       minStat: z
         .object({ stat: StatEnum, value: z.number() })
         .optional(),

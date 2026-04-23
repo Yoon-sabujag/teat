@@ -47,6 +47,7 @@ export type Line = {
 export type ChoiceRequires = {
   flag?: string;
   flagEquals?: { key: string; value: boolean | string | number };
+  flagNotEquals?: { key: string; value: boolean | string | number };
   minStat?: { stat: Stat; value: number };
   maxStat?: { stat: Stat; value: number };
 };
