@@ -116,6 +116,7 @@ const Node = z.object({
   id: z.string(),
   cast: z.array(CastMember).optional(),
   background: z.string().optional(),
+  mode: z.literal("kakao").optional(),
   lines: z.array(Line),
   choices: z.array(Choice).optional(),
   next: z.string().optional(),

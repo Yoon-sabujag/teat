@@ -82,6 +82,11 @@ export type Node = {
   /** Changing any of these mid-scene is allowed to restage the scene. */
   cast?: CastMember[];
   background?: string;
+  /**
+   * Visual presentation mode for this node. Default is the standard
+   * character-over-background view. `kakao` renders as a phone chat thread.
+   */
+  mode?: "kakao";
   lines: Line[];
   choices?: Choice[];
   next?: string;

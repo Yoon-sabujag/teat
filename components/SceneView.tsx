@@ -6,7 +6,9 @@ import { useSceneRunner, type SceneEvent } from "@/lib/dialogue-engine/runner";
 import { STAT_LABELS } from "@/lib/pc/stats";
 import { useSave } from "@/lib/game-state/store";
 import type { Npc, Background } from "@/lib/content/loader";
-import type { Scene, CastMember } from "@/lib/dialogue-engine/types";
+import type { Scene, CastMember, Line, Choice } from "@/lib/dialogue-engine/types";
+import type { CheckResult } from "@/lib/pc/stats";
+import type { PcState } from "@/lib/game-state/store";
 
 type Props = {
   scene: Scene;
@@ -31,7 +33,9 @@ export function SceneView({ scene, npcs, backgrounds, onEvent }: Props) {
   const {
     background,
     cast,
+    mode,
     currentLine,
+    visibleLinesSoFar,
     choices,
     advance,
     runChoice,
@@ -45,6 +49,24 @@ export function SceneView({ scene, npcs, backgrounds, onEvent }: Props) {
     canRetryImprov,
     retryImprov,
   } = runner;
+
+  if (mode === "kakao") {
+    return (
+      <KakaoView
+        npcs={npcs}
+        visibleLines={visibleLinesSoFar}
+        currentLine={currentLine}
+        choices={choices}
+        advance={advance}
+        runChoice={runChoice}
+        busy={busy}
+        lastCheck={lastCheck}
+        hudState={hud}
+        setHud={setHud}
+        pc={pc}
+      />
+    );
+  }
 
   const bg = backgrounds[background];
   const speakerNpc =
@@ -296,6 +318,218 @@ export function SceneView({ scene, npcs, backgrounds, onEvent }: Props) {
             type="button"
             onClick={advance}
             className="rounded-xl border border-neutral-700 bg-neutral-900/60 px-4 py-3 text-sm active:bg-neutral-800"
+          >
+            다음 ▶
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+type KakaoProps = {
+  npcs: Record<string, Npc>;
+  visibleLines: Line[];
+  currentLine: Line;
+  choices: Choice[];
+  advance: () => void;
+  runChoice: (choice: Choice) => void;
+  busy: boolean;
+  lastCheck: CheckResult | null;
+  hudState: null | "stats" | "memory";
+  setHud: (v: null | "stats" | "memory") => void;
+  pc: PcState;
+};
+
+function KakaoView({
+  npcs,
+  visibleLines,
+  currentLine,
+  choices,
+  advance,
+  runChoice,
+  busy,
+  lastCheck,
+  hudState,
+  setHud,
+  pc,
+}: KakaoProps) {
+  // Bubbles: everything in the chat thread except `thought` (which renders
+  // outside the phone frame as interior monologue).
+  const bubbleLines = visibleLines.filter((l) => l.speaker !== "thought");
+  const thoughtLine =
+    currentLine.speaker === "thought" ? currentLine.text : null;
+  // Find the primary non-PC speaker for the header label.
+  const otherSpeakerId = visibleLines
+    .map((l) => l.speaker)
+    .find((s) => s !== "pc" && s !== "narration" && s !== "thought");
+  const otherName = otherSpeakerId
+    ? (npcs[otherSpeakerId]?.displayName ?? otherSpeakerId)
+    : "대화";
+
+  return (
+    <div className="relative flex min-h-dvh flex-col bg-neutral-900 text-neutral-100">
+      {/* Phone header */}
+      <div className="flex items-center justify-between border-b border-neutral-800 bg-neutral-950/95 px-4 py-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-700 text-xs font-semibold">
+            {otherName.slice(0, 1)}
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.3em] text-neutral-500">
+              카카오톡
+            </div>
+            <div className="text-sm font-light text-neutral-100">
+              {otherName}
+            </div>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setHud(hudState === "stats" ? null : "stats")}
+            className={`rounded-full border px-3 py-1 text-xs ${
+              hudState === "stats"
+                ? "border-amber-400 bg-amber-500/20 text-amber-200"
+                : "border-neutral-700 bg-black/40"
+            }`}
+          >
+            스탯
+          </button>
+          <button
+            type="button"
+            onClick={() => setHud(hudState === "memory" ? null : "memory")}
+            className={`rounded-full border px-3 py-1 text-xs ${
+              hudState === "memory"
+                ? "border-amber-400 bg-amber-500/20 text-amber-200"
+                : "border-neutral-700 bg-black/40"
+            }`}
+          >
+            기억 {pc.memory.length > 0 && `(${pc.memory.length})`}
+          </button>
+        </div>
+      </div>
+
+      {/* HUD overlays — reuse compact panels */}
+      {hudState === "stats" && (
+        <div className="absolute right-3 top-16 z-10 w-56 rounded-xl border border-neutral-700 bg-neutral-950/95 p-3 text-xs">
+          <div className="mb-2 text-neutral-400">{pc.name}</div>
+          <ul className="space-y-1">
+            {Object.entries(pc.stats).map(([stat, value]) => (
+              <li key={stat} className="flex justify-between">
+                <span>{STAT_LABELS[stat as keyof typeof STAT_LABELS]}</span>
+                <span className="font-mono text-amber-300">{value}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {hudState === "memory" && (
+        <div className="absolute right-3 top-16 z-10 max-h-[60dvh] w-72 overflow-y-auto rounded-xl border border-neutral-700 bg-neutral-950/95 p-3 text-xs">
+          <div className="mb-2 text-neutral-400">지금까지 알아낸 것</div>
+          {pc.memory.length === 0 ? (
+            <p className="text-neutral-600">아직 기억할 것이 없다.</p>
+          ) : (
+            <ul className="space-y-2">
+              {[...pc.memory].reverse().map((m, i) => (
+                <li
+                  key={`${i}-${m.slice(0, 8)}`}
+                  className="border-l-2 border-neutral-700 pl-2 leading-relaxed text-neutral-300"
+                >
+                  {m}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      {lastCheck && (
+        <div className="absolute left-1/2 top-16 z-10 -translate-x-1/2 rounded-full border border-amber-400/60 bg-black/80 px-4 py-1 text-xs font-mono">
+          {STAT_LABELS[lastCheck.stat as keyof typeof STAT_LABELS]} d20=
+          {lastCheck.roll} + {lastCheck.statValue} = {lastCheck.total} vs{" "}
+          {lastCheck.dc}{" "}
+          <span className={lastCheck.success ? "text-emerald-400" : "text-rose-400"}>
+            {lastCheck.success ? "성공" : "실패"}
+          </span>
+        </div>
+      )}
+
+      {/* Chat body */}
+      <div className="flex-1 overflow-y-auto px-3 py-4">
+        <div className="mx-auto flex max-w-md flex-col gap-2">
+          {bubbleLines.map((line, i) => {
+            if (line.speaker === "narration") {
+              return (
+                <div
+                  key={i}
+                  className="self-center rounded-full bg-neutral-800/60 px-3 py-1 text-[10px] text-neutral-500"
+                >
+                  {line.text}
+                </div>
+              );
+            }
+            if (line.speaker === "pc") {
+              return (
+                <div
+                  key={i}
+                  className="max-w-[78%] self-end rounded-2xl rounded-br-md bg-amber-300 px-3.5 py-2 text-sm text-black"
+                >
+                  {line.text}
+                </div>
+              );
+            }
+            return (
+              <div
+                key={i}
+                className="max-w-[78%] self-start rounded-2xl rounded-bl-md bg-neutral-800 px-3.5 py-2 text-sm text-neutral-100"
+              >
+                {line.text}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Thought panel — interior monologue, rendered outside the chat. */}
+      {thoughtLine && (
+        <div className="border-t border-neutral-800 bg-neutral-950/95 px-5 py-4">
+          <div className="mb-1 text-[10px] uppercase tracking-[0.3em] text-neutral-600">
+            {pc.name} · 속
+          </div>
+          <p className="text-sm italic leading-relaxed text-neutral-400">
+            {thoughtLine}
+          </p>
+        </div>
+      )}
+
+      {/* Bottom action row */}
+      <div className="border-t border-neutral-800 bg-neutral-950/95 p-4">
+        {choices.length > 0 ? (
+          <ul className="flex flex-col gap-2">
+            {choices.map((c) => (
+              <li key={c.id}>
+                <button
+                  type="button"
+                  onClick={() => runChoice(c)}
+                  disabled={busy}
+                  className="w-full rounded-xl border border-amber-500/40 bg-amber-500/5 px-4 py-3 text-left text-sm text-amber-100 disabled:opacity-50 active:bg-amber-500/15"
+                >
+                  {c.check && (
+                    <span className="mr-2 rounded-md bg-amber-900/40 px-2 py-0.5 font-mono text-[10px] text-amber-300">
+                      {STAT_LABELS[c.check.stat]} DC{c.check.dc}
+                    </span>
+                  )}
+                  {c.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <button
+            type="button"
+            onClick={advance}
+            className="w-full rounded-xl border border-neutral-700 bg-neutral-900/60 px-4 py-3 text-sm active:bg-neutral-800"
           >
             다음 ▶
           </button>

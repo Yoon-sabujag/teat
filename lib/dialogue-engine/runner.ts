@@ -99,6 +99,20 @@ export function useSceneRunner({ scene, onEvent }: Args) {
   const atEndOfLines =
     firstVisibleIndex(node, displayIndex + 1, pc.flags, pc.stats) === null;
 
+  // All lines from the start of this node up to and including the current one
+  // that pass `requires` — used by the kakao view to render an accumulating
+  // chat thread. The standard view ignores this and shows only `currentLine`.
+  const visibleLinesSoFar: Line[] = useMemo(() => {
+    if (visibleIdx === null) return [];
+    const out: Line[] = [];
+    for (let i = 0; i <= visibleIdx; i++) {
+      if (matchesRequires(node.lines[i].requires, pc.flags, pc.stats)) {
+        out.push(node.lines[i]);
+      }
+    }
+    return out;
+  }, [node.lines, visibleIdx, pc.flags, pc.stats]);
+
   const applyEffects = useCallback(
     (effects: Effect[] | undefined) => {
       if (!effects) return;
@@ -288,7 +302,9 @@ export function useSceneRunner({ scene, onEvent }: Args) {
   return {
     background,
     cast,
+    mode: node.mode,
     currentLine,
+    visibleLinesSoFar,
     choices,
     advance,
     runChoice,

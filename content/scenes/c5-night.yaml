@@ -358,14 +358,111 @@ nodes:
 
   hajin-exchange:
     id: hajin-exchange
+    mode: kakao
     background: euljiro-office
     lines:
       - speaker: narration
-        text: '하진 카톡. 한 줄짜리 질문 밑에 두 번째 줄 — "엄마는 계속 걱정해요. 말은 안 해도요."'
+        text: 오후 11:47
+      - speaker: hajin
+        text: 아빠 저녁은 드셨어요.
+      - speaker: hajin
+        text: 엄마는 계속 걱정해요. 말은 안 해도요.
+    choices:
+      - id: reply-brief
+        label: 아빠 저녁 먹었어. 너도 얼른 자라.
+        next: hajin-reply-brief
+        effects:
+          - kind: flag
+            key: hajin_reply
+            value: brief
+      - id: reply-softer
+        label: 걱정 마. 아빠 오늘은 덜 늦게 들어갈게.
+        next: hajin-reply-softer
+        effects:
+          - kind: flag
+            key: hajin_reply
+            value: softer
+          - kind: memory
+            text: 하진에게 오늘은 덜 늦게 들어가겠다고 약속했다.
+      - id: reply-truthful
+        label: 아빠가 요새 안 편해. 너라도 먼저 자라.
+        check: { stat: yangsim, dc: 10 }
+        success:
+          next: hajin-reply-truthful
+          effects:
+            - kind: flag
+              key: hajin_reply
+              value: truthful
+            - kind: memory
+              text: 하진에게 '아빠가 요새 안 편하다'고 한 줄 보냈다. 중학생 아이가 그 한 줄을 어른 자리에서 받았다.
+        failure:
+          next: hajin-reply-brief
+          effects:
+            - kind: flag
+              key: hajin_reply
+              value: truthful_failed
+
+  hajin-reply-brief:
+    id: hajin-reply-brief
+    mode: kakao
+    background: euljiro-office
+    lines:
+      - speaker: pc
+        text: 아빠 저녁 먹었어. 너도 얼른 자라.
+      - speaker: hajin
+        requires:
+          flagEquals:
+            key: hajin_reply
+            value: truthful_failed
+        text: …네.
+      - speaker: hajin
+        requires:
+          flagNotEquals:
+            key: hajin_reply
+            value: truthful_failed
+        text: 네.
       - speaker: narration
-        text: 짧게 답을 찍었다. '아빠 저녁 먹었어. 너도 얼른 자라.' 한 줄. 그걸 뒤에 보낸 뒤 지우고 다시 찍었다. '걱정 마. 아빠 오늘은 덜 늦게 들어갈게.' 전송.
+        text: 하진이 대화창을 나갔다.
       - speaker: thought
-        text: 그 애의 이 한 줄짜리 메시지는 내가 두 달 전 이 회사를 나올 때 쥐고 나온 것 중 가장 무거운 짐이다. 오늘 밤 이 사건의 모든 단서보다 이 한 줄이 내 코트 주머니 안에서 더 묵직하다.
+        text: 그 애의 이 한 줄짜리 질문은 내가 두 달 전 이 회사를 나올 때 쥐고 나온 것 중 가장 무거운 짐이다. 오늘 밤 이 사건의 모든 단서보다 이 한 줄이 내 코트 주머니 안에서 더 묵직하다.
+    next: lights-off
+
+  hajin-reply-softer:
+    id: hajin-reply-softer
+    mode: kakao
+    background: euljiro-office
+    lines:
+      - speaker: pc
+        text: 걱정 마. 아빠 오늘은 덜 늦게 들어갈게.
+      - speaker: hajin
+        text: 진짜로요?
+      - speaker: pc
+        text: 응. 진짜.
+      - speaker: hajin
+        text: 알았어요. 아빠도 일찍 자요.
+      - speaker: narration
+        text: 하진이 대화창을 나갔다.
+      - speaker: thought
+        text: 저 애 쪽이 먼저 내 안부를 챙기는 대화를 오늘도 한 번 더 내준 셈이다. 내 쪽에서 돌려 준 한 줄이 내일 아침 집 현관에 닿을 수 있을지부터가 오늘 밤의 무게다.
+    next: lights-off
+
+  hajin-reply-truthful:
+    id: hajin-reply-truthful
+    mode: kakao
+    background: euljiro-office
+    lines:
+      - speaker: pc
+        text: 아빠가 요새 안 편해. 너라도 먼저 자라.
+      - speaker: hajin
+        text: …
+      - speaker: hajin
+        text: 아빠 그냥 집 와도 돼요.
+      - speaker: hajin
+        text: 엄마한테는 제가 말할게요.
+      - speaker: narration
+        text: 이모티콘 하나 없이 보낸 문장이 그대로 위쪽으로 한 칸 밀렸다.
+      - speaker: thought
+        text: 중 2짜리 아이가 내 쪽으로 어른의 자리를 한 칸 내밀어 준 거다. 그 자리 너비만큼 오늘 밤 내가 어른이 못 됐다는 계산이 책상 한쪽에 남는다.
     next: lights-off
 
   defer-hajin-beat:
