@@ -421,8 +421,8 @@ nodes:
             key: hajin_reply
             value: truthful_failed
         text: 네.
-      - speaker: narration
-        text: 하진이 대화창을 나갔다.
+      - speaker: system
+        text: 하진님이 대화창을 나갔습니다.
       - speaker: thought
         text: 그 애의 이 한 줄짜리 질문은 내가 두 달 전 이 회사를 나올 때 쥐고 나온 것 중 가장 무거운 짐이다. 오늘 밤 이 사건의 모든 단서보다 이 한 줄이 내 코트 주머니 안에서 더 묵직하다.
     next: lights-off
@@ -440,8 +440,8 @@ nodes:
         text: 응. 진짜.
       - speaker: hajin
         text: 알았어요. 아빠도 일찍 자요.
-      - speaker: narration
-        text: 하진이 대화창을 나갔다.
+      - speaker: system
+        text: 하진님이 대화창을 나갔습니다.
       - speaker: thought
         text: 저 애 쪽이 먼저 내 안부를 챙기는 대화를 오늘도 한 번 더 내준 셈이다. 내 쪽에서 돌려 준 한 줄이 내일 아침 집 현관에 닿을 수 있을지부터가 오늘 밤의 무게다.
     next: lights-off

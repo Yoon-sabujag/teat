@@ -341,6 +341,18 @@ type KakaoProps = {
   pc: PcState;
 };
 
+// Matches "오후 11:47", "10:04" — short time markers that read as kakao's
+// subtle date separators.
+const TIMESTAMP_RE = /^(오후|오전|\d{1,2}:\d{2})/;
+function isTimestampNarration(line: Line): boolean {
+  return line.speaker === "narration" && TIMESTAMP_RE.test(line.text.trim());
+}
+// Author-voice prose describing the scene from outside — does NOT belong
+// inside the phone frame. Renders externally, like thought.
+function isProseNarration(line: Line): boolean {
+  return line.speaker === "narration" && !TIMESTAMP_RE.test(line.text.trim());
+}
+
 function KakaoView({
   npcs,
   visibleLines,
@@ -354,15 +366,26 @@ function KakaoView({
   setHud,
   pc,
 }: KakaoProps) {
-  // Bubbles: everything in the chat thread except `thought` (which renders
-  // outside the phone frame as interior monologue).
-  const bubbleLines = visibleLines.filter((l) => l.speaker !== "thought");
-  const thoughtLine =
-    currentLine.speaker === "thought" ? currentLine.text : null;
+  // Chat-body lines: bubble speakers (pc + NPCs), `system` (kakao system
+  // notifications like "나갔습니다"), and narration that's a timestamp.
+  // Prose narration and thought render OUTSIDE the phone, near the bottom.
+  const bubbleLines = visibleLines.filter(
+    (l) => l.speaker !== "thought" && !isProseNarration(l),
+  );
+  const externalLine: Line | null =
+    currentLine.speaker === "thought" || isProseNarration(currentLine)
+      ? currentLine
+      : null;
   // Find the primary non-PC speaker for the header label.
   const otherSpeakerId = visibleLines
     .map((l) => l.speaker)
-    .find((s) => s !== "pc" && s !== "narration" && s !== "thought");
+    .find(
+      (s) =>
+        s !== "pc" &&
+        s !== "narration" &&
+        s !== "thought" &&
+        s !== "system",
+    );
   const otherName = otherSpeakerId
     ? (npcs[otherSpeakerId]?.displayName ?? otherSpeakerId)
     : "대화";
@@ -459,23 +482,17 @@ function KakaoView({
       <div className="flex-1 overflow-y-auto px-3 py-4">
         <div className="mx-auto flex max-w-md flex-col gap-2">
           {bubbleLines.map((line, i) => {
-            if (line.speaker === "narration") {
-              // Timestamp-looking strings ("오후 11:47" or "10:04") render as
-              // kakao's quiet date separators. Everything else renders as a
-              // kakao system message bar (thin lines flanking grey text).
-              const isTimestamp = /^(오후|오전|\d{1,2}:\d{2})/.test(
-                line.text.trim(),
+            if (isTimestampNarration(line)) {
+              return (
+                <div
+                  key={i}
+                  className="my-2 self-center text-[10px] tracking-wide text-neutral-500"
+                >
+                  {line.text}
+                </div>
               );
-              if (isTimestamp) {
-                return (
-                  <div
-                    key={i}
-                    className="my-2 self-center text-[10px] tracking-wide text-neutral-500"
-                  >
-                    {line.text}
-                  </div>
-                );
-              }
+            }
+            if (line.speaker === "system") {
               return (
                 <div
                   key={i}
@@ -511,15 +528,24 @@ function KakaoView({
         </div>
       </div>
 
-      {/* Thought panel — interior monologue, rendered outside the chat. */}
-      {thoughtLine && (
+      {/* External panel — author prose (narration outside the chat) or PC's
+          interior monologue (thought). Only the current one is shown. */}
+      {externalLine && (
         <div className="border-t border-neutral-800 bg-neutral-950/95 px-5 py-4">
-          <div className="mb-1 text-[10px] uppercase tracking-[0.3em] text-neutral-600">
-            {pc.name} · 속
-          </div>
-          <p className="text-sm italic leading-relaxed text-neutral-400">
-            {thoughtLine}
-          </p>
+          {externalLine.speaker === "thought" ? (
+            <>
+              <div className="mb-1 text-[10px] uppercase tracking-[0.3em] text-neutral-600">
+                {pc.name} · 속
+              </div>
+              <p className="text-sm italic leading-relaxed text-neutral-400">
+                {externalLine.text}
+              </p>
+            </>
+          ) : (
+            <p className="text-sm leading-relaxed text-neutral-400">
+              {externalLine.text}
+            </p>
+          )}
         </div>
       )}
 
