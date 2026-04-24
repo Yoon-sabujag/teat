@@ -264,17 +264,13 @@ function SceneRow({
 }) {
   return (
     <div className="rounded-lg border border-neutral-800 bg-black/30 p-3">
-      <div className="mb-3 text-[11px] uppercase tracking-[0.2em] text-neutral-500">
+      <div className="mb-4 text-[11px] uppercase tracking-[0.2em] text-neutral-500">
         {title}
       </div>
       {locked ? (
         <div className="text-xs text-neutral-700">? 지나지 않음</div>
-      ) : (
-        <div className="flex flex-col gap-4">
-          {items.map((it) => (
-            <DecisionPoint key={`${it.entry.scene}-${it.index}`} item={it} />
-          ))}
-        </div>
+      ) : items.length === 0 ? null : (
+        <BranchTree items={items} />
       )}
     </div>
   );
@@ -303,82 +299,132 @@ function CheckBadge({
   );
 }
 
-function DecisionPoint({ item }: { item: Indexed }) {
-  const entry = item.entry;
-  const hasLabels = Array.isArray(entry.alternatives);
-  const canRewind = !!entry.rewind;
-
+function BranchTree({ items }: { items: Indexed[] }) {
+  // Continuous amber spine runs through the entire scene's decision dots.
+  // Each decision: dot on spine + picked label + alt stubs that fan to the
+  // right and dead-end at "?" ghost nodes (their subsequent scenes hidden).
   return (
-    <div className="relative">
-      {/* Picked branch */}
-      <div className="flex items-start gap-2">
-        <span className="mt-1.5 inline-block h-2 w-2 flex-none rounded-full bg-amber-400 shadow-[0_0_0_3px_rgba(217,119,6,0.18)]" />
-        <div className="flex-1">
-          <div className="flex items-baseline gap-2 text-sm text-neutral-100">
-            {entry.checkStat && (
-              <CheckBadge stat={entry.checkStat} dc={entry.checkDc} />
-            )}
-            <span className="flex-1 leading-snug">{entry.choiceLabel}</span>
-            {typeof entry.success === "boolean" && (
-              <span
-                className={`rounded-md px-1.5 py-0.5 font-mono text-[10px] ${
-                  entry.success
-                    ? "bg-emerald-900/50 text-emerald-300"
-                    : "bg-rose-900/50 text-rose-300"
-                }`}
-              >
-                {entry.success ? "성공" : "실패"}
-              </span>
-            )}
+    <div className="relative pl-4">
+      {/* Amber spine. Absolute positioned so it stretches from first dot to last. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-[9px] top-[10px] w-px bg-amber-500/45"
+        style={{
+          height: `calc(100% - ${items.length > 0 ? "10px" : "0px"} - 10px)`,
+        }}
+      />
+      {items.map((it, idx) => {
+        const entry = it.entry;
+        const isLast = idx === items.length - 1;
+        return (
+          <div
+            key={`${entry.scene}-${it.index}`}
+            className={`relative ${isLast ? "" : "pb-5"}`}
+          >
+            {/* Spine dot */}
+            <div
+              aria-hidden
+              className="absolute left-[2px] top-1 h-3.5 w-3.5 rounded-full bg-amber-400 shadow-[0_0_0_3px_rgba(217,119,6,0.22)]"
+            />
+            <div className="pl-7">
+              <PickedRow entry={entry} logIndex={it.index} />
+              {entry.alternatives && entry.alternatives.length > 0 ? (
+                <ul className="mt-2 flex flex-col">
+                  {entry.alternatives.map((alt, i) => (
+                    <AlternativeBranch
+                      key={alt.id}
+                      alt={alt}
+                      isLast={i === (entry.alternatives?.length ?? 0) - 1}
+                    />
+                  ))}
+                </ul>
+              ) : entry.alternativeCount > 0 ? (
+                <div className="mt-1 flex flex-wrap gap-1 text-[11px] text-neutral-600">
+                  {Array.from({ length: entry.alternativeCount }).map((_, k) => (
+                    <span
+                      key={k}
+                      className="rounded border border-neutral-800 bg-neutral-900/80 px-1.5 py-0.5"
+                    >
+                      ?
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+            </div>
           </div>
-          <div className="mt-0.5 flex items-center gap-2">
-            <span className="text-[10px] uppercase tracking-[0.15em] text-amber-500">
-              선택
-            </span>
-            {canRewind && (
-              <RewindButton
-                beforeIndex={item.index}
-                rewind={entry.rewind!}
-              />
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Alternative branches */}
-      {hasLabels ? (
-        (entry.alternatives ?? []).length > 0 && (
-          <ul className="mt-2 flex flex-col gap-1.5 border-l border-dashed border-neutral-800 pl-4">
-            {(entry.alternatives ?? []).map((alt) => (
-              <AlternativeRow key={alt.id} alt={alt} />
-            ))}
-          </ul>
-        )
-      ) : entry.alternativeCount > 0 ? (
-        <div className="mt-2 flex flex-wrap gap-1 pl-4 text-[11px] text-neutral-600">
-          {Array.from({ length: entry.alternativeCount }).map((_, k) => (
-            <span
-              key={k}
-              className="rounded border border-neutral-800 bg-neutral-900/80 px-1.5 py-0.5"
-            >
-              ?
-            </span>
-          ))}
-        </div>
-      ) : null}
+        );
+      })}
     </div>
   );
 }
 
-function AlternativeRow({ alt }: { alt: ChoiceAlternative }) {
+function PickedRow({
+  entry,
+  logIndex,
+}: {
+  entry: ChoiceLogEntry;
+  logIndex: number;
+}) {
   return (
-    <li className="flex items-start gap-2">
-      <span className="mt-1.5 inline-block h-1.5 w-1.5 flex-none rounded-full border border-neutral-700 bg-neutral-900" />
-      <div className="flex flex-1 items-baseline gap-2 text-sm text-neutral-500">
+    <div className="flex flex-col gap-1">
+      <div className="flex items-baseline gap-2 text-sm text-neutral-100">
+        {entry.checkStat && (
+          <CheckBadge stat={entry.checkStat} dc={entry.checkDc} />
+        )}
+        <span className="flex-1 leading-snug">{entry.choiceLabel}</span>
+        {typeof entry.success === "boolean" && (
+          <span
+            className={`rounded-md px-1.5 py-0.5 font-mono text-[10px] ${
+              entry.success
+                ? "bg-emerald-900/50 text-emerald-300"
+                : "bg-rose-900/50 text-rose-300"
+            }`}
+          >
+            {entry.success ? "성공" : "실패"}
+          </span>
+        )}
+      </div>
+      {entry.rewind && (
+        <div>
+          <RewindButton beforeIndex={logIndex} rewind={entry.rewind} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AlternativeBranch({
+  alt,
+  isLast,
+}: {
+  alt: ChoiceAlternative;
+  isLast: boolean;
+}) {
+  // Draws ├─ (or └─) connector + faded ghost node + label + dead-end "↳ ?".
+  return (
+    <li className="relative pl-6 pb-1.5 text-[13px] leading-snug text-neutral-500">
+      {/* Vertical sibling line — full height unless last, then only top stub */}
+      <span
+        aria-hidden
+        className={`absolute left-0 top-0 w-px bg-neutral-800 ${
+          isLast ? "h-[10px]" : "bottom-0"
+        }`}
+      />
+      {/* Horizontal elbow into the ghost node */}
+      <span
+        aria-hidden
+        className="absolute left-0 top-[10px] h-px w-4 bg-neutral-800"
+      />
+      {/* Ghost node */}
+      <span
+        aria-hidden
+        className="absolute left-[14px] top-[6px] h-2 w-2 rounded-full border border-neutral-700 bg-neutral-900"
+      />
+      <div className="flex items-baseline gap-2">
         {alt.check && (
           <CheckBadge stat={alt.check.stat} dc={alt.check.dc} faded />
         )}
-        <span className="flex-1 leading-snug">{alt.label}</span>
+        <span className="flex-1">{alt.label}</span>
         <span className="font-mono text-[10px] text-neutral-700">↳ ?</span>
       </div>
     </li>
