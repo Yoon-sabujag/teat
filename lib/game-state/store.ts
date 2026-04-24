@@ -13,7 +13,7 @@ export type PcState = {
   memory: string[];
 };
 
-type SaveState = {
+export type SaveState = {
   pc: PcState;
   currentChapter: string;
   currentScene: string;
@@ -29,6 +29,7 @@ type Actions = {
   goToScene: (sceneId: string) => void;
   completeChapter: (chapter: string, nextChapter?: string) => void;
   reset: () => void;
+  loadSnapshot: (snap: SaveState) => void;
 };
 
 const INITIAL_PC: PcState = {
@@ -90,6 +91,14 @@ export const useSave = create<SaveState & Actions>()(
           currentChapter: nextChapter ?? s.currentChapter,
         })),
       reset: () => set(() => ({ ...INITIAL_STATE, pc: { ...INITIAL_PC, stats: { ...INITIAL_PC.stats } } })),
+      loadSnapshot: (snap) =>
+        set(() => ({
+          pc: snap.pc,
+          currentChapter: snap.currentChapter,
+          currentScene: snap.currentScene,
+          history: snap.history,
+          completedChapters: snap.completedChapters,
+        })),
     }),
     {
       name: "euljiro-save",

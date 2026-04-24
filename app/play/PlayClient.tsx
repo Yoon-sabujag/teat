@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SceneView } from "@/components/SceneView";
 import { useSave } from "@/lib/game-state/store";
+import { useSlots } from "@/lib/game-state/slots";
 import type { SceneEvent } from "@/lib/dialogue-engine/runner";
 import type { Npc, Background } from "@/lib/content/loader";
 import type { ParsedCampaign, ParsedScene } from "@/lib/dialogue-engine/schema";
@@ -19,12 +20,29 @@ export function PlayClient({ campaign, scenes, npcs, backgrounds }: Props) {
   const currentScene = useSave((s) => s.currentScene);
   const goToScene = useSave((s) => s.goToScene);
   const completeChapter = useSave((s) => s.completeChapter);
+  const activeSlot = useSlots((s) => s.activeSlot);
+  const writeToSlot = useSlots((s) => s.writeToSlot);
   const [banner, setBanner] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     setHydrated(true);
   }, []);
+
+  useEffect(() => {
+    if (activeSlot === null) return;
+    return useSave.subscribe((s) => {
+      if (!s.currentScene) return;
+      writeToSlot(activeSlot, {
+        pc: s.pc,
+        currentChapter: s.currentChapter,
+        currentScene: s.currentScene,
+        history: s.history,
+        completedChapters: s.completedChapters,
+        updatedAt: Date.now(),
+      });
+    });
+  }, [activeSlot, writeToSlot]);
 
   if (!hydrated) {
     return (
