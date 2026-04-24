@@ -249,20 +249,46 @@ PC 초기 스탯 2, 최대 10이라 후반으로 갈수록 높은 DC를 뚫을 �
 
 ## 현 상태
 
-**프롤로그 + 1장만 구현됨 (플레이 시간 ~20분 예상)**:
+**프롤로그 ~ 9장 엔딩까지 스크립트 완료**. 플레이 시간 한 회 기준 80-120분 예상.
 
-1. **프롤로그 — 그날의 결재판**: 차 상무 앞에서 퇴직 합의서 서명. 3개 스킬 체크 분기 (`gwonmo`, `ttuksim`, `beopri`)
-2. **1장 — 을지로에 앉다**: 재민과의 재회 + 김승기 부회장의 의뢰 수락. `accepted_case`, `reserved_channel` 등 플래그 세팅
+- 프롤로그부터 9장까지의 모든 씬 YAML 작성됨. 45개 스킬 체크 전체 DC 10-13 범위.
+- 세이브 슬롯 3개 + 슬롯 단위 로드/덮어쓰기/지우기 (`lib/game-state/slots.ts`, `app/TitleClient.tsx`).
+- 카카오톡 UI 모드 (`Node.mode: kakao`) — 현재는 5장 하진 카톡 씬에만 적용.
+- 허브 씬(c2 미영 / c3 암자 / c4 이수연)에 실패 누적 시 열리는 "기지" 선택지 추가.
 
-### 아직 없는 것 (다음 단계)
+### 아직 없는 것 / 추후 업데이트 후보
 
-- 2장 이후 (**도현의 궤적** → **북한산 암자** → … → **9장 엔딩 분기**) 9개 챕터 남음
-- LLM improv 노드 — 차 상무 카페 대면(7장), 미영 거짓말(2·3·6장), 원장 스님(3장)에서 도입 예정
-- 캐릭터 메모리 → 시스템 프롬프트 주입 로직 (7장 전에 필요)
-- **실제 이미지**: 전부 플레이스홀더 (회색 그라디언트 + 라벨). 캐릭터 바이블 확정 후 Replicate(Flux Kontext)로 일괄 생성 예정
-- 단톡방 UI (딸 하진과의 대화용 — 다른 씬과 시각 대비)
-- 다중 엔딩 처리 UI
-- 메인 메뉴에 스탯 리셋 이상의 세이브 슬롯 관리
+- **실제 이미지** — 캐릭터·배경 전부 회색 그라디언트 플레이스홀더. `content/character-bible.yaml` + `scripts/gen-replicate.mjs` 로 Flux Kontext 파이프라인 준비됨. 실행 블록은 뒷 섹션 참조.
+- LLM improv 노드 — 현재는 전 씬 스크립트로 대체. 후반 결정적 씬에서만 선택적 도입 검토 (7장 차 상무 대면 확장 등).
+- 메모리 → 시스템 프롬프트 주입 로직 — improv 도입 시에만 필요.
+- 다중 엔딩 처리 UI (현재는 단순 배너). 9장 엔딩 6갈래 각각 전용 에필로그 페이지로 이어지는 쪽이 더 좋음.
+- 엔딩 후 세이브 슬롯 상태 처리 (현재는 그대로 두고 타이틀로). "끝난 세이브"를 아카이브로 이동하는 플래그 추가 검토.
+
+## 이미지 파이프라인
+
+캐릭터·배경 이미지 생성은 Flux Kontext (Replicate) 기반으로 단계적 생성.
+
+**바이블**: `content/character-bible.yaml`
+- 각 캐릭터의 나이·체형·얼굴·기본 의상·팔레트·무드를 고정.
+- `expressions_prompts` 8종 표정 변환용 템플릿.
+- `backgrounds` 로케이션 프롬프트.
+- 하진은 바이블에 있지만 **생성 스킵 대상** (미성년 규칙).
+
+**생성 순서**:
+1. `node scripts/gen-replicate.mjs reference <id>` — 캐릭터 중립 표정 1장 생성 → `public/characters/<id>/neutral.webp`.
+2. `node scripts/gen-replicate.mjs expressions <id>` — 1번의 neutral.webp 를 ref 로 Kontext edit, 나머지 7종 생성.
+3. `node scripts/gen-replicate.mjs backgrounds` — 배경 일괄 생성.
+4. `node scripts/gen-replicate.mjs all` — 전부 (오래 걸림, 비용 큼).
+
+**환경 변수**:
+- `REPLICATE_API_TOKEN` — replicate.com 토큰.
+- `FLUX_KONTEXT_MODEL` — 선택, 기본 `black-forest-labs/flux-kontext-max`.
+- `DEV_BASE_URL` — expressions 생성 시 neutral.webp 를 Replicate 가 읽을 수 있어야 하므로 정적 서빙 URL 필요 (프로덕션 CDN 또는 ngrok).
+
+**주의**:
+- Replicate 의 input schema 는 모델 버전에 따라 `input_image` / `image` / `ref_image` 로 바뀌므로 `callReplicate` 에서 직접 수정.
+- placeholder 덮어쓰기 전 `git stash` 해 두면 PR 에서 비교가 쉽다.
+- 캐릭터 하진은 스크립트가 자동으로 skip. 수동 생성도 금지.
 
 ## 개발 팁
 
