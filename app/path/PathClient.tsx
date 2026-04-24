@@ -9,6 +9,11 @@ import type {
   ChoiceLogEntry,
   RewindSnapshot,
 } from "@/lib/game-state/store";
+import {
+  routeTrackers,
+  summarizeChapterRoute,
+  type RouteTone,
+} from "@/lib/game-state/routes";
 import { STAT_LABELS } from "@/lib/pc/stats";
 
 type Props = {
@@ -31,6 +36,7 @@ export function PathClient({
   const currentChapter = useSave((s) => s.currentChapter);
   const completedChapters = useSave((s) => s.completedChapters);
   const currentScene = useSave((s) => s.currentScene);
+  const flags = useSave((s) => s.pc.flags);
 
   if (!hydrated) {
     return (
@@ -63,6 +69,7 @@ export function PathClient({
       chapterTitles={chapterTitles}
       chapterScenes={chapterScenes}
       sceneTitles={sceneTitles}
+      flags={flags}
     />
   );
 }
@@ -75,6 +82,15 @@ type FlowProps = {
   chapterTitles: Record<string, string>;
   chapterScenes: Record<string, string[]>;
   sceneTitles: Record<string, string>;
+  flags: Record<string, boolean | string | number>;
+};
+
+const TONE_CLASS: Record<RouteTone, string> = {
+  warm: "text-amber-300",
+  cold: "text-sky-300",
+  tense: "text-rose-300",
+  dim: "text-neutral-500",
+  neutral: "text-neutral-300",
 };
 
 function FlowchartView({
@@ -85,7 +101,9 @@ function FlowchartView({
   chapterTitles,
   chapterScenes,
   sceneTitles,
+  flags,
 }: FlowProps) {
+  const trackers = useMemo(() => routeTrackers(flags), [flags]);
   const completed = new Set(completedChapters);
 
   // Pair each log entry with its absolute index (for rewind truncation).
@@ -122,7 +140,7 @@ function FlowchartView({
         </Link>
       </div>
 
-      <p className="mb-6 text-xs leading-relaxed text-neutral-500">
+      <p className="mb-4 text-xs leading-relaxed text-neutral-500">
         각 결정점의 선택지는 그 시점에 이미 보였던 카드. 안 고른 카드의{" "}
         <em className="not-italic text-neutral-400">이후</em>는 숨깁니다. 카드 끝의
         <span className="mx-1 rounded border border-neutral-800 bg-neutral-900/80 px-1 py-0.5 font-mono text-[9px] text-neutral-400">
@@ -130,6 +148,26 @@ function FlowchartView({
         </span>
         버튼으로 그 시점부터 다시 플레이.
       </p>
+
+      {trackers.length > 0 && (
+        <div className="mb-6 rounded-xl border border-neutral-800 bg-neutral-950/60 p-4">
+          <div className="mb-3 text-[10px] uppercase tracking-[0.3em] text-neutral-500">
+            지금 기울어져 있는 방향
+          </div>
+          <ul className="flex flex-col gap-1.5">
+            {trackers.map((t, i) => (
+              <li key={i} className="flex items-baseline gap-3 text-sm">
+                <span className="w-16 flex-none text-[11px] uppercase tracking-[0.15em] text-neutral-500">
+                  {t.label}
+                </span>
+                <span className={`flex-1 leading-snug ${TONE_CLASS[t.tone]}`}>
+                  {t.value}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="flex flex-col gap-5">
         {chapterOrder.map((chId) => {
@@ -157,6 +195,24 @@ function FlowchartView({
                   {isDone ? "완료" : isCurrent ? "진행 중" : "잠김"}
                 </div>
               </header>
+
+              {(() => {
+                if (!(isDone || isCurrent)) return null;
+                const summary = summarizeChapterRoute(chId, flags);
+                if (!summary) return null;
+                return (
+                  <div className="mt-2 flex items-baseline gap-2">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-neutral-600">
+                      결
+                    </span>
+                    <span
+                      className={`text-xs leading-snug ${TONE_CLASS[summary.tone]}`}
+                    >
+                      {summary.text}
+                    </span>
+                  </div>
+                );
+              })()}
 
               {isDone || isCurrent ? (
                 <div className="mt-3 flex flex-col gap-3">
