@@ -36,6 +36,10 @@ chapters:
     title: "카페에서"
     scenes:
       - c7-cafe
+  - id: chapter-8
+    title: "도현"
+    scenes:
+      - c8-dohyun
   - id: chapter-9
     title: "다시 을지로 7층"
     scenes:
