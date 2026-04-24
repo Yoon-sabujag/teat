@@ -67,9 +67,17 @@ type Args = {
 };
 
 export function useSceneRunner({ scene, onEvent }: Args) {
-  const [state, setState] = useState<RunnerState>({
-    nodeId: scene.entry,
-    lineIndex: 0,
+  const [state, setState] = useState<RunnerState>(() => {
+    // On the first render of this scene, honor a pending resumePoint from the
+    // store (set by path-view rewind). Consuming clears it so the next scene
+    // mount won't re-use it.
+    const resume = useSave.getState().resumePoint;
+    if (resume && scene.nodes[resume]) {
+      // Clear synchronously so we don't race re-renders.
+      useSave.setState({ resumePoint: null });
+      return { nodeId: resume, lineIndex: 0 };
+    }
+    return { nodeId: scene.entry, lineIndex: 0 };
   });
   const [busy, setBusy] = useState(false);
   const [lastCheck, setLastCheck] = useState<CheckResult | null>(null);
@@ -193,14 +201,35 @@ export function useSceneRunner({ scene, onEvent }: Args) {
   const runChoice = useCallback(
     (choice: Choice) => {
       applyCurrentLineEffectsOnce();
-      // Count of other choices visible at the moment of this pick — used later
-      // by the path view to display "? ×N" placeholders without revealing labels.
-      const alternativeCount = Math.max(
-        0,
-        (node.choices ?? []).filter((c) =>
-          choiceAvailable(pc.flags, pc.stats, c),
-        ).length - 1,
+      // Snapshot the other visible choices at pick time so the path view can
+      // render their labels later. Only choices whose `requires` currently
+      // pass are included — same filter the UI uses.
+      const visibleChoices = (node.choices ?? []).filter((c) =>
+        choiceAvailable(pc.flags, pc.stats, c),
       );
+      const alternativeCount = Math.max(0, visibleChoices.length - 1);
+      const alternatives = visibleChoices
+        .filter((c) => c.id !== choice.id)
+        .map((c) => ({
+          id: c.id,
+          label: c.label,
+          ...(c.check ? { check: { stat: c.check.stat, dc: c.check.dc } } : {}),
+        }));
+      // Minimal state snapshot for rewind. Line effects applied above are
+      // included; the choice's own effects are not yet.
+      const snap = useSave.getState();
+      const rewind = {
+        pc: {
+          ...snap.pc,
+          stats: { ...snap.pc.stats },
+          flags: { ...snap.pc.flags },
+          memory: [...snap.pc.memory],
+        },
+        currentChapter: snap.currentChapter,
+        currentScene: snap.currentScene,
+        resumeNode: state.nodeId,
+        completedChapters: [...snap.completedChapters],
+      };
       if (choice.check) {
         const result = rollCheck(choice.check, pc.stats);
         setLastCheck(result);
@@ -211,8 +240,11 @@ export function useSceneRunner({ scene, onEvent }: Args) {
           choiceId: choice.id,
           choiceLabel: choice.label,
           alternativeCount,
+          alternatives,
           success: result.success,
           checkStat: choice.check.stat,
+          checkDc: choice.check.dc,
+          rewind,
         });
         const branch = result.success ? choice.success : choice.failure;
         if (!branch) return;
@@ -229,6 +261,8 @@ export function useSceneRunner({ scene, onEvent }: Args) {
         choiceId: choice.id,
         choiceLabel: choice.label,
         alternativeCount,
+        alternatives,
+        rewind,
       });
       applyEffects(choice.effects);
       if (choice.next) {

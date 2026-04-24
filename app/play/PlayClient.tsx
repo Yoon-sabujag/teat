@@ -5,7 +5,6 @@ import Link from "next/link";
 import { SceneView } from "@/components/SceneView";
 import { AllocationInterstitial } from "./AllocationInterstitial";
 import { useSave } from "@/lib/game-state/store";
-import { useSlots } from "@/lib/game-state/slots";
 import type { SceneEvent } from "@/lib/dialogue-engine/runner";
 import type { Npc, Background } from "@/lib/content/loader";
 import type { ParsedCampaign, ParsedScene } from "@/lib/dialogue-engine/schema";
@@ -24,8 +23,6 @@ export function PlayClient({ campaign, scenes, npcs, backgrounds }: Props) {
   const completeChapter = useSave((s) => s.completeChapter);
   const setPendingAllocation = useSave((s) => s.setPendingAllocation);
   const pendingAllocation = useSave((s) => s.pendingAllocation);
-  const activeSlot = useSlots((s) => s.activeSlot);
-  const writeToSlot = useSlots((s) => s.writeToSlot);
   const [banner, setBanner] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
 
@@ -33,22 +30,6 @@ export function PlayClient({ campaign, scenes, npcs, backgrounds }: Props) {
     setHydrated(true);
   }, []);
 
-  useEffect(() => {
-    if (activeSlot === null) return;
-    return useSave.subscribe((s) => {
-      if (!s.currentScene) return;
-      writeToSlot(activeSlot, {
-        pc: s.pc,
-        currentChapter: s.currentChapter,
-        currentScene: s.currentScene,
-        history: s.history,
-        completedChapters: s.completedChapters,
-        choiceLog: s.choiceLog,
-        pendingAllocation: s.pendingAllocation,
-        updatedAt: Date.now(),
-      });
-    });
-  }, [activeSlot, writeToSlot]);
 
   if (!hydrated) {
     return (

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSave } from "@/lib/game-state/store";
-import { useSlots, type SlotIndex, type SlotSnapshot } from "@/lib/game-state/slots";
 
 type Props = {
   startChapter: string;
@@ -24,71 +23,30 @@ function formatTimestamp(ts: number): string {
 export function TitleClient({ startChapter, startScene, chapterTitles }: Props) {
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
-  const slots = useSlots((s) => s.slots);
-  const setActiveSlot = useSlots((s) => s.setActiveSlot);
-  const writeToSlot = useSlots((s) => s.writeToSlot);
-  const clearSlot = useSlots((s) => s.clearSlot);
+  const currentScene = useSave((s) => s.currentScene);
+  const currentChapter = useSave((s) => s.currentChapter);
+  const updatedAt = useSave((s) => s.updatedAt);
   const startNew = useSave((s) => s.startNew);
-  const loadSnapshot = useSave((s) => s.loadSnapshot);
+  const reset = useSave((s) => s.reset);
 
-  useEffect(() => {
-    setHydrated(true);
-    // One-time migration: if the legacy single-save has progress but no slot
-    // has been populated yet, seed slot 0 with the active state.
-    const slotsState = useSlots.getState();
-    const saveState = useSave.getState();
-    const anyFilled = slotsState.slots.some((s) => s !== null);
-    if (!anyFilled && saveState.currentScene) {
-      writeToSlot(0, {
-        pc: saveState.pc,
-        currentChapter: saveState.currentChapter,
-        currentScene: saveState.currentScene,
-        history: saveState.history,
-        completedChapters: saveState.completedChapters,
-        choiceLog: saveState.choiceLog ?? [],
-        pendingAllocation: saveState.pendingAllocation ?? null,
-        updatedAt: Date.now(),
-      });
-    }
-  }, [writeToSlot]);
+  useEffect(() => setHydrated(true), []);
 
-  const handleContinue = (i: SlotIndex, snap: SlotSnapshot) => {
-    loadSnapshot({
-      pc: snap.pc,
-      currentChapter: snap.currentChapter,
-      currentScene: snap.currentScene,
-      history: snap.history,
-      completedChapters: snap.completedChapters,
-      choiceLog: snap.choiceLog ?? [],
-      pendingAllocation: snap.pendingAllocation ?? null,
-    });
-    setActiveSlot(i);
-    router.push("/play");
-  };
+  const hasSave = !!currentScene;
+  const chapterTitle = hasSave
+    ? (chapterTitles[currentChapter] ?? currentChapter)
+    : null;
 
-  const handleStartNew = (i: SlotIndex, overwrite: boolean) => {
-    if (overwrite && !confirm(`슬롯 ${i + 1}의 진행을 덮어쓰고 새로 시작하시겠습니까?`)) {
-      return;
-    }
+  const handleContinue = () => router.push("/play");
+
+  const handleStartNew = () => {
+    if (hasSave && !confirm("진행을 덮어쓰고 새로 시작하시겠습니까?")) return;
     startNew({ chapter: startChapter, scene: startScene });
-    setActiveSlot(i);
-    // Seed the slot immediately so the title page reflects the new game on back-nav.
-    writeToSlot(i, {
-      pc: useSave.getState().pc,
-      currentChapter: startChapter,
-      currentScene: startScene,
-      history: [startScene],
-      completedChapters: [],
-      choiceLog: [],
-      pendingAllocation: null,
-      updatedAt: Date.now(),
-    });
     router.push("/play");
   };
 
-  const handleClear = (i: SlotIndex) => {
-    if (!confirm(`슬롯 ${i + 1}을 지우시겠습니까?`)) return;
-    clearSlot(i);
+  const handleReset = () => {
+    if (!confirm("세이브를 완전히 지우시겠습니까?")) return;
+    reset();
   };
 
   return (
@@ -108,82 +66,62 @@ export function TitleClient({ startChapter, startScene, chapterTitles }: Props) 
       </header>
 
       <nav className="flex w-full flex-col gap-3">
-        {hydrated ? (
-          ([0, 1, 2] as SlotIndex[]).map((i) => {
-            const snap = slots[i];
-            const filled = snap !== null;
-            const chapterTitle = filled
-              ? chapterTitles[snap.currentChapter] ?? snap.currentChapter
-              : null;
-            return (
-              <div
-                key={i}
-                className="rounded-xl border border-neutral-800 bg-neutral-950/40 p-4"
+        {hydrated && hasSave && (
+          <div className="rounded-xl border border-neutral-800 bg-neutral-950/40 p-4">
+            <div className="flex items-baseline justify-between">
+              <p className="text-[10px] uppercase tracking-[0.3em] text-neutral-500">
+                진행 중
+              </p>
+              {updatedAt > 0 && (
+                <p className="text-[10px] text-neutral-600">
+                  {formatTimestamp(updatedAt)}
+                </p>
+              )}
+            </div>
+            <div className="mt-2 text-base font-light text-neutral-200">
+              {chapterTitle}
+            </div>
+            <div className="mt-3 flex gap-2">
+              <button
+                type="button"
+                onClick={handleContinue}
+                className="flex-1 rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-black active:scale-[0.98]"
               >
-                <div className="flex items-baseline justify-between">
-                  <p className="text-[10px] uppercase tracking-[0.3em] text-neutral-500">
-                    슬롯 {i + 1}
-                  </p>
-                  {filled && (
-                    <p className="text-[10px] text-neutral-600">
-                      {formatTimestamp(snap.updatedAt)}
-                    </p>
-                  )}
-                </div>
-                <div className="mt-2 min-h-[1.75rem] text-base font-light">
-                  {filled ? (
-                    <span className="text-neutral-200">{chapterTitle}</span>
-                  ) : (
-                    <span className="text-neutral-600">비어 있음</span>
-                  )}
-                </div>
-                <div className="mt-3 flex gap-2">
-                  {filled ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => handleContinue(i, snap)}
-                        className="flex-1 rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-black active:scale-[0.98]"
-                      >
-                        이어서
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleStartNew(i, true)}
-                        className="rounded-lg border border-neutral-700 px-3 py-2.5 text-xs text-neutral-400"
-                      >
-                        새로
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleClear(i)}
-                        className="rounded-lg px-3 py-2.5 text-xs text-neutral-600"
-                      >
-                        지우기
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => handleStartNew(i, false)}
-                      className="flex-1 rounded-lg border border-amber-500/60 px-4 py-2.5 text-sm font-semibold text-amber-400 active:scale-[0.98]"
-                    >
-                      새로 시작
-                    </button>
-                  )}
-                </div>
-                {filled && (
-                  <Link
-                    href={`/path?slot=${i}`}
-                    className="mt-2 block text-right text-[11px] text-neutral-500 underline decoration-dotted underline-offset-4"
-                  >
-                    경로 보기 ▸
-                  </Link>
-                )}
-              </div>
-            );
-          })
-        ) : (
+                이어서
+              </button>
+              <button
+                type="button"
+                onClick={handleStartNew}
+                className="rounded-lg border border-neutral-700 px-3 py-2.5 text-xs text-neutral-400"
+              >
+                새로
+              </button>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="rounded-lg px-3 py-2.5 text-xs text-neutral-600"
+              >
+                지우기
+              </button>
+            </div>
+            <Link
+              href="/path"
+              className="mt-2 block text-right text-[11px] text-neutral-500 underline decoration-dotted underline-offset-4"
+            >
+              경로 보기 ▸
+            </Link>
+          </div>
+        )}
+        {hydrated && !hasSave && (
+          <button
+            type="button"
+            onClick={handleStartNew}
+            className="rounded-xl bg-amber-500 px-5 py-4 text-center font-semibold text-black active:scale-[0.98]"
+          >
+            새로 시작
+          </button>
+        )}
+        {!hydrated && (
           <p className="text-center text-xs text-neutral-600">불러오는 중…</p>
         )}
       </nav>
