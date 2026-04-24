@@ -39,6 +39,7 @@ export function PlayClient({ campaign, scenes, npcs, backgrounds }: Props) {
         currentScene: s.currentScene,
         history: s.history,
         completedChapters: s.completedChapters,
+        choiceLog: s.choiceLog,
         updatedAt: Date.now(),
       });
     });

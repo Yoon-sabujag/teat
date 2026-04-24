@@ -13,12 +13,25 @@ export type PcState = {
   memory: string[];
 };
 
+export type ChoiceLogEntry = {
+  scene: string;
+  node: string;
+  choiceId: string;
+  choiceLabel: string;
+  /** How many other choices were visible at this node when the pick happened. */
+  alternativeCount: number;
+  /** Set only for skill-check choices. */
+  success?: boolean;
+  timestamp: number;
+};
+
 export type SaveState = {
   pc: PcState;
   currentChapter: string;
   currentScene: string;
   history: string[];
   completedChapters: string[];
+  choiceLog: ChoiceLogEntry[];
 };
 
 type Actions = {
@@ -28,6 +41,7 @@ type Actions = {
   addMemory: (text: string) => void;
   goToScene: (sceneId: string) => void;
   completeChapter: (chapter: string, nextChapter?: string) => void;
+  logChoice: (entry: Omit<ChoiceLogEntry, "timestamp">) => void;
   reset: () => void;
   loadSnapshot: (snap: SaveState) => void;
 };
@@ -52,6 +66,7 @@ const INITIAL_STATE: SaveState = {
   currentScene: "",
   history: [],
   completedChapters: [],
+  choiceLog: [],
 };
 
 export const useSave = create<SaveState & Actions>()(
@@ -90,6 +105,13 @@ export const useSave = create<SaveState & Actions>()(
           completedChapters: [...s.completedChapters, chapter],
           currentChapter: nextChapter ?? s.currentChapter,
         })),
+      logChoice: (entry) =>
+        set((s) => ({
+          choiceLog: [
+            ...s.choiceLog,
+            { ...entry, timestamp: Date.now() },
+          ],
+        })),
       reset: () => set(() => ({ ...INITIAL_STATE, pc: { ...INITIAL_PC, stats: { ...INITIAL_PC.stats } } })),
       loadSnapshot: (snap) =>
         set(() => ({
@@ -98,12 +120,20 @@ export const useSave = create<SaveState & Actions>()(
           currentScene: snap.currentScene,
           history: snap.history,
           completedChapters: snap.completedChapters,
+          choiceLog: snap.choiceLog ?? [],
         })),
     }),
     {
       name: "euljiro-save",
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
+      migrate: (persisted, fromVersion) => {
+        const s = (persisted ?? {}) as Partial<SaveState>;
+        if (fromVersion < 2) {
+          return { ...s, choiceLog: s.choiceLog ?? [] } as SaveState;
+        }
+        return s as SaveState;
+      },
     },
   ),
 );

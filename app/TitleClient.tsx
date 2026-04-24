@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSave } from "@/lib/game-state/store";
 import { useSlots, type SlotIndex, type SlotSnapshot } from "@/lib/game-state/slots";
@@ -44,6 +45,7 @@ export function TitleClient({ startChapter, startScene, chapterTitles }: Props) 
         currentScene: saveState.currentScene,
         history: saveState.history,
         completedChapters: saveState.completedChapters,
+        choiceLog: saveState.choiceLog ?? [],
         updatedAt: Date.now(),
       });
     }
@@ -56,6 +58,7 @@ export function TitleClient({ startChapter, startScene, chapterTitles }: Props) 
       currentScene: snap.currentScene,
       history: snap.history,
       completedChapters: snap.completedChapters,
+      choiceLog: snap.choiceLog ?? [],
     });
     setActiveSlot(i);
     router.push("/play");
@@ -74,6 +77,7 @@ export function TitleClient({ startChapter, startScene, chapterTitles }: Props) 
       currentScene: startScene,
       history: [startScene],
       completedChapters: [],
+      choiceLog: [],
       updatedAt: Date.now(),
     });
     router.push("/play");
@@ -165,6 +169,14 @@ export function TitleClient({ startChapter, startScene, chapterTitles }: Props) 
                     </button>
                   )}
                 </div>
+                {filled && (
+                  <Link
+                    href={`/path?slot=${i}`}
+                    className="mt-2 block text-right text-[11px] text-neutral-500 underline decoration-dotted underline-offset-4"
+                  >
+                    경로 보기 ▸
+                  </Link>
+                )}
               </div>
             );
           })

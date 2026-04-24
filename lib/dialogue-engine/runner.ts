@@ -82,6 +82,7 @@ export function useSceneRunner({ scene, onEvent }: Args) {
   const applyStat = useSave((s) => s.applyStat);
   const setFlag = useSave((s) => s.setFlag);
   const addMemory = useSave((s) => s.addMemory);
+  const logChoice = useSave((s) => s.logChoice);
 
   const node = scene.nodes[state.nodeId];
   if (!node) throw new Error(`Missing node ${state.nodeId} in ${scene.id}`);
@@ -192,10 +193,26 @@ export function useSceneRunner({ scene, onEvent }: Args) {
   const runChoice = useCallback(
     (choice: Choice) => {
       applyCurrentLineEffectsOnce();
+      // Count of other choices visible at the moment of this pick — used later
+      // by the path view to display "? ×N" placeholders without revealing labels.
+      const alternativeCount = Math.max(
+        0,
+        (node.choices ?? []).filter((c) =>
+          choiceAvailable(pc.flags, pc.stats, c),
+        ).length - 1,
+      );
       if (choice.check) {
         const result = rollCheck(choice.check, pc.stats);
         setLastCheck(result);
         onEvent({ kind: "check", result, label: choice.label });
+        logChoice({
+          scene: scene.id,
+          node: state.nodeId,
+          choiceId: choice.id,
+          choiceLabel: choice.label,
+          alternativeCount,
+          success: result.success,
+        });
         const branch = result.success ? choice.success : choice.failure;
         if (!branch) return;
         applyEffects(branch.effects);
@@ -205,13 +222,30 @@ export function useSceneRunner({ scene, onEvent }: Args) {
         }
         return;
       }
+      logChoice({
+        scene: scene.id,
+        node: state.nodeId,
+        choiceId: choice.id,
+        choiceLabel: choice.label,
+        alternativeCount,
+      });
       applyEffects(choice.effects);
       if (choice.next) {
         appliedRef.current.clear();
         setState({ nodeId: choice.next, lineIndex: 0 });
       }
     },
-    [applyCurrentLineEffectsOnce, pc.stats, onEvent, applyEffects],
+    [
+      applyCurrentLineEffectsOnce,
+      pc.stats,
+      pc.flags,
+      onEvent,
+      applyEffects,
+      logChoice,
+      scene.id,
+      state.nodeId,
+      node.choices,
+    ],
   );
 
   const runImprov = useCallback(
