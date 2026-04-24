@@ -460,12 +460,32 @@ function KakaoView({
         <div className="mx-auto flex max-w-md flex-col gap-2">
           {bubbleLines.map((line, i) => {
             if (line.speaker === "narration") {
+              // Timestamp-looking strings ("오후 11:47" or "10:04") render as
+              // kakao's quiet date separators. Everything else renders as a
+              // kakao system message bar (thin lines flanking grey text).
+              const isTimestamp = /^(오후|오전|\d{1,2}:\d{2})/.test(
+                line.text.trim(),
+              );
+              if (isTimestamp) {
+                return (
+                  <div
+                    key={i}
+                    className="my-2 self-center text-[10px] tracking-wide text-neutral-500"
+                  >
+                    {line.text}
+                  </div>
+                );
+              }
               return (
                 <div
                   key={i}
-                  className="self-center rounded-full bg-neutral-800/60 px-3 py-1 text-[10px] text-neutral-500"
+                  className="my-2 flex items-center gap-3 self-stretch px-2 text-neutral-500"
                 >
-                  {line.text}
+                  <span className="h-px flex-1 bg-neutral-800" />
+                  <span className="text-[11px] leading-relaxed">
+                    {line.text}
+                  </span>
+                  <span className="h-px flex-1 bg-neutral-800" />
                 </div>
               );
             }

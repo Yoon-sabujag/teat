@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { PcState, ChoiceLogEntry } from "./store";
+import type { PcState, ChoiceLogEntry, PendingAllocation } from "./store";
 
 export type SlotSnapshot = {
   pc: PcState;
@@ -11,6 +11,7 @@ export type SlotSnapshot = {
   history: string[];
   completedChapters: string[];
   choiceLog: ChoiceLogEntry[];
+  pendingAllocation: PendingAllocation | null;
   updatedAt: number;
 };
 

@@ -212,6 +212,7 @@ export function useSceneRunner({ scene, onEvent }: Args) {
           choiceLabel: choice.label,
           alternativeCount,
           success: result.success,
+          checkStat: choice.check.stat,
         });
         const branch = result.success ? choice.success : choice.failure;
         if (!branch) return;

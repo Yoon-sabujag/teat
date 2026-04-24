@@ -46,6 +46,7 @@ export function TitleClient({ startChapter, startScene, chapterTitles }: Props) 
         history: saveState.history,
         completedChapters: saveState.completedChapters,
         choiceLog: saveState.choiceLog ?? [],
+        pendingAllocation: saveState.pendingAllocation ?? null,
         updatedAt: Date.now(),
       });
     }
@@ -59,6 +60,7 @@ export function TitleClient({ startChapter, startScene, chapterTitles }: Props) 
       history: snap.history,
       completedChapters: snap.completedChapters,
       choiceLog: snap.choiceLog ?? [],
+      pendingAllocation: snap.pendingAllocation ?? null,
     });
     setActiveSlot(i);
     router.push("/play");
@@ -78,6 +80,7 @@ export function TitleClient({ startChapter, startScene, chapterTitles }: Props) 
       history: [startScene],
       completedChapters: [],
       choiceLog: [],
+      pendingAllocation: null,
       updatedAt: Date.now(),
     });
     router.push("/play");

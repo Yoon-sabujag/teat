@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SceneView } from "@/components/SceneView";
+import { AllocationInterstitial } from "./AllocationInterstitial";
 import { useSave } from "@/lib/game-state/store";
 import { useSlots } from "@/lib/game-state/slots";
 import type { SceneEvent } from "@/lib/dialogue-engine/runner";
 import type { Npc, Background } from "@/lib/content/loader";
 import type { ParsedCampaign, ParsedScene } from "@/lib/dialogue-engine/schema";
+import type { Stat } from "@/lib/pc/stats";
 
 type Props = {
   campaign: ParsedCampaign;
@@ -20,6 +22,8 @@ export function PlayClient({ campaign, scenes, npcs, backgrounds }: Props) {
   const currentScene = useSave((s) => s.currentScene);
   const goToScene = useSave((s) => s.goToScene);
   const completeChapter = useSave((s) => s.completeChapter);
+  const setPendingAllocation = useSave((s) => s.setPendingAllocation);
+  const pendingAllocation = useSave((s) => s.pendingAllocation);
   const activeSlot = useSlots((s) => s.activeSlot);
   const writeToSlot = useSlots((s) => s.writeToSlot);
   const [banner, setBanner] = useState<string | null>(null);
@@ -40,6 +44,7 @@ export function PlayClient({ campaign, scenes, npcs, backgrounds }: Props) {
         history: s.history,
         completedChapters: s.completedChapters,
         choiceLog: s.choiceLog,
+        pendingAllocation: s.pendingAllocation,
         updatedAt: Date.now(),
       });
     });
@@ -91,6 +96,29 @@ export function PlayClient({ campaign, scenes, npcs, backgrounds }: Props) {
         const chapter = campaign.chapters.find((c) => c.id === event.chapter);
         completeChapter(event.chapter, event.nextChapter);
         setBanner(`${chapter?.title ?? event.chapter} 완료`);
+        // Compute allocation pool from successful skill checks in just-completed chapter.
+        if (chapter) {
+          const sceneIds = new Set(chapter.scenes);
+          const log = useSave.getState().choiceLog;
+          const successesByStat: Partial<Record<Stat, number>> = {};
+          let successCount = 0;
+          for (const e of log) {
+            if (!sceneIds.has(e.scene)) continue;
+            if (e.success === true && e.checkStat) {
+              successesByStat[e.checkStat] =
+                (successesByStat[e.checkStat] ?? 0) + 1;
+              successCount += 1;
+            }
+          }
+          const points = Math.floor(successCount / 3);
+          if (points > 0) {
+            setPendingAllocation({
+              fromChapter: event.chapter,
+              points,
+              successesByStat,
+            });
+          }
+        }
         if (event.nextChapter) {
           const next = campaign.chapters.find((c) => c.id === event.nextChapter);
           if (next && next.scenes[0]) {
@@ -132,6 +160,21 @@ export function PlayClient({ campaign, scenes, npcs, backgrounds }: Props) {
           </p>
         </div>
       </main>
+    );
+  }
+
+  // After the chapter banner clears and we've auto-advanced to the next chapter's
+  // first scene, the allocation interstitial takes priority over scene rendering
+  // so the player commits points before the new chapter plays.
+  if (pendingAllocation && pendingAllocation.points > 0) {
+    const sourceChapter = campaign.chapters.find(
+      (c) => c.id === pendingAllocation.fromChapter,
+    );
+    return (
+      <AllocationInterstitial
+        allocation={pendingAllocation}
+        sourceChapterTitle={sourceChapter?.title ?? pendingAllocation.fromChapter}
+      />
     );
   }
 
