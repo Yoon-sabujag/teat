@@ -17,7 +17,7 @@ nodes:
     choices:
       - id: tail-convenience
         label: (근처 편의점에 들러 유리에 반사된 번호판을 확인한다.)
-        check: { stat: jikgam, dc: 13 }
+        check: { stat: jikgam, dc: 12 }
         success:
           next: tail-seen
           effects:
@@ -34,7 +34,7 @@ nodes:
               value: missed
       - id: tail-evade
         label: (골목 세 번 꺾어 사무실 반대쪽으로 유도한 뒤 돌아온다.)
-        check: { stat: gwonmo, dc: 13 }
+        check: { stat: gwonmo, dc: 12 }
         success:
           next: tail-evaded
           effects:
@@ -140,7 +140,7 @@ nodes:
         label: 사무실 소형 금고에 넣는다.
         requires:
           flag: got_tape
-        check: { stat: ttuksim, dc: 11 }
+        check: { stat: ttuksim, dc: 10 }
         success:
           next: tape-result
           effects:
@@ -161,7 +161,7 @@ nodes:
         label: 재민이한테 맡긴다. 심부름 비용은 내일 처리.
         requires:
           flag: got_tape
-        check: { stat: inmaek, dc: 12 }
+        check: { stat: inmaek, dc: 11 }
         success:
           next: tape-result
           effects:
@@ -256,7 +256,7 @@ nodes:
             value: polite
       - id: cha-defiant
         label: 상무님, 이 시간에 이 번호로 거신 이유부터 말씀하시죠.
-        check: { stat: ttuksim, dc: 13 }
+        check: { stat: ttuksim, dc: 12 }
         success:
           next: cha-defiant-success
           effects:

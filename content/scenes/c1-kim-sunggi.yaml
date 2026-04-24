@@ -31,7 +31,7 @@ nodes:
             value: coffee
       - id: water
         label: 물 한 잔이면 됩니다.
-        check: { stat: gwonmo, dc: 11 }
+        check: { stat: gwonmo, dc: 10 }
         success:
           next: setup
           effects:
@@ -98,7 +98,7 @@ nodes:
             value: listened
       - id: probe-motive
         label: 부회장님, 왜 저였습니까.
-        check: { stat: jikgam, dc: 13 }
+        check: { stat: jikgam, dc: 12 }
         success:
           next: probe-motive-success
           effects:
@@ -115,7 +115,7 @@ nodes:
               value: probe_missed
       - id: decline-outright
         label: 죄송합니다, 부회장님. 이 건은 제가 받지 못할 것 같습니다.
-        check: { stat: ttuksim, dc: 15 }
+        check: { stat: ttuksim, dc: 13 }
         success:
           next: decline-success
           effects:
@@ -215,7 +215,7 @@ nodes:
             text: 김승기 부회장 의뢰 수락. 실종된 조카 김도현. 착수금 오천, 단독 보고.
       - id: negotiate
         label: 한 가지 조항을 조정해 주셔야겠습니다.
-        check: { stat: gwonmo, dc: 14 }
+        check: { stat: gwonmo, dc: 12 }
         success:
           next: negotiate-success
           effects:
@@ -238,7 +238,7 @@ nodes:
               value: negotiate_failed
       - id: sleep-on-it
         label: 하루만 시간 주실 수 있겠습니까.
-        check: { stat: ttuksim, dc: 13 }
+        check: { stat: ttuksim, dc: 12 }
         success:
           next: sleep-success
           effects:

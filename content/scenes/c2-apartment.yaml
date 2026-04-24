@@ -19,7 +19,7 @@ nodes:
     choices:
       - id: greet-old
         label: 아저씨, 오래간만입니다.
-        check: { stat: inmaek, dc: 11 }
+        check: { stat: inmaek, dc: 10 }
         success:
           next: guard-talks
           effects:
@@ -121,7 +121,7 @@ nodes:
         next: living-room
       - id: sweep-study
         label: 서재·책상부터 본다.
-        check: { stat: jikgam, dc: 12 }
+        check: { stat: jikgam, dc: 11 }
         success:
           next: study-clue
           effects:
@@ -217,7 +217,7 @@ nodes:
             value: admitted
       - id: refuse-junhyuk
         label: 지금 바쁩니다. 다음에 뵙죠.
-        check: { stat: gwonmo, dc: 13 }
+        check: { stat: gwonmo, dc: 12 }
         success:
           next: junhyuk-later
           effects:
@@ -269,7 +269,7 @@ nodes:
             value: let_speak
       - id: challenge-junhyuk
         label: 네가 왜 이걸 지금 말하지?
-        check: { stat: jikgam, dc: 13 }
+        check: { stat: jikgam, dc: 12 }
         success:
           next: junhyuk-admits
           effects:
@@ -310,7 +310,7 @@ nodes:
             value: promised
       - id: no-promise
         label: 약속은 못 해요. 상황에 따라 달라질 수 있습니다.
-        check: { stat: yangsim, dc: 12 }
+        check: { stat: yangsim, dc: 11 }
         success:
           next: junhyuk-leaves-partial
           effects:

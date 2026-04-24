@@ -54,7 +54,7 @@ nodes:
             value: business
       - id: probe-jaemin
         label: 너 내가 여기 자리 잡은 거 어디서 들었어.
-        check: { stat: jikgam, dc: 12 }
+        check: { stat: jikgam, dc: 11 }
         success:
           next: probe-jaemin-success
           effects:
@@ -188,7 +188,7 @@ nodes:
             value: immediate
       - id: let-it-ring
         label: 한 번 흘려 보낸다.
-        check: { stat: ttuksim, dc: 13 }
+        check: { stat: ttuksim, dc: 12 }
         success:
           next: let-it-ring-success
           effects:

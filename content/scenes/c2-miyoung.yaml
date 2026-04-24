@@ -31,7 +31,7 @@ nodes:
             value: principle
       - id: decline
         label: 상황에 따라 다릅니다. 지금은 안 합니다.
-        check: { stat: yangsim, dc: 12 }
+        check: { stat: yangsim, dc: 11 }
         success:
           next: open-question
           effects:
@@ -88,7 +88,7 @@ nodes:
             value: honest
       - id: downplay
         label: 별 얘기 없었습니다. 직접 듣는 게 나을 것 같아서요.
-        check: { stat: gwonmo, dc: 12 }
+        check: { stat: gwonmo, dc: 11 }
         success:
           next: surface-truth
           effects:
@@ -152,7 +152,7 @@ nodes:
         next: improv-node
       - id: thank-and-leave
         label: 오늘은 여기까지 듣겠습니다. 감사합니다.
-        check: { stat: ttuksim, dc: 14 }
+        check: { stat: ttuksim, dc: 12 }
         success:
           next: thank-leave-success
           effects:
@@ -232,7 +232,7 @@ nodes:
           flagNotEquals:
             key: asked_usb
             value: true
-        check: { stat: gwonmo, dc: 13 }
+        check: { stat: gwonmo, dc: 12 }
         success:
           next: usb-disclosure
           effects:
@@ -259,6 +259,9 @@ nodes:
             - kind: flag
               key: miyoung_strike_usb
               value: true
+            - kind: flag
+              key: miyoung_any_strike
+              value: true
       - id: ask-alibi
         label: '"공식적으로"라고 하셨는데, 실제로 그날 밤 어디 계셨습니까.'
         requires:
@@ -266,7 +269,7 @@ nodes:
           flagNotEquals:
             key: asked_alibi
             value: true
-        check: { stat: jikgam, dc: 13 }
+        check: { stat: jikgam, dc: 12 }
         success:
           next: caught-that-night
           effects:
@@ -293,6 +296,9 @@ nodes:
             - kind: flag
               key: miyoung_strike_alibi
               value: true
+            - kind: flag
+              key: miyoung_any_strike
+              value: true
       - id: ask-alive
         label: 도현 씨가 지금 살아 있다고 보십니까.
         requires:
@@ -300,7 +306,7 @@ nodes:
           flagNotEquals:
             key: asked_alive
             value: true
-        check: { stat: yangsim, dc: 12 }
+        check: { stat: yangsim, dc: 11 }
         success:
           next: alive-signal
           effects:
@@ -327,6 +333,9 @@ nodes:
             - kind: flag
               key: miyoung_strike_alive
               value: true
+            - kind: flag
+              key: miyoung_any_strike
+              value: true
 
       # ── Layer 3 (unlocks only after the alibi has actually CRACKED — miyoung_was_there) ──
       - id: ask-phone
@@ -336,7 +345,7 @@ nodes:
           flagNotEquals:
             key: asked_phone
             value: true
-        check: { stat: gwonmo, dc: 14 }
+        check: { stat: gwonmo, dc: 12 }
         success:
           next: phone-admission
           effects:
@@ -363,6 +372,42 @@ nodes:
             - kind: flag
               key: miyoung_strike_phone
               value: true
+            - kind: flag
+              key: miyoung_any_strike
+              value: true
+
+      # ── Comeback (기지) — 실패가 쌓였을 때만 열리는 각도 재정비 ──
+      - id: regroup
+        label: (한 박자 잔을 내려놓고 앉은 자세를 다시 잡으며) 제가 지금 각도를 잘못 고르고 있는 것 같네요. 잠깐만 드려 봐도 되겠습니까.
+        requires:
+          flag: miyoung_any_strike
+          flagNotEquals:
+            key: c2_regrouped
+            value: true
+        check: { stat: yangsim, dc: 11 }
+        success:
+          next: regroup-payoff
+          effects:
+            - kind: flag
+              key: c2_regrouped
+              value: true
+            - kind: flag
+              key: miyoung_turn_taken
+              value: true
+            - kind: flag
+              key: miyoung_hinted_firing_line
+              value: true
+            - kind: memory
+              text: 미영 앞에서 한 박자 물러나 각도를 다시 잡자 미영이 내 퇴직 라인 쪽으로 한 줄 돌려줬다.
+        failure:
+          next: regroup-missed
+          effects:
+            - kind: flag
+              key: c2_regrouped
+              value: true
+            - kind: flag
+              key: miyoung_turn_taken
+              value: true
 
       # ── Exit routes ──
       - id: end-politely
@@ -374,7 +419,7 @@ nodes:
             value: true
       - id: end-hard
         label: (의자를 한 번 더 끌어당기며) 오늘 끝까지 다 말씀하셔야겠는데요.
-        check: { stat: gwonmo, dc: 14 }
+        check: { stat: gwonmo, dc: 12 }
         requires:
           flag: miyoung_turn_taken
         success:
@@ -588,6 +633,37 @@ nodes:
         expression: tense
     next: improv-node
 
+  regroup-payoff:
+    id: regroup-payoff
+    lines:
+      - speaker: narration
+        text: 의자를 한 손바닥만큼 당기고 탁자 위 잔을 반쯤 비웠다. 손등을 탁자 가장자리에 한 번 얹었다 뗐고, 그 한 박자 사이에 미영이 내 얼굴을 한 번 더 읽었다. 창가 자리의 재즈 기타 솔로가 한 소절을 끝내고 다음 소절로 넘어갔다.
+      - speaker: miyoung
+        text: …실장님, 지금 앉아 계신 그 자리에 원래 계셔야 할 분 한 분 계시잖아요. 두 달 전에 조용히 정리되신 쪽.
+        expression: weary
+      - speaker: miyoung
+        text: 도현 씨가 그 분 이름, 저한테 두 번 꺼냈어요. 한 번은 "저 사람 선이 맞다"고, 한 번은 "저 사람이 쓸려 간 게 우리 쪽 경고등이었다"고요.
+        expression: grim
+      - speaker: thought
+        text: 오늘 이 카페에 앉은 내가 그 "선이 맞다"고 불린 쪽이다. 도현이 두 달 전에 이미 나를 자기 쪽 경고등으로 읽어 뒀다는 뜻이고, 오늘 저 사람이 굳이 그 문장을 내 쪽으로 돌려준 건 그 경고를 이제 내 자리에 얹어 두겠다는 뜻이다.
+      - speaker: miyoung
+        text: 다른 물으실 거 있으시면, 지금 물으시는 게 편하실 거예요.
+        expression: neutral
+    next: improv-node
+
+  regroup-missed:
+    id: regroup-missed
+    lines:
+      - speaker: miyoung
+        text: 한 박자 쉬신다고 하시는 거, 저는 받아 드립니다. 다만 그 한 박자에 실장님이 쉬신 게 맞는지는 제가 아직 못 읽었어요. 오늘은 여기까지만 돌려 드릴게요.
+        expression: grim
+      - speaker: thought
+        text: 각도를 다시 잡으려다 같은 쪽으로 한 번 더 헛디뎠다. 저 사람이 나를 한 바퀴 더 재는 자리에서 오늘 이 카페가 끝난다.
+      - speaker: miyoung
+        text: 다른 거 있으세요.
+        expression: neutral
+    next: improv-node
+
   miyoung-leaves:
     id: miyoung-leaves
     cast:
@@ -673,6 +749,11 @@ nodes:
         requires:
           flag: miyoung_walked_out
         text: 미영이 먼저 일어났고, 남은 건 오늘 들은 것까지 한 장뿐이었다. 이 자리가 이렇게 끝난 건 내 쪽 잘못이라고 하기엔 애매했고, 저 사람 잘못이라고 하기엔 더 애매했다.
+
+      - speaker: thought
+        requires:
+          flag: miyoung_hinted_firing_line
+        text: 오늘 이 자리에서 내가 한 박자 물러서자 저 사람이 내 퇴직 라인 하나를 돌려줬다. 두 달 전에 내가 받았던 해고 통보가 오늘 저녁 이 카페 한쪽에 다시 놓였고, 놓인 자리의 모양이 본사 쪽 조직도 위에서 생각보다 선명하게 그어져 있었다.
 
       - speaker: thought
         requires:

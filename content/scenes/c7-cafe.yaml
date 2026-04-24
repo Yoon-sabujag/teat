@@ -59,7 +59,7 @@ nodes:
             value: warm
       - id: sit-sharp
         label: 용건부터 들려주시죠.
-        check: { stat: gwonmo, dc: 13 }
+        check: { stat: gwonmo, dc: 12 }
         success:
           next: first-exchange
           effects:
@@ -124,7 +124,7 @@ nodes:
             value: consider
       - id: offer-reject
         label: 거절하겠습니다.
-        check: { stat: ttuksim, dc: 13 }
+        check: { stat: ttuksim, dc: 12 }
         success:
           next: cha-offer-reaction
           effects:
@@ -139,7 +139,7 @@ nodes:
               value: reject_flinch
       - id: offer-counter
         label: 다른 조건부로는 수락 가능합니다.
-        check: { stat: gwonmo, dc: 14 }
+        check: { stat: gwonmo, dc: 12 }
         success:
           next: cha-offer-reaction
           effects:
@@ -156,7 +156,7 @@ nodes:
               value: counter_failed
       - id: offer-redirect
         label: 상무님, 그 자리 말씀드리러 오신 건 아니시죠.
-        check: { stat: jikgam, dc: 13 }
+        check: { stat: jikgam, dc: 12 }
         success:
           next: cha-offer-reaction
           effects:
@@ -272,7 +272,7 @@ nodes:
           flagNotEquals:
             key: c7_asked_hierarchy
             value: true
-        check: { stat: gwonmo, dc: 14 }
+        check: { stat: gwonmo, dc: 12 }
         success:
           next: cha-on-hierarchy-hit
           effects:
@@ -317,7 +317,7 @@ nodes:
           flagNotEquals:
             key: c7_asked_where
             value: true
-        check: { stat: jikgam, dc: 15 }
+        check: { stat: jikgam, dc: 13 }
         success:
           next: cha-on-where-hit
           effects:
@@ -503,7 +503,7 @@ nodes:
         text: 미영 변호사 자리까지 가셨다면, 승재씨 쪽 한 달치 피로는 저도 대충 예상이 가요.
         expression: weary
       - speaker: cha-sangmu
-        text: 다만 미영 씨 쪽이 제공하신 정보와 제가 지금 이 자리에서 드릴 수 있는 정보 사이엔 한 층 두꺼운 벽이 있어요. 미영 씨는 사건 안쪽 사람이고, 저는 사건 바깥쪽 사람이거든요.
+        text: 다만 미영 씨 쪽 정보와 제가 지금 이 자리에서 드릴 수 있는 정보 사이엔 한 층 두꺼운 벽이 있어요. 거긴 현장 쪽이고, 제가 앉은 건 그 현장 치우는 쪽 책상입니다. 한 방향으로 같이 움직이는 건 맞는데, 같은 층 얘기는 아니에요.
         expression: grim
       - speaker: thought
         text: 본인이 사건 바깥쪽이라는 건 책임 회피 문장이고, 동시에 자기 위치가 그림 안에서 어디인지 다시 한 번 박아 두는 문장이다. 차 상무는 오늘 이 자리에서 '저는 실행자입니다' 라고 반쯤 인정한 셈이다.
@@ -545,7 +545,7 @@ nodes:
             text: 카페 퇴장 선언 — 공개 라인. 이수연 쪽 편집국과 내 쪽 시간선이 같이 움직인다.
       - id: end-deal
         label: 상무님이 오늘 그려 드린 그 자리, 조건부로 받겠습니다.
-        check: { stat: gwonmo, dc: 14 }
+        check: { stat: gwonmo, dc: 12 }
         requires:
           flagEquals:
             key: c7_offer
@@ -568,7 +568,7 @@ nodes:
               text: 복귀·거래 선언했지만 조건 조율에 실패. 그쪽 계산서가 내 쪽보다 조금 더 두꺼웠다.
       - id: end-silence
         label: 오늘 자리, 제 쪽에선 없는 자리로 정리하겠습니다.
-        check: { stat: ttuksim, dc: 13 }
+        check: { stat: ttuksim, dc: 12 }
         success:
           next: close-silence
           effects:

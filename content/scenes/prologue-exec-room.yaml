@@ -44,7 +44,7 @@ nodes:
             value: formal
       - id: probe
         label: 상무님, 진짜 이유는 따로 있는 거 아닙니까.
-        check: { stat: gwonmo, dc: 13 }
+        check: { stat: gwonmo, dc: 12 }
         success:
           next: probe-success
           effects:
@@ -64,7 +64,7 @@ nodes:
               value: probe_failure
       - id: silent
         label: (대답 대신 차 상무를 본다.)
-        check: { stat: ttuksim, dc: 12 }
+        check: { stat: ttuksim, dc: 11 }
         success:
           next: silent-success
           effects:
@@ -179,7 +179,7 @@ nodes:
     choices:
       - id: read-carefully
         label: (페이지를 천천히 넘기며 조항을 따라간다.)
-        check: { stat: beopri, dc: 12 }
+        check: { stat: beopri, dc: 11 }
         success:
           next: read-caught
           effects:
@@ -206,7 +206,7 @@ nodes:
             value: clean
       - id: push-back
         label: 하루만 검토 시간 주실 수 있습니까.
-        check: { stat: beopri, dc: 14 }
+        check: { stat: beopri, dc: 12 }
         success:
           next: pushback-success
           effects:
@@ -238,7 +238,7 @@ nodes:
     choices:
       - id: confront
         label: 5년 조항. 이게 이 자리에 들어간 이유가 따로 있을 것 같은데요.
-        check: { stat: gwonmo, dc: 14 }
+        check: { stat: gwonmo, dc: 12 }
         success:
           next: confront-success
           effects:

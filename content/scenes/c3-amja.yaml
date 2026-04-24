@@ -48,7 +48,7 @@ nodes:
             value: family
       - id: intro-silent
         label: (고개만 숙여 인사하고 스님 맞은편에 앉는다.)
-        check: { stat: ttuksim, dc: 12 }
+        check: { stat: ttuksim, dc: 11 }
         success:
           next: opening-exchange
           effects:
@@ -72,7 +72,7 @@ nodes:
           flagEquals:
             key: c3_intro
             value: detective
-        text: 리서치라는 말은 참 편한 말이네요. 사람 찾는 쪽도 리서치고, 사람 숨기는 쪽도 리서치고.
+        text: 리서치라는 말, 편한 말이긴 하지요. 요즘은 그 말 한 개로 걸음을 덜기도 하시고, 더하시기도 하시더라고요. 그 쪽은 어느 쪽으로 오셨는지는 제가 묻는 자리가 아니고요.
         expression: amused
       - speaker: wonjang
         requires:
@@ -124,7 +124,7 @@ nodes:
           flagNotEquals:
             key: asked_amja_why
             value: true
-        check: { stat: yangsim, dc: 12 }
+        check: { stat: yangsim, dc: 11 }
         success:
           next: why-answer
           effects:
@@ -151,13 +151,16 @@ nodes:
             - kind: flag
               key: amja_miss_why
               value: true
+            - kind: flag
+              key: amja_any_miss
+              value: true
       - id: ask-left
         label: 도현 씨가 이 자리에 뭔가 두고 가셨습니까.
         requires:
           flagNotEquals:
             key: asked_amja_left
             value: true
-        check: { stat: ttuksim, dc: 13 }
+        check: { stat: ttuksim, dc: 12 }
         success:
           next: left-answer
           effects:
@@ -184,13 +187,16 @@ nodes:
             - kind: flag
               key: amja_miss_left
               value: true
+            - kind: flag
+              key: amja_any_miss
+              value: true
       - id: ask-state
         label: 삼 일 뒤 내려가실 때 도현 씨는 어떤 분이셨습니까.
         requires:
           flagNotEquals:
             key: asked_amja_state
             value: true
-        check: { stat: jikgam, dc: 13 }
+        check: { stat: jikgam, dc: 12 }
         success:
           next: state-answer
           effects:
@@ -217,13 +223,16 @@ nodes:
             - kind: flag
               key: amja_miss_state
               value: true
+            - kind: flag
+              key: amja_any_miss
+              value: true
       - id: ask-advice
         label: 도현 씨한테 스님이 하신 말씀 한 줄이 있으셨다면.
         requires:
           flagNotEquals:
             key: asked_amja_advice
             value: true
-        check: { stat: yangsim, dc: 11 }
+        check: { stat: yangsim, dc: 10 }
         success:
           next: advice-answer
           effects:
@@ -250,6 +259,43 @@ nodes:
             - kind: flag
               key: amja_miss_advice
               value: true
+            - kind: flag
+              key: amja_any_miss
+              value: true
+
+      # ── Comeback (기지) — 선문답에서 한 박자 물러나 자기를 내놓는 쪽 ──
+      - id: regroup
+        label: (곶감 접시를 가만히 내려다보다가) 스님, 제가 오늘 이 자리에 합당하게 앉아 있는지 잘 모르겠습니다.
+        requires:
+          flag: amja_any_miss
+          flagNotEquals:
+            key: c3_regrouped
+            value: true
+        check: { stat: yangsim, dc: 10 }
+        success:
+          next: amja-regroup-payoff
+          effects:
+            - kind: flag
+              key: c3_regrouped
+              value: true
+            - kind: flag
+              key: amja_turn_taken
+              value: true
+            - kind: flag
+              key: monk_saw_through
+              value: true
+            - kind: memory
+              text: 암자에서 질문 대신 자신의 자리를 내어 놓자 스님이 도현이 내려가는 날 아침에 내려놓은 한 줄을 마저 들려줬다.
+        failure:
+          next: amja-regroup-missed
+          effects:
+            - kind: flag
+              key: c3_regrouped
+              value: true
+            - kind: flag
+              key: amja_turn_taken
+              value: true
+
       - id: end-bow
         label: (합장하고 물러난다.)
         next: descent
@@ -331,7 +377,7 @@ nodes:
     id: state-deflect
     lines:
       - speaker: wonjang
-        text: 사람 상태는 사람한테 들으셔야지요. 제가 법복 입고 본 건 뒷모습이었고, 뒷모습은 늘 앞모습보다 적게 말합니다.
+        text: 사람 상태는 사람한테 들으셔야지요. 제가 법복 입고 본 건 그 분 내려가시는 뒷모습 한 자락뿐이었고요, 그 한 자락으로 드릴 답은 오늘 이 자리엔 마땅찮습니다.
         expression: neutral
       - speaker: thought
         text: 직감의 칼끝이 미세하게 어긋났다. 스님이 돌려준 문장 안에 답이 있었는데, 오늘은 그 안까지 못 들어갔다.
@@ -369,6 +415,43 @@ nodes:
         expression: weary
     next: hub
 
+  amja-regroup-payoff:
+    id: amja-regroup-payoff
+    lines:
+      - speaker: narration
+        text: 스님이 곶감 접시를 무릎 쪽으로 반 뼘 당기셨다. 대답 대신 평상 너머 멀리 은행나무 아래 고무신 두 켤레 쪽으로 시선을 한 번 보내셨고, 한 박자가 길어졌다.
+      - speaker: wonjang
+        text: 도현 씨가 내려가시던 날 아침에 제게 한 말씀 더 남기셨어요. 그 말씀은 그 분 몫이라 그날 이후 아무한테도 안 드렸고요.
+        expression: weary
+      - speaker: wonjang
+        text: 오늘 그쪽이 앉아 계신 자세가 탐정 자세가 아니라 사람 자세여서, 그 한 줄을 오늘은 드리겠습니다. "제가 못 돌아오면, 제 이름 밑에 앉으실 분 한 분이 있어요. 그 분 먼저 제 대신 바라봐 주세요."
+        expression: grim
+      - speaker: thought
+        text: 내 이름이 오늘 이 산 위까지 따라왔다. 도현이 내려가기 전에 이미 자기 이후의 자리에 누가 앉을지를 한 줄 맡겨 두고 떠났다는 얘기다. 오늘 내가 받은 건 정보라기보다 맡긴 사람의 약속 한 줄이다.
+        effects:
+          - kind: flag
+            key: heard_dohyun_legacy_line
+            value: true
+          - kind: memory
+            text: '도현이 암자에서 남긴 한 줄 — "제가 못 돌아오면, 제 이름 밑에 앉으실 분 한 분이 있어요." 그 분이 나.'
+      - speaker: wonjang
+        text: 다른 것 있으시면 편하게.
+        expression: neutral
+    next: hub
+
+  amja-regroup-missed:
+    id: amja-regroup-missed
+    lines:
+      - speaker: wonjang
+        text: 앉으신 자세는 잡으셨는데, 아직 사람 자세는 덜 잡으셨네요. 그 자세는 제가 잡아 드릴 수 있는 자세가 아니지요.
+        expression: neutral
+      - speaker: thought
+        text: 스스로를 내려놓는 자세는 내가 아직 익히지 못한 자세였다. 오늘은 여기까지 돌려받는다.
+      - speaker: wonjang
+        text: 다른 것 있으시면.
+        expression: weary
+    next: hub
+
   descent:
     id: descent
     cast:
@@ -395,6 +478,11 @@ nodes:
         requires:
           flag: heard_monk_line
         text: '"피해도 오게 되어 있다"는 문장은 오늘 내 쪽에도 앉았다. 오늘 이후로는 내가 이 사건에서 걸음을 돌려도, 이 사건이 나를 다시 찾아온다.'
+
+      - speaker: thought
+        requires:
+          flag: heard_dohyun_legacy_line
+        text: 도현이 내려가기 전 스님께 맡긴 그 한 줄이 오늘 내 이름 쪽으로 걸어 내려왔다. 그 사람이 자기 다음 자리에 미리 앉혀 둔 이름이 내 이름이었다는 사실 하나가, 오늘 이후의 걸음 속도를 한 박자 더 무겁게 만든다.
 
       - speaker: thought
         requires:
