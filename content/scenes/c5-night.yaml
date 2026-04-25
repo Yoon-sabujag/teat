@@ -515,6 +515,73 @@ nodes:
         text: 오늘 밤은 일정을 확정하지 않는 쪽으로 끌었다. 내일 오전 회신 전에, 이수연 엔지니어 자리에서 무엇이 나오느냐가 오늘 밤 이 통화의 가격표를 결정한다.
       - speaker: narration
         text: 사무실 문을 한 번 더 돌려 잠그고, 6층까지 계단, 그 아래는 엘리베이터. 1층 현관 유리문을 열고 나서자 을지로 골목의 겨울 공기가 정면으로 다시 한 번 목을 쳤다.
+    next: tomorrow-line
+
+  tomorrow-line:
+    id: tomorrow-line
+    background: euljiro-office
+    cast: []
+    lines:
+      - speaker: narration
+        text: 골목 끝 가로등 아래 잠시 섰다. 코트 안주머니의 휴대폰을 꺼내 내일 일정 메모 앱을 한 번 켰다. 빈 칸 한 줄. 내일 첫 자리는 어디부터 칠지를 이 한 줄로 박아 둬야 잠이 오는 밤이다.
+      - speaker: thought
+        text: 세 갈래가 책상 위에 있다. 내일 아침 일곱 시 반 광화문 카페에서 차 상무 정면, 또는 그 전에 미영 변호사 한 번 더, 또는 그 전에 이수연 편집국 라인 먼저. 어느 쪽이 첫 패가 되느냐로 내일 오전이 통째로 정해진다.
+    choices:
+      - id: line-cha
+        label: 차 상무 카페부터. 정면이 가장 빠른 길이다.
+        next: tomorrow-confirmed
+        effects:
+          - kind: flag
+            key: c5_line
+            value: cha
+          - kind: memory
+            text: 내일 첫 패 — 차 상무 카페 정면. 다른 라인은 그 자리 끝나고 결정.
+      - id: line-miyoung
+        label: 미영부터 한 번 더. 카페 자리 들어가기 전에 카드 한 장 더 깔자.
+        next: tomorrow-confirmed
+        effects:
+          - kind: flag
+            key: c5_line
+            value: miyoung
+          - kind: memory
+            text: 내일 첫 패 — 미영 변호사 호출. 카페 자리 전에 미영 쪽 카드 한 장 더.
+      - id: line-press
+        label: 이수연 쪽 먼저. 엔지니어 자리에서 카드 정리하고 들어간다.
+        requires:
+          flag: tape_duplicated_plan
+        next: tomorrow-confirmed
+        effects:
+          - kind: flag
+            key: c5_line
+            value: press
+          - kind: memory
+            text: 내일 첫 패 — 이수연 편집국 뒷문 엔지니어 자리. 복제본 손에 쥐고 그 다음으로.
+
+  tomorrow-confirmed:
+    id: tomorrow-confirmed
+    background: euljiro-office
+    cast: []
+    lines:
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c5_line
+            value: cha
+        text: 광화문, 일곱 시 반, 카페 1층. 메모 한 줄 박고 휴대폰을 다시 안주머니로.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c5_line
+            value: miyoung
+        text: 청담, 아침 여덟 시. 미영 쪽 일정 비어 있는 시간 하나, 어제 통화 라인으로 한 줄 보내고 휴대폰을 다시 안주머니로.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c5_line
+            value: press
+        text: 시청 사거리 뒷문, 아홉 시. 이수연한테 한 줄 보내고 휴대폰을 다시 안주머니로.
+      - speaker: narration
+        text: 큰길로 한 블록 더 걸어 택시를 잡았다. 운전기사한테 집 주소를 부르는 대신 그냥 "분당 쪽이요" 한 마디만 하고 차창에 머리를 기댔다.
         effects:
           - kind: chapterComplete
             chapter: chapter-5

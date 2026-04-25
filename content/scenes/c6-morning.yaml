@@ -45,10 +45,27 @@ nodes:
             value: true
         text: 오늘 아침엔 틀 것이 없다. 어제 암자에서 못 받아 온 조각이 그대로 비어 있고, 그 빈자리 위에 혼자 앉아 한 번 더 가설을 정리해야 한다.
     choices:
+      - id: go-miyoung
+        label: (미영한테 청담 사무실 자리부터 잡는다.)
+        requires:
+          flagEquals:
+            key: c5_line
+            value: miyoung
+        next: morning-miyoung
+      - id: go-cha-direct
+        label: (광화문 카페로 그대로 직진한다.)
+        requires:
+          flagEquals:
+            key: c5_line
+            value: cha
+        next: morning-cha-direct
       - id: go-engineer
         label: (주간지 뒷문으로 간다.)
         requires:
           flag: tape_duplicated_plan
+          flagNotEquals:
+            key: c5_line
+            value: cha
         next: engineer-bay
       - id: play-solo
         label: (혼자 녹음기를 꺼내 재생한다.)
@@ -65,6 +82,52 @@ nodes:
             key: got_tape
             value: true
         next: no-tape-morning
+
+  morning-miyoung:
+    id: morning-miyoung
+    background: cheongdam-cafe
+    cast:
+      - npc: miyoung
+        position: center
+        expression: tense
+    lines:
+      - speaker: narration
+        text: 청담 사거리, 어제 저녁 같은 카페 1층은 아직 문을 안 열었다. 미영이 먼저 약속한 자리는 그 옆 건물 자기 로펌 1층 회의실. 일정 안 잡힌 채로 들어가야 했지만, 어젯밤에 보낸 한 줄짜리 톡 ("내일 아침, 카페 자리 들어가기 전 십오 분만") 에 미영이 "오세요" 한 글자로 답해 둔 자리.
+      - speaker: miyoung
+        text: 일찍 오셨네요. 차 상무 자리 들어가시기 전에 한 줄만 더 받으시겠다는 거죠.
+        expression: weary
+      - speaker: miyoung
+        text: 한 줄 드릴게요. 도현 씨 휴대폰 안에 있는 마지막 발신, 차 상무 본인이 아니라 차 상무 비서 라인. 그 비서가 어제 저녁부터 본인 휴대폰을 꺼 두고 있어요. 오늘 아침 카페 자리에 그 비서는 안 옵니다.
+        expression: grim
+      - speaker: thought
+        text: 차 상무 옆자리 한 명의 부재가 미리 박힌 자리. 그 한 명이 안 오는 자리는 차 상무 혼자 결정해야 하는 자리이고, 그 결정의 무게는 어제까지의 세 명짜리 자리보다 두 단계 무거워진다.
+        effects:
+          - kind: flag
+            key: miyoung_morning_brief
+            value: true
+          - kind: memory
+            text: 미영이 차 상무 비서의 부재를 미리 알려 줬다. 카페 자리는 차 상무 단독 자리로 들어간다.
+      - speaker: miyoung
+        text: 오늘 그 자리 들어가시고, 끝나면 한 줄 보내 주세요. 다음 자리는 그때 잡습니다.
+        expression: neutral
+    next: decision
+
+  morning-cha-direct:
+    id: morning-cha-direct
+    background: gwanghwamun-cafe
+    cast: []
+    lines:
+      - speaker: narration
+        text: 광화문 사거리, 일곱 시 사십 분. 카페 1층, 차 상무가 어제까지 잡아 두었던 그 자리에 정확히 같은 자세로 먼저 와 앉아 있는 게 유리벽 너머로 보였다. 미영도, 이수연도, 재민도, 오늘 아침 이 한 자리에 같이 들어가 줄 사람은 한 명도 없다.
+      - speaker: thought
+        text: 정면. 카드 한 장도 더 깔지 않고 들어가는 자세. 어제 저녁 이수연 자리에서 받아 둔 정보도, 미영이 던져 준 한 줄도 모두 머릿속에만 두고 들어간다. 그 한 발의 무게가 오늘 이 자리 안의 첫 한 분이 된다.
+        effects:
+          - kind: flag
+            key: cha_direct_entry
+            value: true
+          - kind: memory
+            text: 차 상무 카페 자리에 다른 카드 없이 정면으로 진입. 어제까지의 정보는 머릿속에만.
+    next: decision
 
   engineer-bay:
     id: engineer-bay
