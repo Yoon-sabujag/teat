@@ -1,0 +1,147 @@
+id: c2-jaemin-extra
+title: "재민 한 번 더"
+background: euljiro-night-alley
+cast:
+  - npc: jaemin
+    position: center
+    expression: amused
+entry: arrive
+
+# 2장 사이드. c2-miyoung 의 side-prompt-jaemin 에서 분기. 짧게: 재민이
+# 도현 실종 전 사흘간의 동선 정보 한 조각을 풀어 준다. 끝나면 chapter-3.
+nodes:
+  arrive:
+    id: arrive
+    lines:
+      - speaker: narration
+        text: 을지로 3가 뒷골목, '재민 컨설팅' 간판 아래 작은 사무실. 셔터는 반쯤 내려져 있었고, 안쪽 형광등 한 개만 켜져 있었다. 재민이 회전의자 등받이에 한쪽 발을 걸치고 모니터 두 대 사이에 앉아 컵라면 한 개를 비우고 있었다.
+      - speaker: jaemin
+        text: 형. 카톡 안 하시고 직접 오신 거 보면 미영이 자리가 한 단계 더 무겁게 끝났다는 거죠.
+        expression: amused
+      - speaker: jaemin
+        text: 마침 어제까지 도현이 동선 사흘치 정리해 둔 게 있긴 해요. 형 의뢰 박은 적 없는데 제가 그냥 한 번 짚어 본 거. 들어갈래요?
+        expression: neutral
+    choices:
+      - id: take-info
+        label: 들어보자. 비용은 내일 아침 정산하고.
+        check: { stat: inmaek, dc: 11 }
+        success:
+          next: jaemin-shares
+          effects:
+            - kind: flag
+              key: c2side_jaemin
+              value: shared
+            - kind: memory
+              text: 재민이 도현 실종 전 사흘 동선 정리본을 풀었다 — 둘째 날 오후 분당 자택 진입 1회, 셋째 날 새벽 강남대로 호텔 한 곳 진입 후 다음 날 새벽 빠져나옴.
+            - kind: flag
+              key: dohyun_three_day_route
+              value: true
+        failure:
+          next: jaemin-charges
+          effects:
+            - kind: flag
+              key: c2side_jaemin
+              value: paid_high
+      - id: brush-off
+        label: 오늘은 됐다. 정산 안 한 정보는 안 받아.
+        next: jaemin-respect
+        effects:
+          - kind: flag
+            key: c2side_jaemin
+            value: declined
+
+  jaemin-shares:
+    id: jaemin-shares
+    cast:
+      - npc: jaemin
+        position: center
+        expression: grim
+    lines:
+      - speaker: jaemin
+        text: 사흘치 동선 짧게 정리. 첫째 날은 본사 출근 후 정상 퇴근, 둘째 날 오후 두 시 분당 본가 진입 — 김승기 부회장 별장 쪽. 거기서 약 두 시간 머무름.
+        expression: grim
+      - speaker: jaemin
+        text: 셋째 날 새벽 한 시, 강남대로 옆 골목 호텔 한 곳 진입. 호텔 이름은 형 앞에서는 안 깔게요. 다음 날 아침 다섯 시쯤 빠져나왔고, 그 뒤로 동선 흔적 끊김.
+        expression: tense
+      - speaker: thought
+        text: 셋째 날 새벽 강남 호텔. 그 시간 그 자리에 도현이 혼자 들어갔는지 누구와 같이 들어갔는지를 재민이 굳이 안 깐 건 그 사실이 지금 내 자리에 들어가면 안 되는 카드라는 뜻이다. 카드를 사 두긴 하되 깔 때는 본인이 못 박는 자리에서.
+      - speaker: jaemin
+        text: 형, 그 호텔 이름 들어가는 자리는 따로 잡아요. 오늘은 여기까지.
+        expression: weary
+    next: depart
+
+  jaemin-charges:
+    id: jaemin-charges
+    cast:
+      - npc: jaemin
+        position: center
+        expression: amused
+    lines:
+      - speaker: jaemin
+        text: 알겠어요. 다만 이 정보 형한테 풀면 형 쪽에서 비용 한 번 더 드셔요. 정확히 두 배. 오늘 밤 11시 안으로 송금. 그 조건이면 풀어요.
+        expression: amused
+      - speaker: jaemin
+        text: 그래도 들으실래요?
+        expression: neutral
+      - speaker: thought
+        text: 인맥 자세가 한 칸 모자랐다. 재민이 오늘 그냥 풀려고 했던 카드를 두 배 가격으로 다시 부른다. 받을지 말지는 내 쪽 무게추 문제.
+    choices:
+      - id: pay-anyway
+        label: 그래. 두 배. 풀어.
+        next: jaemin-shares
+        effects:
+          - kind: flag
+            key: c2side_jaemin_paid_double
+            value: true
+      - id: walk
+        label: 그 가격이면 다음 자리에. 오늘은 그냥 간다.
+        next: jaemin-respect
+        effects:
+          - kind: flag
+            key: c2side_jaemin
+            value: walked
+
+  jaemin-respect:
+    id: jaemin-respect
+    cast:
+      - npc: jaemin
+        position: center
+        expression: neutral
+    lines:
+      - speaker: jaemin
+        text: 형 그 자세가 형이라서 가능한 자세인 거 알죠. 다음에 정산 자리 만들고 다시 보자고요.
+        expression: amused
+      - speaker: thought
+        text: 한 번 거절한 카드는 다음 자리에서 더 비싸진다. 다만 오늘 그 카드 값 안 부른 사실이, 재민이 안에서 내 쪽 신뢰의 단단함으로 한 칸 박힌다.
+    next: depart
+
+  depart:
+    id: depart
+    cast: []
+    lines:
+      - speaker: narration
+        text: 사무실 셔터를 등 뒤로 한 번 더 내리는 소리가 났다. 골목 끝 가로등 아래에서 한 번 더 휴대폰을 켰고, 자정 직전 알림 두 통 — 미영의 카톡 안 읽음 한 줄, 김승기 부회장 비서실 부재중 한 통.
+
+      - speaker: thought
+        requires:
+          flag: dohyun_three_day_route
+        text: 셋째 날 새벽 강남 호텔. 그 자리는 오늘 이 사무실 셔터 안쪽에서 받은 카드 중 가장 무거운 한 줄이다. 다음 자리에서 그 호텔 이름 한 줄을 사야 한다.
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c2side_jaemin_paid_double
+            value: true
+        text: 두 배 가격. 오늘 밤 안에 송금 한 번 박아 둬야 한다. 가격이 두 배인 정보가 지렛대로 두 배의 무게가 되는지는 내일 이후의 자리에서 확인된다.
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c2side_jaemin
+            value: walked
+        text: 두 배 가격을 부른 카드는 오늘 안 받았다. 다음 자리에서 그 가격이 다시 한 번 부르는 가격이 될지, 아니면 재민이 다른 라인에 풀어 버릴지가 내일의 변수.
+
+      - speaker: narration
+        text: 택시를 다시 잡았다. 기사한테 이번엔 사무실 주소를 정확히 불렀고, 차창에 머리를 기대지 않은 채 정면을 봤다.
+        effects:
+          - kind: chapterComplete
+            chapter: chapter-2
+            nextChapter: chapter-3

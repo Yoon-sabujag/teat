@@ -82,6 +82,24 @@ nodes:
             key: got_tape
             value: true
         next: no-tape-morning
+      - id: call-jaemin-tail
+        label: (재민한테 어젯밤 미행 차 번호 의뢰. 카페 자리 들어가기 전에 한 번.)
+        requires:
+          flag: followed_to_office
+          flagNotEquals:
+            key: tail_was_security_line
+            value: true
+        next: jaemin-tail-goto
+
+  jaemin-tail-goto:
+    id: jaemin-tail-goto
+    cast: []
+    lines:
+      - speaker: narration
+        text: 휴대폰을 들었다. 재민이 시간 어긋남 없이 받았다. "형, 어제 밤 그 차 번호판 찍어 주신 거, 한 시간만요." 한 시간 뒤 만남 약속.
+        effects:
+          - kind: goto
+            scene: c6-jaemin-tail
 
   morning-miyoung:
     id: morning-miyoung

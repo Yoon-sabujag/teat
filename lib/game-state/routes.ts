@@ -305,6 +305,12 @@ export function routeTrackers(flags: Flags): Tracker[] {
 
   // 나 (내 위치)
   (() => {
+    if (is(flags, "knew_pc_named_in_dohyun_chain"))
+      return out.push({
+        label: "나",
+        value: "도현 라인에 이름 박힌 상태 (준혁 확인)",
+        tone: "cold",
+      });
     if (is(flags, "learned_why_chosen"))
       return out.push({
         label: "나",
@@ -321,6 +327,65 @@ export function routeTrackers(flags: Flags): Tracker[] {
       return out.push({
         label: "나",
         value: "5년 NDA 박힌 상태",
+        tone: "tense",
+      });
+  })();
+
+  // 다음 첫 패 (c5 라인 선택)
+  (() => {
+    const line = flags.c5_line;
+    if (line === "cha")
+      return out.push({
+        label: "다음 패",
+        value: "차 상무 정면",
+        tone: "tense",
+      });
+    if (line === "miyoung")
+      return out.push({
+        label: "다음 패",
+        value: "미영 한 번 더 → 차 상무",
+        tone: "warm",
+      });
+    if (line === "press")
+      return out.push({
+        label: "다음 패",
+        value: "이수연 → 차 상무",
+        tone: "warm",
+      });
+  })();
+
+  // 미행 추적 (c6 사이드)
+  (() => {
+    if (is(flags, "tail_orders_traced"))
+      return out.push({
+        label: "미행",
+        value: "보안실 → 장 전무 비서실 라인",
+        tone: "warm",
+      });
+    if (is(flags, "tail_was_security_line"))
+      return out.push({
+        label: "미행",
+        value: "본사 보안실 차량",
+        tone: "neutral",
+      });
+  })();
+
+  // 도현 사흘 동선 (c2 사이드)
+  (() => {
+    if (is(flags, "dohyun_three_day_route"))
+      return out.push({
+        label: "도현 동선",
+        value: "사흘치 확보 (강남 호텔 한 곳 미상)",
+        tone: "warm",
+      });
+  })();
+
+  // 27층 동석 (c7-confrontation)
+  (() => {
+    if (is(flags, "jang_present"))
+      return out.push({
+        label: "본사 위쪽",
+        value: "장 전무 비서실 라인 동석 확인",
         tone: "tense",
       });
   })();

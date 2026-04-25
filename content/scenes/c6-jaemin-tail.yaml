@@ -1,0 +1,96 @@
+id: c6-jaemin-tail
+title: "차 번호 한 줄"
+background: euljiro-night-alley
+cast:
+  - npc: jaemin
+    position: center
+    expression: tense
+entry: arrive
+
+# 6장 사이드. c6-morning 의 morning-route 에서 분기. 한 시간 만에 재민이
+# 어제 미행 차량 번호판 추적 결과를 가져옴. 끝나면 c6-morning 의 decision
+# 노드로 goto 해서 본선 합류.
+nodes:
+  arrive:
+    id: arrive
+    lines:
+      - speaker: narration
+        text: 한 시간 뒤. 을지로 사거리 인쇄 골목 한 칸 안쪽, 재민이 자기 차 운전석 창을 반쯤 내린 채 정차해 있었다. 조수석 시트 위엔 노트북 한 대 + 출력본 한 장. 차 번호판 사진 한 컷 위에 형광펜 한 줄.
+      - speaker: jaemin
+        text: 형, 짧게 갑니다. 그 번호판은 그룹 자회사 명의 차량이에요. 본사 보안실 직속 운용 라인.
+        expression: grim
+      - speaker: jaemin
+        text: 보안실장 누구냐 — 오 팀장. 형 어제 이수연 자리에서 받으셨다고 들은 그 이름. 그 라인 차량입니다.
+        expression: tense
+      - speaker: thought
+        text: 어제 저녁 이수연이 비싸게 부른 이름이 오늘 아침 미행 차량 번호판 위에 같은 라인으로 박혔다. 두 줄이 한 줄로 합쳐지면서, 어제까지의 가설이 오늘 아침 한 단계 더 단단해진다.
+        effects:
+          - kind: flag
+            key: tail_was_security_line
+            value: true
+          - kind: memory
+            text: 어제 미행 차량 번호판 추적 — 본사 보안실(오 팀장) 직속 운용 라인. 이수연 정보와 합치됨.
+    choices:
+      - id: ask-more
+        label: 그 차가 누구 명령으로 움직이는지도 알아낼 수 있나.
+        check: { stat: gwonmo, dc: 12 }
+        success:
+          next: jaemin-deeper
+          effects:
+            - kind: flag
+              key: tail_orders_traced
+              value: true
+            - kind: memory
+              text: 미행 차량 운용 명령 라인 — 보안실장 → 장 전무 비서실. 차 상무 라인 우회.
+        failure:
+          next: jaemin-stops
+          effects:
+            - kind: flag
+              key: c6_jaemin_tail_pressed
+              value: true
+      - id: thank-and-go
+        label: 여기까지면 충분해. 이 한 줄로 카페 자리 한 박자 더 무겁게 깔 수 있다.
+        next: depart-tail
+
+  jaemin-deeper:
+    id: jaemin-deeper
+    cast:
+      - npc: jaemin
+        position: center
+        expression: weary
+    lines:
+      - speaker: jaemin
+        text: 한 단계 더 들어가면, 그 차의 어제 운행 지시는 보안실장 휴대폰 명령이 아니에요. 지주 쪽 비서실 라인에서 한 다리 건너 떨어진 지시. 정확히는 장 전무 비서실의 한 명.
+        expression: weary
+      - speaker: jaemin
+        text: 그 한 명 이름은 형 앞에서 안 깔게요. 다음 자리에서 정산하고 받으세요.
+        expression: tense
+      - speaker: thought
+        text: 차 상무 라인 우회. 어제 저녁 이수연이 "새벽 두 시 오피스텔 방문은 차 상무 라인이 아니다" 라고 한 줄과, 오늘 아침 이 미행 차량의 명령 라인이 한 곳에서 만난다. 그 한 곳은 장 전무 비서실.
+    next: depart-tail
+
+  jaemin-stops:
+    id: jaemin-stops
+    cast:
+      - npc: jaemin
+        position: center
+        expression: amused
+    lines:
+      - speaker: jaemin
+        text: 형, 그 한 단계 더는 형 카드 한 장 더 깔리는 자리예요. 오늘 아침 한 시간 안엔 못 받아요.
+        expression: amused
+      - speaker: thought
+        text: 권모 한 칸이 모자랐다. 명령 라인까지는 오늘 못 받는다. 다만 미행 차량이 보안실 라인이라는 사실 하나만 들고 카페 자리에 들어가는 것도 어제까지의 빈손보다는 한 칸 무겁다.
+    next: depart-tail
+
+  depart-tail:
+    id: depart-tail
+    cast: []
+    lines:
+      - speaker: narration
+        text: 재민이 운전석 창을 다시 올렸다. 차가 인쇄 골목 안쪽으로 한 칸 후진해서 사라졌고, 골목 입구의 신호등이 한 번 깜빡였다. 광화문까지 다시 이동.
+      - speaker: thought
+        text: 카페 자리 들어가기 전 한 시간을 이 한 줄로 채웠다. 오늘 아침 결정의 무게가 어제 저녁보다 한 칸 위에서 시작한다.
+        effects:
+          - kind: goto
+            scene: c6-morning

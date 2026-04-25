@@ -773,6 +773,46 @@ nodes:
         text: 차 상무, 그리고 도현. 두 사람이 향하고 있던 자리가 같은 회사의 같은 층, 같은 방이었다는 걸 부정하기엔 오늘 저녁이 이미 너무 길었다.
       - speaker: narration
         text: 코트 안주머니에서 휴대폰이 한 번 울리고 바로 끊겼다. 모르는 번호였고, 국번은 다시 02. 부재중 알림이 잠금 화면 위에 잠깐 떠 있다 사라졌다. 카페 바깥 골목에 대기 중인 택시 트렁크 쪽으로 빗방울이 한두 방울 떨어지기 시작했다.
+    next: side-prompt-jaemin
+
+  side-prompt-jaemin:
+    id: side-prompt-jaemin
+    cast: []
+    lines:
+      - speaker: thought
+        text: 미영이 던져 준 카드 무게가 코트 안주머니 안에서 한 번 더 묵직해졌다. 사무실 가는 길, 을지로 사거리에서 두 블록만 우회하면 재민 사무실. 이 시간에도 그 친구는 자리에 앉아 있을 가능성이 높다. 도현이 동선 한 줄 더 사 두는 자리가 될 수 있다.
+    choices:
+      - id: visit-jaemin
+        label: (재민 사무실 잠깐 들렀다 간다.)
+        next: jaemin-extra-goto
+        effects:
+          - kind: flag
+            key: c2_side_chose
+            value: jaemin
+      - id: skip-jaemin
+        label: (오늘 밤은 사무실로 직진. 재민은 내일 아침 다시.)
+        next: wrap-up-c2
+        effects:
+          - kind: flag
+            key: c2_side_chose
+            value: skip
+
+  jaemin-extra-goto:
+    id: jaemin-extra-goto
+    cast: []
+    lines:
+      - speaker: narration
+        text: 청담 사거리에서 다시 택시. 기사한테 을지로 3가 뒷골목 한 곳을 부르고 차창에 머리를 기댔다.
+        effects:
+          - kind: goto
+            scene: c2-jaemin-extra
+
+  wrap-up-c2:
+    id: wrap-up-c2
+    cast: []
+    lines:
+      - speaker: narration
+        text: 사무실 쪽으로 택시를 돌렸다. 빗방울이 차창에 한 줄로 늘어졌다.
         effects:
           - kind: chapterComplete
             chapter: chapter-2

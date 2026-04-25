@@ -16,6 +16,7 @@ chapters:
     scenes:
       - c2-apartment
       - c2-miyoung
+      - c2-jaemin-extra
   - id: chapter-3
     title: "북한산 암자"
     scenes:
@@ -33,6 +34,7 @@ chapters:
     title: "복제본"
     scenes:
       - c6-morning
+      - c6-jaemin-tail
   - id: chapter-7
     title: "카페에서"
     scenes:
