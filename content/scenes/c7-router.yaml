@@ -1,0 +1,56 @@
+id: c7-router
+title: ""
+background: gwanghwamun-cafe
+cast: []
+entry: route
+
+# 7장 진입 라우터. c6 decision 노드의 c6_decision 플래그 값으로 4개 변형 중
+# 하나로 즉시 goto. 한 줄짜리 narration 후 분기되어 사실상 transparent.
+nodes:
+  route:
+    id: route
+    cast: []
+    lines:
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c6_decision
+            value: expose
+        text: 택시 기사한테 광화문 사거리 대신 시청 쪽으로 한 블록 우회해 달라고 했다. 주간지 편집국 뒷문이 먼저였다.
+        effects:
+          - kind: goto
+            scene: c7-press
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c6_decision
+            value: confront
+        text: 광화문 본사 정문 대신 옆 골목 비상구 쪽. 차 상무가 아니라 그 윗선을 한 번 직접 흔들어 볼 자리였다.
+        effects:
+          - kind: goto
+            scene: c7-confrontation
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c6_decision
+            value: postpone
+        text: 광화문은 패스. 택시를 을지로로 다시 돌렸다. 오늘은 사무실 안에서 결정한다.
+        effects:
+          - kind: goto
+            scene: c7-defer
+      # leverage 또는 c6_decision 미세팅(예외) 시 기본은 카페.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c6_decision
+            value: leverage
+        text: 광화문 사거리, 카페 1층, 같은 자리. 오늘은 거래 카드를 쥐고 들어간다.
+        effects:
+          - kind: goto
+            scene: c7-cafe
+      # 폴백: 위 매치 모두 실패 시 (예: c6 미통과 디버그 진입) 카페로.
+      - speaker: narration
+        text: 광화문 사거리, 카페 1층.
+        effects:
+          - kind: goto
+            scene: c7-cafe

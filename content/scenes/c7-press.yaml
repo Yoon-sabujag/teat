@@ -1,0 +1,301 @@
+id: c7-press
+title: "편집국 뒷문"
+background: jugangji-backlot
+cast:
+  - npc: soo-yeon
+    position: center
+    expression: tense
+entry: arrive
+
+nodes:
+  arrive:
+    id: arrive
+    lines:
+      - speaker: narration
+        text: 시청 사거리에서 두 블록 안쪽, 주간지 편집국 빌딩 뒷문 주차장. 회색 시멘트 벽 한 면이 출입구 방향으로 길게 그늘을 드리웠고, 직원용 입구 위 흰 형광등 한 줄이 깜빡임 없이 켜져 있었다. 이수연이 검은 폴스카 점퍼 차림으로 자기 차 트렁크에 한쪽 발을 걸치고 기다리고 있었다.
+      - speaker: narration
+        text: 차 옆에 또 한 사람. 어제 통화에서 짧게 들은 데스크 차장. 50대 초, 셔츠 소매를 팔꿈치까지 접어 올렸고, 손에는 종이 출력본 한 묶음과 디지털 녹음기 거치대 한 개를 쥐고 있었다. 우리 쪽 녹음을 받을 사람.
+      - speaker: soo-yeon
+        text: 실장님. 오신 거 차장님한테 한 번에 정리할게요. 이쪽 한 분이 이 건 데스크 보세요.
+        expression: grim
+      - speaker: thought
+        text: 데스크 차장이 직접 나왔다. 이건 이미 편집국 안에서 한 단계 위 회의가 한 번 돈 자리고, 오늘 이 주차장에서 결정될 사안이 신문 한 페이지 위치까지 정해져 있는 자리라는 뜻이다.
+    next: handover
+  handover:
+    id: handover
+    cast:
+      - npc: soo-yeon
+        position: left
+        expression: tense
+    lines:
+      - speaker: soo-yeon
+        text: 그 녹음, 지금 갖고 계시죠.
+        expression: tense
+      - speaker: soo-yeon
+        text: 차장님 데스크 룰은 이거예요. 원본은 우리 쪽에 한 번 카피만, 실장님 손에서 떠나지 않고요. 카피본은 차장님이 오늘 오후 두 시까지 정리해서 데스크 회의 한 번에 올립니다.
+        expression: neutral
+      - speaker: soo-yeon
+        text: 그 회의 통과하면 오늘 저녁 일곱 시 디지털 판에 한 줄이 나가요. 차 상무 이름은 첫 한 줄에 안 박아요. 둘째 줄. 본인은 그게 더 무서워요.
+        expression: grim
+      - speaker: thought
+        text: 첫 줄이 아니라 둘째 줄이라는 말이 차장 라인의 화법이다. 첫 줄은 배경 정리, 둘째 줄에 사람 이름 박는 게 시사주간지 1면 룰. 둘째 줄에 박힌 이름은 그날 저녁부터 그 이름 본인이 가장 먼저 안다.
+    choices:
+      - id: hand-over-clean
+        label: (녹음기를 꺼내 차장 쪽 거치대 위에 올려놓는다.)
+        check: { stat: ttuksim, dc: 12 }
+        success:
+          next: handover-clean-success
+          effects:
+            - kind: flag
+              key: c7_press_handover
+              value: clean
+            - kind: memory
+              text: 편집국 뒷문에서 데스크 차장에게 녹음기 직접 인계. 카피본만 떠 가는 룰로 합의.
+        failure:
+          next: handover-clumsy
+          effects:
+            - kind: flag
+              key: c7_press_handover
+              value: clumsy
+      - id: hold-back
+        label: (녹음기는 안주머니에 둔 채) 카피 룰부터 다시 한 번 정리해 주시죠.
+        check: { stat: gwonmo, dc: 12 }
+        success:
+          next: handover-renegotiated
+          effects:
+            - kind: flag
+              key: c7_press_handover
+              value: renegotiated
+            - kind: memory
+              text: 편집국 뒷문에서 카피 룰 재협상. 원본 보관 + 카피 두 개로 분산.
+        failure:
+          next: handover-tense
+          effects:
+            - kind: flag
+              key: c7_press_handover
+              value: tense
+      - id: walk-back
+        label: 잠시만요. 오늘 이 자리, 한 박자만 미루겠습니다.
+        next: walk-back-now
+        effects:
+          - kind: flag
+            key: c7_press_handover
+            value: walked_back
+
+  handover-clean-success:
+    id: handover-clean-success
+    cast:
+      - npc: soo-yeon
+        position: left
+        expression: weary
+    lines:
+      - speaker: narration
+        text: 차장이 거치대를 자기 쪽으로 돌려 카피 모드를 켰다. 작은 LED 한 칸이 빨간색에서 주황색으로 한 번 깜빡였다. 카피 시작.
+      - speaker: soo-yeon
+        text: 좋아요. 차장님이 카피 받는 동안 우리 쪽 마지막 한 줄만 맞추고 가요.
+        expression: grim
+    next: final-decision
+
+  handover-renegotiated:
+    id: handover-renegotiated
+    cast:
+      - npc: soo-yeon
+        position: left
+        expression: amused
+    lines:
+      - speaker: soo-yeon
+        text: 카피 두 개. 하나는 우리 데스크, 하나는 실장님 쪽 변호사 라인 — 미영 변호사겠죠. 그 룰로 가요. 한 시간 더 걸리지만 실장님 쪽 안전선은 한 칸 더 커져요.
+        expression: amused
+      - speaker: thought
+        text: 미영 쪽 카피 한 개를 추가하면 미영이 이 건의 공식 라인 안에 한 발 더 들어온다. 오늘 이후 미영의 위치가 내 쪽 라인 옆에 한 칸 고정되는 셈이다.
+    next: final-decision
+
+  handover-clumsy:
+    id: handover-clumsy
+    cast:
+      - npc: soo-yeon
+        position: left
+        expression: tense
+    lines:
+      - speaker: narration
+        text: 녹음기를 꺼내 거치대 위에 올리는 동작이 한 박자 빨랐다. 차장이 말없이 카피를 시작했지만, 자기 손이 한 번 멈춘 자리에 작은 표정 한 줄이 남았다.
+      - speaker: thought
+        text: 자세 한 칸이 부족했다. 오늘 자리는 룰을 정하는 자리가 아니라 룰에 끼워 넣어지는 자리로 끝난다. 카피본 한 장이 어디로 가는지 내 쪽에서 더 묻기 어려워진다.
+    next: final-decision
+
+  handover-tense:
+    id: handover-tense
+    cast:
+      - npc: soo-yeon
+        position: left
+        expression: grim
+    lines:
+      - speaker: soo-yeon
+        text: 카피 룰 다시 정리하자고 하시는 건데요, 오늘 이 주차장 자리는 데스크 룰이에요. 우리 쪽이 이미 한 번 회의 돌린 안이고요. 실장님이 다른 룰을 들고 오시려면 다음 자리가 필요해요.
+        expression: grim
+      - speaker: thought
+        text: 권모 한 칸이 모자랐다. 차장 쪽 룰을 그대로 받는 자리로 굳어졌다. 오늘 카피본은 카피본대로 가고, 내 쪽 안전선은 추가되지 않는다.
+    next: final-decision
+
+  walk-back-now:
+    id: walk-back-now
+    cast:
+      - npc: soo-yeon
+        position: left
+        expression: weary
+    lines:
+      - speaker: soo-yeon
+        text: 한 박자 미루신다는 거, 저는 받습니다. 다만 차장님이 한 번 나온 자리고요, 오늘 안에 한 번은 답이 와야 해요.
+        expression: weary
+      - speaker: thought
+        text: 차장이 한 번 주차장까지 내려왔다는 사실 자체가 청구서로 남는다. 오늘 안에 대답을 안 하면 내일은 이 라인 자체가 닫힌다.
+    next: final-decision
+
+  final-decision:
+    id: final-decision
+    cast:
+      - npc: soo-yeon
+        position: left
+        expression: grim
+    lines:
+      - speaker: soo-yeon
+        text: 마지막 한 줄. 오늘 저녁 일곱 시 판에 둘째 줄로 차 상무 이름 박는 거, 그 한 줄을 실장님 쪽이 미시는 걸로 갑니다.
+        expression: grim
+      - speaker: soo-yeon
+        text: 아니면, 오늘 이 자리 우리 쪽에서도 없던 자리로 정리. 다음 자리는 다음 주에. 그 사이에 그쪽이 무엇을 할지는 그쪽 몫.
+        expression: weary
+      - speaker: soo-yeon
+        text: 또 다른 안 하나 더 드리자면, 오늘 카피본은 우리 쪽에 두되, 기사 출고는 한 주 늦추는 거. 협상 카드로 한 번 더 쓸 수 있어요.
+        expression: amused
+      - speaker: thought
+        text: 세 갈래. 공개로 미는 쪽 / 없던 자리로 정리하는 쪽 / 한 주 미루며 협상으로 들고 가는 쪽. 어느 쪽을 고르느냐에 따라 오늘 저녁 일곱 시의 광화문 본사 임원실 안 공기가 정해진다.
+    choices:
+      - id: end-public
+        label: 둘째 줄에 박으세요. 오늘 저녁에 나갑니다.
+        next: close-public
+        effects:
+          - kind: flag
+            key: c7_end
+            value: public
+          - kind: memory
+            text: 편집국 뒷문에서 공개 결정. 오늘 저녁 일곱 시 판에 차 상무 이름 둘째 줄.
+      - id: end-silence-leak
+        label: 한 주 늦춥시다. 카피본은 두고요. 협상 카드로 한 번 더.
+        check: { stat: gwonmo, dc: 12 }
+        success:
+          next: close-leverage-success
+          effects:
+            - kind: flag
+              key: c7_end
+              value: silence_leak
+            - kind: memory
+              text: 편집국 카피본 보관 + 출고 한 주 유예. 협상 카드로 활용 예정.
+        failure:
+          next: close-leverage-failed
+          effects:
+            - kind: flag
+              key: c7_end
+              value: silence_leak
+            - kind: memory
+              text: 출고 유예했지만 카피본의 통제권이 편집국 쪽에 더 가깝게 정리됨.
+      - id: end-defer
+        label: 오늘은 여기까지. 다음 주에 다시 보겠습니다.
+        next: close-defer
+        effects:
+          - kind: flag
+            key: c7_end
+            value: defer
+          - kind: memory
+            text: 편집국 자리 유예 처리. 다음 자리는 내 쪽이 잡을 예정이지만 라인은 한 칸 식는다.
+
+  close-public:
+    id: close-public
+    cast:
+      - npc: soo-yeon
+        position: left
+        expression: grim
+    lines:
+      - speaker: soo-yeon
+        text: 알겠습니다. 차장님 쪽 출고 채널 켭니다. 오늘 저녁 일곱 시. 실장님은 그 시각엔 사람들이 안 보는 자리에 계세요.
+        expression: grim
+      - speaker: narration
+        text: 차장이 종이 묶음을 한 번 추슬렀고, 차 트렁크가 짧게 닫혔다. 주차장을 나가기 직전, 이수연이 자기 차 보닛 쪽으로 한 걸음 다가와 마지막으로 한 줄만 더했다.
+      - speaker: soo-yeon
+        text: 오늘 저녁 일곱 시부터 실장님 쪽 휴대폰엔 모르는 번호 전화 두세 통 들어와요. 받지 마세요. 받기 시작하면 그 첫 통화한테 룰을 한 번 양보하시는 거예요.
+        expression: weary
+    next: depart
+
+  close-leverage-success:
+    id: close-leverage-success
+    cast:
+      - npc: soo-yeon
+        position: left
+        expression: amused
+    lines:
+      - speaker: soo-yeon
+        text: 한 주. 카피본은 데스크 금고 쪽에. 다음 주 화요일 정오까지 실장님 쪽에서 결정 한 번 더 들어와야 해요. 안 들어오면 자동 출고로 잡혀요.
+        expression: amused
+      - speaker: thought
+        text: 한 주짜리 카드를 하나 받았다. 그 한 주 동안 차 상무 쪽이 무엇을 알아챌지가 다음 라인의 무게다.
+    next: depart
+
+  close-leverage-failed:
+    id: close-leverage-failed
+    cast:
+      - npc: soo-yeon
+        position: left
+        expression: weary
+    lines:
+      - speaker: soo-yeon
+        text: 한 주는 받습니다. 다만 카피본 통제권은 우리 쪽이에요. 다음 주 화요일에 우리 데스크 회의에서 결정합니다. 실장님 쪽 의견은 듣되, 결정 라인 안엔 안 계세요.
+        expression: weary
+      - speaker: thought
+        text: 한 주는 벌었지만 칼자루는 저쪽에 더 들어갔다. 다음 주 정오를 기다리는 사람이 두 명에서 세 명으로 늘었고, 셋 중 하나는 내가 아니다.
+    next: depart
+
+  close-defer:
+    id: close-defer
+    cast:
+      - npc: soo-yeon
+        position: left
+        expression: weary
+    lines:
+      - speaker: soo-yeon
+        text: 그러시군요. 차장님 한 번 더 모시기 어렵다는 건 실장님도 아실 거고요. 다음 주에 실장님 쪽이 자리 잡으시면 오긴 오겠지만, 오늘 같은 자리는 아니에요.
+        expression: weary
+      - speaker: thought
+        text: 오늘 한 번 미룬 자리는 다음 주에 같은 모양으로 돌아오지 않는다. 내가 다시 잡는 자리는 내 쪽 자리가 아니라 저쪽 일정 사이에 끼워지는 한 칸이다.
+    next: depart
+
+  depart:
+    id: depart
+    cast: []
+    lines:
+      - speaker: narration
+        text: 주차장을 나오자 시청 쪽 인도에 점심 시간보다 한 박자 이른 직장인 무리가 한 줄로 길을 건너고 있었다. 그 무리 안쪽으로 걸어 들어가면서, 오늘 저녁 일곱 시까지 내가 어디에 있어야 하는지를 한 번 정리했다.
+
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c7_end
+            value: public
+        text: 공개 라인. 오늘 저녁 일곱 시 이후로 내 쪽 휴대폰은 받지 않는다. 차 상무가 그 첫 통화의 자리를 가져가게 두지 않는 게 오늘 이후의 첫 룰이다.
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c7_end
+            value: silence_leak
+        text: 한 주 짜리 카드 한 장. 그 한 주 동안 차 상무가 자기 쪽 라인에서 무엇을 받아낼지가 정해진다. 이 한 주는 협상 카드라기보다 그쪽의 반응 속도를 재는 자.
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c7_end
+            value: defer
+        text: 유예. 다음 주의 자리가 오늘 자리와 같은 모양이 아니라는 걸 받아들이면서, 그 사이의 며칠은 내 쪽 페이스로 사용한다.
+
+      - speaker: narration
+        text: 시청 사거리에서 횡단보도 신호가 바뀌었고, 다음 한 시간 동안 누구의 휴대폰도 받지 않기로 한 결정을 한 번 더 손 안에서 다졌다.
+        effects:
+          - kind: chapterComplete
+            chapter: chapter-7
+            nextChapter: chapter-8

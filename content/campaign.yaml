@@ -35,7 +35,11 @@ chapters:
   - id: chapter-7
     title: "카페에서"
     scenes:
+      - c7-router
       - c7-cafe
+      - c7-press
+      - c7-confrontation
+      - c7-defer
   - id: chapter-8
     title: "도현"
     scenes:
