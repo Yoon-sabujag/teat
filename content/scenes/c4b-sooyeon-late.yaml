@@ -1,0 +1,227 @@
+id: c4b-sooyeon-late
+title: "녹음 같이 듣는 자리"
+background: euljiro-night-alley
+cast:
+  - npc: soo-yeon
+    position: center
+    expression: weary
+entry: arrive
+
+# 4장 사이드 (성인 누아르). c4-soo-yeon side-prompt 에 3번째 옵션으로 들어감.
+# tape_duplicated_plan 게이트. 마포 이수연 오피스텔, 녹음을 미리 한 번 같이
+# 듣는 자리. 둘 다 같은 무게를 같은 박자로 받는 자리.
+nodes:
+  arrive:
+    id: arrive
+    lines:
+      - speaker: narration
+        text: 마포 합정 사거리 옆 골목, 4층 오피스텔. 인터폰 한 번에 문이 열렸다. 안쪽은 13평 정도, 책장 두 면 + 작은 식탁 + 검은 가죽 소파 한 자리. 식탁 위엔 위스키 한 병 — 글렌리벳 18, 절반쯤 빈 채. 잔 두 개가 미리 닦여 놓여 있었다.
+      - speaker: soo-yeon
+        text: 차장님 자리에서 카피 한 개 미리 받아 놨어요. 내일 오전 자리 들어가시기 전에, 한 번은 같이 듣는 자리가 있어야 한다고 생각했어요.
+        expression: grim
+      - speaker: soo-yeon
+        text: 같이 안 들으면 실장님이 들고 들어가시는 카드 무게가 안 맞아요. 본인 카드인데 본인이 그 무게를 모르고 들어가시는 건, 저한테도 부담이고요.
+        expression: weary
+      - speaker: thought
+        text: 노포 자리에서의 카키 필드 재킷 대신 회색 후드 한 벌. 화장도 거의 안 한 얼굴. 오늘 자리는 기자 자리가 아니라 같은 라인의 사람 자리였고, 그 차이가 식탁 위 잔 두 개의 간격으로 먼저 깔려 있었다.
+    next: pour
+  pour:
+    id: pour
+    cast:
+      - npc: soo-yeon
+        position: center
+        expression: neutral
+    lines:
+      - speaker: soo-yeon
+        text: 잔, 알아서 따르세요. 저는 이미 한 잔.
+        expression: amused
+      - speaker: narration
+        text: 글렌리벳을 두 손가락 정도 따랐다. 얼음은 안 넣었다. 식탁 끝에 디지털 녹음기 거치대 한 개, 그 옆에 작은 모니터 스피커 두 대. 재생 준비는 이미 끝나 있었다.
+      - speaker: soo-yeon
+        text: 한 번에 끝까지 갑니다. 중간에 멈추지 말고요. 처음 듣는 사람은 네 분쯤이 가장 무겁고, 거기서 한 번 견디면 끝까지 가실 수 있어요.
+        expression: grim
+    next: playback
+  playback:
+    id: playback
+    cast:
+      - npc: soo-yeon
+        position: center
+        expression: grim
+    lines:
+      - speaker: narration
+        text: 재생 시작. 도현의 첫 한 줄이 두 사람의 잔 사이를 한 번에 통과했다. 스피커 한 대의 미세한 노이즈, 도현의 숨소리, 그리고 자기 결정을 정리하는 사람 특유의 느린 박자.
+      - speaker: narration
+        text: 이수연이 잔을 한 번 들었다 내려놓는 사이, 후드 소매가 손목 안쪽으로 한 칸 올라갔다. 가는 손목 안쪽에 옅은 흉터 한 줄. 오래된 흉터. 본인이 이 자리에 그것까지 끌고 들어왔다는 사실은, 본인이 의식하지 않은 채 박힌 자세였다.
+      - speaker: narration
+        text: 사 분쯤 지났을 때 도현의 두 번째 호명. 차 상무. 셋째 호명. 오 감사. 넷째. 장 전무. 세 이름이 같은 한 줄 안에 박힐 때, 식탁 위 잔 두 개가 동시에 한 박자 멈췄다.
+      - speaker: thought
+        text: 같은 박자로 같은 무게를 받는 자리. 두 사람 다 자기 잔에 손을 대는 동작 한 칸을 같은 시간에 잠시 놓아 두고 있었다. 그 박자 한 칸이 같이 깔린 자리에서, 오늘 밤의 자세가 한 번 정해진다.
+    next: charged-moment
+  charged-moment:
+    id: charged-moment
+    cast:
+      - npc: soo-yeon
+        position: center
+        expression: weary
+    lines:
+      - speaker: narration
+        text: 재생이 끝나고 한 박자, 두 박자, 세 박자 침묵. 이수연이 자리에서 일어나 식탁 끝의 스피커 전원을 끄고 다시 자리에 앉았다. 잔에 한 손가락 더 따랐고, 그 잔을 내 잔과 가볍게 한 번 부딪쳤다. 카운터식 건배가 아니라 식탁 위에서의 짧은 한 번.
+      - speaker: soo-yeon
+        text: 실장님, 오늘 밤 이 자리 한 번 더 가져갈래요. 한 번 더 가져가면 내일 아침 차장님 자리 들어가실 때, 실장님 자세가 같은 라인 사람 자세로 박혀요. 그게 도움이 될지 짐이 될지는 자리 안에서 정해지고요.
+        expression: tense
+    choices:
+      - id: lean-in
+        label: (잔을 식탁 끝까지 밀고, 소파 쪽으로 자세를 옮긴다.)
+        check: { stat: yangsim, dc: 11 }
+        success:
+          next: night-shared
+          effects:
+            - kind: flag
+              key: c4_intimate
+              value: shared
+            - kind: flag
+              key: sooyeon_bond
+              value: deepened
+            - kind: memory
+              text: 이수연 마포 오피스텔에서 녹음 같이 들은 후 선 한 번 넘었다. 같은 라인 사람 자세로 다음 날 편집국 자리에 들어간다.
+        failure:
+          next: night-flinch
+          effects:
+            - kind: flag
+              key: c4_intimate
+              value: hesitated
+      - id: hold-line
+        label: (잔을 한 번 더 채우고, 식탁 자리는 그 자리에 둔다.)
+        check: { stat: ttuksim, dc: 11 }
+        success:
+          next: night-held
+          effects:
+            - kind: flag
+              key: c4_intimate
+              value: held
+            - kind: flag
+              key: sooyeon_bond
+              value: respected
+            - kind: memory
+              text: 이수연 자리에서 같이 듣고 같은 박자로 닫았다. 식탁 자리는 식탁 자리 그대로.
+        failure:
+          next: night-cold
+          effects:
+            - kind: flag
+              key: c4_intimate
+              value: cold
+      - id: walk-now
+        label: 듣는 자리는 여기까지가 좋겠습니다. 내일 아침 자리에서 뵙죠.
+        next: night-walk
+        effects:
+          - kind: flag
+            key: c4_intimate
+            value: walked
+          - kind: flag
+            key: sooyeon_bond
+            value: clean
+          - kind: memory
+            text: 마포에서 같이 듣고 자리는 일찍 닫았다. 내일 아침 편집국 자리는 동등한 라인 두 명 자리.
+
+  night-shared:
+    id: night-shared
+    cast:
+      - npc: soo-yeon
+        position: center
+        expression: weary
+    lines:
+      - speaker: narration
+        text: 검은 가죽 소파 등받이 위에 후드 한 벌이 던져져 있었고, 그 옆 협탁 위 글렌리벳 잔 두 개의 얼음 자리는 처음부터 비어 있었다. 새벽 네 시 사십 분, 창 너머 합정 사거리에 첫 트럭의 시동 소리가 한 번 깔렸다.
+      - speaker: thought
+        text: 같은 라인의 사람 자세로 박힌 자리. 내일 아침 편집국 뒷문에서 차장 앞에 앉을 때, 이 사람의 자리가 내 옆 자리로 한 칸 더 가까이 와 있을 거다.
+      - speaker: soo-yeon
+        text: 한 시간 더 누워 계세요. 일곱 시 반에 깨워 드릴게요. 그 전에 일어나시면 커피만 끓여 두고 가시고요.
+        expression: weary
+    next: depart
+  night-flinch:
+    id: night-flinch
+    cast:
+      - npc: soo-yeon
+        position: center
+        expression: tense
+    lines:
+      - speaker: narration
+        text: 식탁 끝까지 잔을 밀고 자세를 옮기는 동작이 한 박자 늦었다. 이수연이 그 한 박자를 자기 자리에서 한 번 봤고, 자기 잔을 입에 다시 한 번 올렸다.
+      - speaker: soo-yeon
+        text: 자리 옮기시는 게 본인 자세 아니시면, 오늘 밤은 식탁 자리에서 끝내는 게 두 사람 다 편한 자리예요.
+        expression: tense
+      - speaker: thought
+        text: 양심 자세가 한 칸 늦었다. 같은 라인 자세 직전에서 한 박자 식었고, 그 식음이 다음 날 아침 자리에 어떻게 박힐지는 내일 아침에 확인.
+    next: depart
+  night-held:
+    id: night-held
+    cast:
+      - npc: soo-yeon
+        position: center
+        expression: weary
+    lines:
+      - speaker: soo-yeon
+        text: 식탁 자리 그대로 두는 거, 두 사람 다 받는 거예요. 그 자세 한 줄이 내일 아침 편집국 자리에서 더 단단해요.
+        expression: weary
+      - speaker: thought
+        text: 식탁 끝의 잔 두 개가 같은 자리에 그대로. 자세 한 칸 풀어 둔 채로 자리는 자리. 같은 라인 사람의 두 번째 단단한 형태.
+    next: depart
+  night-cold:
+    id: night-cold
+    cast:
+      - npc: soo-yeon
+        position: center
+        expression: tense
+    lines:
+      - speaker: soo-yeon
+        text: 자리 그대로 두자고 하시는데 자세가 한 박자 굳어 계세요. 오늘 밤은 그 굳음만큼 일찍 정리합시다.
+        expression: tense
+      - speaker: thought
+        text: 뚝심이 한 칸 모자랐다. 같은 라인 자세 대신 한 칸 식은 동료 자세로 닫혔고, 그 한 칸이 내일 아침 자리에 따라온다.
+    next: depart
+  night-walk:
+    id: night-walk
+    cast:
+      - npc: soo-yeon
+        position: center
+        expression: amused
+    lines:
+      - speaker: soo-yeon
+        text: 일찍 일어서시는 거 받습니다. 내일 아침 자리, 그 자세 그대로 들어오세요. 저도 같은 자세로 받을게요.
+        expression: amused
+      - speaker: thought
+        text: 같은 무게짜리 자리 한 번씩 받고, 두 사람 다 자기 자리로 돌아가는 자세. 같은 라인 사람의 가장 깔끔한 형태.
+    next: depart
+
+  depart:
+    id: depart
+    cast: []
+    lines:
+      - speaker: narration
+        text: 합정 사거리에서 택시를 잡았다. 새벽 다섯 시 십오 분. 기사한테 을지로 사거리를 부르고 차창 쪽으로 자세를 한 번 기댔다.
+
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c4_intimate
+            value: shared
+        text: 같은 라인 사람 자세로 내일 아침 자리에 들어간다. 이수연 쪽 정보 한 줄과 내 쪽 정보 한 줄이 더 촘촘하게 묶여 있을 거다.
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c4_intimate
+            value: held
+        text: 식탁 자리에서 끝낸 자세가 다음 자리에서 같은 박자로 이어진다. 두 사람 다 자기 자세 안에서.
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c4_intimate
+            value: walked
+        text: 일찍 일어선 자세가 동등한 동료 자세로 박혔다. 내일 아침 편집국 뒷문에서 같은 그 자세로 받는다.
+
+      - speaker: narration
+        text: 택시 안 라디오에서 새벽 일기예보 한 줄이 흘러나왔다. 광화문 사거리 일대 가벼운 이슬비. 기사한테 을지로보다 한 블록 못 미친 곳에 세워 달라고 했다.
+        effects:
+          - kind: chapterComplete
+            chapter: chapter-4
+            nextChapter: chapter-5

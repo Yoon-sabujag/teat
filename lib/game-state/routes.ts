@@ -165,6 +165,25 @@ export function routeTrackers(flags: Flags): Tracker[] {
 
   // 미영
   (() => {
+    const bond = flags.miyoung_bond;
+    if (bond === "deepened")
+      return out.push({
+        label: "미영",
+        value: "두 번째 자리 · 선 한 번 넘음",
+        tone: "warm",
+      });
+    if (bond === "respected")
+      return out.push({
+        label: "미영",
+        value: "두 번째 자리 · 선 그대로 닫음",
+        tone: "warm",
+      });
+    if (bond === "clean")
+      return out.push({
+        label: "미영",
+        value: "두 번째 자리 · 일정 안 자리로",
+        tone: "neutral",
+      });
     if (is(flags, "miyoung_walked_out"))
       return out.push({ label: "미영", value: "결렬", tone: "tense" });
     if (is(flags, "miyoung_full_disclosure"))
@@ -243,6 +262,25 @@ export function routeTrackers(flags: Flags): Tracker[] {
 
   // 이수연
   (() => {
+    const bond = flags.sooyeon_bond;
+    if (bond === "deepened")
+      return out.push({
+        label: "이수연",
+        value: "마포 자리 · 같은 라인 사람",
+        tone: "warm",
+      });
+    if (bond === "respected")
+      return out.push({
+        label: "이수연",
+        value: "마포 자리 · 식탁 자세 유지",
+        tone: "warm",
+      });
+    if (bond === "clean")
+      return out.push({
+        label: "이수연",
+        value: "마포 자리 · 동등한 동료",
+        tone: "neutral",
+      });
     if (is(flags, "tape_duplicated_plan"))
       return out.push({
         label: "이수연",

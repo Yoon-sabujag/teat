@@ -789,13 +789,32 @@ nodes:
           - kind: flag
             key: c2_side_chose
             value: jaemin
+      - id: visit-miyoung-night
+        label: (휴대폰에 미영 카톡 한 줄 — '한 잔만 더?'. 답한다.)
+        requires:
+          flag: held_back_with_miyoung
+        next: miyoung-night-goto
+        effects:
+          - kind: flag
+            key: c2_side_chose
+            value: miyoung_night
       - id: skip-jaemin
-        label: (오늘 밤은 사무실로 직진. 재민은 내일 아침 다시.)
+        label: (오늘 밤은 사무실로 직진. 다른 자리는 내일 아침 다시.)
         next: wrap-up-c2
         effects:
           - kind: flag
             key: c2_side_chose
             value: skip
+
+  miyoung-night-goto:
+    id: miyoung-night-goto
+    cast: []
+    lines:
+      - speaker: narration
+        text: 답을 짧게 찍어 보냈다. "지금 갈게요." 청담 사거리 옆 골목, 7층 건물 꼭대기. 미영이 이미 자리 잡고 기다리고 있을 거였다.
+        effects:
+          - kind: goto
+            scene: c2b-miyoung-night
 
   jaemin-extra-goto:
     id: jaemin-extra-goto

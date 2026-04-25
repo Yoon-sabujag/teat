@@ -477,13 +477,32 @@ nodes:
           - kind: flag
             key: c4_side_chose
             value: junhyuk
+      - id: visit-sooyeon-late
+        label: (이수연 카톡 — '오늘 밤 마포에서 한 번 같이 들으실래요'. 답한다.)
+        requires:
+          flag: tape_duplicated_plan
+        next: sooyeon-late-goto
+        effects:
+          - kind: flag
+            key: c4_side_chose
+            value: sooyeon_late
       - id: skip-side
-        label: (오늘 밤은 사무실로 직진. 준혁은 내일 다시.)
+        label: (오늘 밤은 사무실로 직진. 다른 자리는 내일 다시.)
         next: wrap-up
         effects:
           - kind: flag
             key: c4_side_chose
             value: skip
+
+  sooyeon-late-goto:
+    id: sooyeon-late-goto
+    cast: []
+    lines:
+      - speaker: narration
+        text: 답을 짧게 찍어 보냈다. "갑니다." 마포 합정 사거리 4층. 카피본을 미리 받아 둔 자리고, 내일 아침 편집국 자리 들어가기 전에 한 번은 같은 박자로 받아야 하는 자리.
+        effects:
+          - kind: goto
+            scene: c4b-sooyeon-late
 
   junhyuk-redux-goto:
     id: junhyuk-redux-goto

@@ -17,6 +17,7 @@ chapters:
       - c2-apartment
       - c2-miyoung
       - c2-jaemin-extra
+      - c2b-miyoung-night
   - id: chapter-3
     title: "북한산 암자"
     scenes:
@@ -26,6 +27,7 @@ chapters:
     scenes:
       - c4-soo-yeon
       - c4-junhyuk-redux
+      - c4b-sooyeon-late
   - id: chapter-5
     title: "그날 밤 을지로"
     scenes:
