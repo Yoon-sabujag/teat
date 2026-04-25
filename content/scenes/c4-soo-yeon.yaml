@@ -461,6 +461,46 @@ nodes:
         text: 을지로 사무실까지 걸어서 십 분. 오늘 밤 안에 내 쪽에서 정리해야 할 것이 두 덩어리다. 첫째, 녹음기를 어디 둘지. 둘째, 차 뒤에 붙을 차의 번호판을 어떻게 처음 한 번에 확인할지.
       - speaker: narration
         text: 노포 밖으로 나오자 을지로 골목의 겨울 공기가 정면으로 목을 쳤다. 회식 3차 찾아가는 양복 무리 한 팀이 스쳐 지나갔고, 그 뒤로 길 건너편 편의점 간판 불빛이 한 번 깜빡였다 다시 돌아왔다.
+    next: side-prompt
+
+  side-prompt:
+    id: side-prompt
+    cast: []
+    lines:
+      - speaker: thought
+        text: 사무실 가는 길 직전, 코트 안주머니 휴대폰을 꺼냈다. 준혁이 카톡이 사흘 째 읽음 없이 떠 있다. 오 분만 더 우회하면 여의도 라인 끝, 회사 사람 안 가는 그 노포에 그 친구가 아직 앉아 있을 시간이다.
+    choices:
+      - id: call-junhyuk
+        label: (준혁한테 짧게 톡 한 줄, 오 분만 보러 간다.)
+        next: junhyuk-redux-goto
+        effects:
+          - kind: flag
+            key: c4_side_chose
+            value: junhyuk
+      - id: skip-side
+        label: (오늘 밤은 사무실로 직진. 준혁은 내일 다시.)
+        next: wrap-up
+        effects:
+          - kind: flag
+            key: c4_side_chose
+            value: skip
+
+  junhyuk-redux-goto:
+    id: junhyuk-redux-goto
+    cast: []
+    lines:
+      - speaker: narration
+        text: 택시를 잡았다. 기사한테 여의도가 아니라 영등포 쪽 골목 한 곳을 불렀다. 준혁이가 회사 사람 만날 일 없을 때만 가는 작은 노가리집.
+        effects:
+          - kind: goto
+            scene: c4-junhyuk-redux
+
+  wrap-up:
+    id: wrap-up
+    cast: []
+    lines:
+      - speaker: narration
+        text: 사무실 쪽으로 걸음을 옮겼다. 골목 끝 가로등 아래에서 한 번, 어깨 너머를 짧게 돌아봤다.
         effects:
           - kind: chapterComplete
             chapter: chapter-4

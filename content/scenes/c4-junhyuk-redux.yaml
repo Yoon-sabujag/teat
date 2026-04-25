@@ -1,0 +1,151 @@
+id: c4-junhyuk-redux
+title: "준혁 한 번 더"
+background: euljiro-night-alley
+cast:
+  - npc: junhyuk
+    position: center
+    expression: tense
+entry: arrive
+
+# 4장 사이드 씬. c4-soo-yeon 의 side-prompt 에서 갈리어 진입.
+# 짧게: 준혁이 사흘 만에 입을 떼고 도현의 마지막 통화 한 줄을 줌.
+# 끝나면 chapter-5 로 넘어감.
+nodes:
+  arrive:
+    id: arrive
+    lines:
+      - speaker: narration
+        text: 영등포 뒷골목 노가리집 두 번째 칸. 준혁이 입구 쪽 자리에 등을 보이고 앉아 있었고, 탁자엔 카스 한 병 + 마른안주 한 접시 + 사용 흔적이 있는 일회용 전자담배 한 개. 셔츠는 단추 두 개 풀어 헤쳤고, 넥타이는 앞주머니에 둘둘 말려 있었다.
+      - speaker: junhyuk
+        text: 형. 사흘 동안 답 안 한 거 미안한데, 사흘이 필요했어요.
+        expression: weary
+      - speaker: junhyuk
+        text: 도현이가 실종 사흘 전 마지막으로 저한테 한 통화. 그 통화 내용을 형한테 어디까지 풀어야 할지가 사흘 동안 계속 머리 속에서 굴렀어요.
+        expression: tense
+    choices:
+      - id: lean-in
+        label: 풀고 싶은 만큼만 풀어. 내가 굳이 다 들을 필요 없다.
+        check: { stat: yangsim, dc: 11 }
+        success:
+          next: junhyuk-opens
+          effects:
+            - kind: flag
+              key: c4side_junhyuk
+              value: opened
+            - kind: memory
+              text: '준혁이가 도현의 마지막 통화 내용을 풀었다 — "형, 나 제 이름 밑에 다른 이름 한 줄 더 박혀 있어. 그 이름이 너 알아."'
+            - kind: flag
+              key: junhyuk_last_call
+              value: true
+        failure:
+          next: junhyuk-clams
+          effects:
+            - kind: flag
+              key: c4side_junhyuk
+              value: clams
+      - id: press-direct
+        label: 풀어. 사흘 줬으면 됐다.
+        check: { stat: gwonmo, dc: 12 }
+        success:
+          next: junhyuk-opens
+          effects:
+            - kind: flag
+              key: c4side_junhyuk
+              value: pressured
+            - kind: memory
+              text: '준혁이를 압박해서 도현의 마지막 통화 한 줄을 받아냈다 — "형, 나 제 이름 밑에 다른 이름 한 줄 더 박혀 있어. 그 이름이 너 알아."'
+            - kind: flag
+              key: junhyuk_last_call
+              value: true
+        failure:
+          next: junhyuk-walks
+          effects:
+            - kind: flag
+              key: c4side_junhyuk
+              value: walked
+
+  junhyuk-opens:
+    id: junhyuk-opens
+    cast:
+      - npc: junhyuk
+        position: center
+        expression: grim
+    lines:
+      - speaker: junhyuk
+        text: 도현이가 그날 한 줄 그랬어요. "형, 나 제 이름 밑에 다른 이름 한 줄 더 박혀 있어. 그 이름이 너 알아."
+        expression: grim
+      - speaker: junhyuk
+        text: 그 다음에 통화 끊겼고, 사흘 뒤에 실종 보도. 저는 그 한 줄을 사흘 동안 머리 속에서만 굴리다가 이수연 기자가 형 만나러 간다는 얘기 듣고 형 자리에 한 번은 깔아야겠다 싶었어요.
+        expression: tense
+      - speaker: thought
+        text: '"제 이름 밑에 다른 이름 한 줄." 도현이 회사 조직도 안에서 자기 자리 다음 줄에 누군가 한 명을 미리 박아 두었다는 뜻이고, 그 한 명을 도현 본인은 알았고 나도 안다는 뜻이다. 두 달 전 차 상무 라인에서 잘려 나간 사람 한 명. 내 이름.'
+      - speaker: junhyuk
+        text: 형 들으니까 어때요. 저는 사흘 들고 다닌 게 형 머리 속에 사흘 안 가도 알 줄 알았어요.
+        expression: weary
+      - speaker: thought
+        text: 도현이 미리 자기 이름 밑에 적어 둔 이름이 내 이름이라는 사실은, 오늘 이 노가리집 자리에서 처음 활자처럼 박혔다. 어제까지 미영이 던져 준 시사보다 한 단계 더 단단한 형태로.
+        effects:
+          - kind: flag
+            key: knew_pc_named_in_dohyun_chain
+            value: true
+    next: depart
+
+  junhyuk-clams:
+    id: junhyuk-clams
+    cast:
+      - npc: junhyuk
+        position: center
+        expression: weary
+    lines:
+      - speaker: junhyuk
+        text: 형이 그렇게 받으니까 저도 한 박자 더 묵혀야겠어요. 오늘은 형 얼굴만 보고 가는 자리로 정리해도 돼요?
+        expression: weary
+      - speaker: thought
+        text: 양심 자세를 취했지만 자세 한 칸이 모자랐다. 준혁이가 사흘 더 묵힌다. 그 사흘 동안 도현의 마지막 한 줄은 준혁이 머리 속에만 남는다.
+    next: depart
+
+  junhyuk-walks:
+    id: junhyuk-walks
+    cast:
+      - npc: junhyuk
+        position: center
+        expression: angry
+    lines:
+      - speaker: junhyuk
+        text: 형. 사흘 줬으면 됐다는 그 말, 형이 회사 다닐 때 후배한테 자주 하던 말이에요. 그게 사흘 동안 저 끌고 다닌 사람한테 할 말은 아니죠.
+        expression: angry
+      - speaker: narration
+        text: 준혁이 자리에서 일어났다. 카스 잔에 마지막 한 입 남기지 않고 끝까지 비웠고, 일회용 전자담배는 탁자 위에 놓아둔 채 그대로 나갔다.
+      - speaker: thought
+        text: 권모 카드를 잘못 꺼냈다. 사흘짜리 호의가 한 박자에 닫혔다. 도현의 마지막 한 줄은 오늘 밤 이 노가리집 안에 남지 못한다.
+    next: depart
+
+  depart:
+    id: depart
+    cast: []
+    lines:
+      - speaker: narration
+        text: 노가리집 밖으로 나오자 영등포 골목의 자정 직전 공기가 흐릿한 가로등 아래 가라앉아 있었다. 택시 한 대를 잡고 기사한테 을지로 사거리를 불렀다. 사무실에 도착할 때쯤 자정을 넘기게 될 거였고, 내일 아침 일정은 그 자정 전에 한 번 더 정리해야 했다.
+
+      - speaker: thought
+        requires:
+          flag: knew_pc_named_in_dohyun_chain
+        text: 도현이 자기 이름 밑에 미리 적어 둔 한 줄이 내 이름이었다는 사실 한 가지가, 오늘 밤 이후 모든 결정의 첫 자리에 앞서 앉는다.
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c4side_junhyuk
+            value: clams
+        text: 사흘짜리 호의가 한 박자 더 묵히는 쪽으로 정리됐다. 그 한 박자가 며칠짜리가 될지는 준혁이 쪽 결정.
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: c4side_junhyuk
+            value: walked
+        text: 준혁이 노가리집을 먼저 나갔다. 그 친구한테 사흘 짜리 카드 한 장을 빚지고 끝낸 자리였다.
+      - speaker: narration
+        text: 택시 안 라디오에서 자정 뉴스 한 토막이 흘러나왔다. 그룹 이름이 잠깐 한 번 스쳤고, 그 뒤는 광고로 넘어갔다.
+        effects:
+          - kind: chapterComplete
+            chapter: chapter-4
+            nextChapter: chapter-5
