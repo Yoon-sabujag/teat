@@ -66,12 +66,14 @@ export type RewindSnapshot = {
  * Cleared once applied.
  */
 export type PendingAllocation = {
-  /** Chapter id the points were earned in (for display). */
+  /** Chapter id the points were earned in (for display). For initial allocation, "" or unused. */
   fromChapter: string;
-  /** Point budget — usually 1~2 per chapter. */
+  /** Point budget — usually 1~2 per chapter, 4 for initial. */
   points: number;
   /** Success count per stat in the completed chapter (used for recommendations). */
   successesByStat: Partial<Record<Stat, number>>;
+  /** True for the new-game initial allocation screen. UI uses different copy + +2 cap. */
+  isInitial?: boolean;
 };
 
 export type SaveState = {

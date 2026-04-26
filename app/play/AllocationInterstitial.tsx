@@ -19,9 +19,9 @@ type Props = {
 };
 
 /**
- * Chapter-start stat allocation screen. Shown only when pendingAllocation
- * has points > 0. Player distributes the earned points (at most +1 per stat
- * via this screen), then commits to proceed into the next chapter.
+ * Stat allocation screen. Two modes:
+ *   - chapter-end: +1 per stat max, recommendation by successes in source chapter
+ *   - initial (isInitial=true): +2 per stat max, no recommendation, equal listing
  */
 export function AllocationInterstitial({
   allocation,
@@ -30,34 +30,42 @@ export function AllocationInterstitial({
   const stats = useSave((s) => s.pc.stats);
   const applyAllocation = useSave((s) => s.applyAllocation);
 
+  const isInitial = !!allocation.isInitial;
+  const maxPerStat = isInitial ? 2 : 1;
+
   const [picks, setPicks] = useState<Partial<Record<Stat, number>>>({});
   const spent = Object.values(picks).reduce<number>((n, v) => n + (v ?? 0), 0);
   const remaining = allocation.points - spent;
 
-  // Sort stats by the player's successes in the source chapter, so the
-  // "leaned on this one" recommendation reads first.
+  // Sort stats by the player's successes in the source chapter (chapter-end
+  // mode), or in canonical order (initial mode).
   const ranked = useMemo(() => {
+    if (isInitial) return [...STAT_ORDER];
     const successes = allocation.successesByStat;
     return [...STAT_ORDER].sort(
       (a, b) => (successes[b] ?? 0) - (successes[a] ?? 0),
     );
-  }, [allocation.successesByStat]);
+  }, [allocation.successesByStat, isInitial]);
 
-  const topTwo = new Set(ranked.slice(0, 2).filter((s) => (allocation.successesByStat[s] ?? 0) > 0));
+  const topTwo = new Set(
+    isInitial
+      ? []
+      : ranked.slice(0, 2).filter((s) => (allocation.successesByStat[s] ?? 0) > 0),
+  );
 
   const togglePick = (stat: Stat) => {
     const current = picks[stat] ?? 0;
     const statValue = stats[stat];
-    if (current > 0) {
-      // Un-pick.
+    // Cycle: 0 → 1 → ... → maxPerStat → 0
+    if (current >= maxPerStat) {
       const next = { ...picks };
       delete next[stat];
       setPicks(next);
       return;
     }
     if (remaining <= 0) return;
-    if (statValue >= 6) return; // can't raise above allocation cap
-    setPicks({ ...picks, [stat]: 1 });
+    if (statValue + (current + 1) > 6) return; // cap
+    setPicks({ ...picks, [stat]: current + 1 });
   };
 
   const commit = () => {
@@ -68,16 +76,20 @@ export function AllocationInterstitial({
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-between p-6 text-neutral-100">
       <header className="mt-4">
         <p className="text-[10px] uppercase tracking-[0.4em] text-neutral-500">
-          {sourceChapterTitle} 이후
+          {isInitial ? "백승재 — 46세" : `${sourceChapterTitle} 이후`}
         </p>
         <h1 className="mt-3 text-2xl font-light leading-snug">
-          지난 장에서 통한 감이 한 뼘 돌아왔다.
+          {isInitial
+            ? "어디에 강한 사람으로 들어가실지."
+            : "지난 장에서 통한 감이 한 뼘 돌아왔다."}
         </h1>
         <p className="mt-4 text-sm leading-relaxed text-neutral-400">
           남은 포인트{" "}
-          <span className="font-mono text-amber-300">{remaining}</span> / {" "}
+          <span className="font-mono text-amber-300">{remaining}</span> /{" "}
           <span className="font-mono text-neutral-500">{allocation.points}</span>
-          . 어디에 얹어 두실지 고르세요. 한 스탯당 최대 +1.
+          . {isInitial
+            ? "한 스탯당 최대 +2 (다시 누르면 단계 조정). 6 이상은 올라가지 않음."
+            : "어디에 얹어 두실지 고르세요. 한 스탯당 최대 +1."}
         </p>
       </header>
 
@@ -114,17 +126,21 @@ export function AllocationInterstitial({
                     )}
                   </div>
                   <div className="mt-1 text-[11px] text-neutral-500">
-                    {successes > 0
-                      ? `성공 ${successes}회`
-                      : "성공 없음"}
-                    {capped && " · 상한(6)"}
+                    {isInitial
+                      ? capped
+                        ? "상한(6)"
+                        : "기본 2"
+                      : successes > 0
+                        ? `성공 ${successes}회`
+                        : "성공 없음"}
+                    {!isInitial && capped && " · 상한(6)"}
                   </div>
                 </div>
                 <div className="flex items-baseline gap-1 font-mono text-sm">
                   <span className="text-neutral-300">{current}</span>
-                  {picked && (
+                  {(picks[stat] ?? 0) > 0 && (
                     <span className="text-amber-300">
-                      → {Math.min(6, current + 1)}
+                      → {Math.min(6, current + (picks[stat] ?? 0))}
                     </span>
                   )}
                 </div>

@@ -27,6 +27,7 @@ export function TitleClient({ startChapter, startScene, chapterTitles }: Props) 
   const currentChapter = useSave((s) => s.currentChapter);
   const updatedAt = useSave((s) => s.updatedAt);
   const startNew = useSave((s) => s.startNew);
+  const setPendingAllocation = useSave((s) => s.setPendingAllocation);
   const reset = useSave((s) => s.reset);
 
   useEffect(() => setHydrated(true), []);
@@ -41,6 +42,13 @@ export function TitleClient({ startChapter, startScene, chapterTitles }: Props) 
   const handleStartNew = () => {
     if (hasSave && !confirm("진행을 덮어쓰고 새로 시작하시겠습니까?")) return;
     startNew({ chapter: startChapter, scene: startScene });
+    // Queue initial stat allocation. PlayClient renders the interstitial first.
+    setPendingAllocation({
+      fromChapter: "",
+      points: 4,
+      successesByStat: {},
+      isInitial: true,
+    });
     router.push("/play");
   };
 

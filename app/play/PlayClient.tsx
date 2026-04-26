@@ -24,11 +24,21 @@ export function PlayClient({ campaign, scenes, npcs, backgrounds }: Props) {
   const setPendingAllocation = useSave((s) => s.setPendingAllocation);
   const pendingAllocation = useSave((s) => s.pendingAllocation);
   const [banner, setBanner] = useState<string | null>(null);
+  const [pendingNextScene, setPendingNextScene] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     setHydrated(true);
   }, []);
+
+  // After an allocation interstitial commits, pendingAllocation transitions
+  // from set→null. If we have a deferred scene transition queued, execute it.
+  useEffect(() => {
+    if (!pendingAllocation && pendingNextScene) {
+      goToScene(pendingNextScene);
+      setPendingNextScene(null);
+    }
+  }, [pendingAllocation, pendingNextScene, goToScene]);
 
 
   if (!hydrated) {
@@ -78,6 +88,7 @@ export function PlayClient({ campaign, scenes, npcs, backgrounds }: Props) {
         completeChapter(event.chapter, event.nextChapter);
         setBanner(`${chapter?.title ?? event.chapter} 완료`);
         // Compute allocation pool from successful skill checks in just-completed chapter.
+        let allocPoints = 0;
         if (chapter) {
           const sceneIds = new Set(chapter.scenes);
           const log = useSave.getState().choiceLog;
@@ -91,11 +102,11 @@ export function PlayClient({ campaign, scenes, npcs, backgrounds }: Props) {
               successCount += 1;
             }
           }
-          const points = Math.floor(successCount / 3);
-          if (points > 0) {
+          allocPoints = Math.floor(successCount / 3);
+          if (allocPoints > 0) {
             setPendingAllocation({
               fromChapter: event.chapter,
-              points,
+              points: allocPoints,
               successesByStat,
             });
           }
@@ -103,10 +114,17 @@ export function PlayClient({ campaign, scenes, npcs, backgrounds }: Props) {
         if (event.nextChapter) {
           const next = campaign.chapters.find((c) => c.id === event.nextChapter);
           if (next && next.scenes[0]) {
-            setTimeout(() => {
-              goToScene(next.scenes[0]);
-              setBanner(null);
-            }, 2500);
+            if (allocPoints > 0) {
+              // Banner shows briefly, then allocation interstitial takes over.
+              // The post-allocation effect commits the scene transition.
+              setPendingNextScene(next.scenes[0]);
+              setTimeout(() => setBanner(null), 1500);
+            } else {
+              setTimeout(() => {
+                goToScene(next.scenes[0]);
+                setBanner(null);
+              }, 2500);
+            }
           }
         }
         break;
