@@ -257,6 +257,18 @@ nodes:
             outcome: deal
       - speaker: narration
         requires:
+          flagEqualsAll:
+            - { key: c7_end, value: deal_tainted }
+            - { key: miyoung_count_2, value: true }
+        text: 미영한테는 한 달 동안 답이 가지 않았고, 그 한 달이 지난 뒤로는 답을 보내야 할 자리가 더 이상 남아 있지 않았다. 청담 위스키 바 그 카운터 한 자리는 그 사이에 한 번도 다시 가지 않았다.
+      - speaker: narration
+        requires:
+          flagEqualsAll:
+            - { key: c7_end, value: deal_tainted }
+            - { key: sooyeon_count_2, value: true }
+        text: 이수연 쪽에선 카톡도 전화도 오지 않았다. 마포 합정 사거리는 그 사이에 두 번 지나갔지만 4층 창문 쪽으로는 고개를 들지 않았다.
+      - speaker: narration
+        requires:
           flagEquals:
             key: c7_end
             value: deal_tainted
@@ -371,6 +383,18 @@ nodes:
             key: c7_end
             value: silence_leak
         text: 블라인드 틈으로 다시 살폈더니 어제의 그 검은 세단은 오늘 저 자리에 없었다. 대신 한 블록 떨어진 길가에, 앞 번호판 흙자국까지 똑같은 각도로 다른 세단 한 대가 깜빡이를 켜지 않은 채 서 있었다.
+      - speaker: narration
+        requires:
+          flagEqualsAll:
+            - { key: c7_end, value: silence_leak }
+            - { key: miyoung_count_2, value: true }
+        text: 미영한테서는 한 줄 카톡이 한 번 더 왔다. '실장님이 흘리신 한 줄, 저쪽 라인이 저한테까지 들고 왔어요. 한 번만 만나서 정리하시죠.' 그 한 번 만남이 마지막이었고, 그 자리는 카페가 아니라 로펌 미팅룸 4호였다.
+      - speaker: narration
+        requires:
+          flagEqualsAll:
+            - { key: c7_end, value: silence_leak }
+            - { key: sooyeon_count_2, value: true }
+        text: 이수연은 한 주 뒤 짧은 톡으로 정리했다. '실장님 쪽 흘림이 우리 데스크 라인까지 들어왔어요. 이번 자리는 여기까지가 맞을 것 같습니다.' 마포 4층은 다음 주에 다른 기자가 입주했다는 얘기를 다른 라인으로 들었다.
       - speaker: thought
         requires:
           flag: c7_end
@@ -415,6 +439,18 @@ nodes:
             key: c7_end
             value: defer
         text: 녹음기는 아직 내 책상 서랍 안에 있다. 열 사람이 없는 물건은 시간이 지나면 그 물건 자체가 사람을 알아보지 못하게 된다. 내가 오늘 이 서랍을 한 번 열지 않으면, 내일 이 서랍은 더 안 열린다.
+      - speaker: narration
+        requires:
+          flagEqualsAll:
+            - { key: c7_end, value: defer }
+            - { key: miyoung_count_2, value: true }
+        text: 미영한테서 카톡 알림이 한 달에 한 번씩 깜빡였다. 답을 보낸 적은 없었고, 어느 시점부터 알림 자체가 멈췄다. 청담 위스키 바 그 카운터 자리에 누구의 잔 두 개가 다음으로 놓이고 있는지는 끝까지 모르고 살게 됐다.
+      - speaker: narration
+        requires:
+          flagEqualsAll:
+            - { key: c7_end, value: defer }
+            - { key: sooyeon_count_2, value: true }
+        text: 이수연은 다른 데스크로 옮긴 뒤 다른 기자 라인으로 사라졌다. 마포 4층 창문에 한밤중 불이 켜져 있는지 어떤지는 오늘 밤도 확인하지 않은 채로 한 해가 지났다.
       - speaker: narration
         requires:
           flagEquals:
