@@ -849,7 +849,7 @@ nodes:
       - speaker: thought
         requires:
           flag: saw_audit_paper
-        text: 오피스텔 서랍 안 붉은 줄과, 오늘 저 사람이 한 번씩씩 밀어 준 말들. 두 쪽이 같은 방향의 지도에 찍힌 두 핀이라는 건, 오늘 이 카페를 나가기 전에 이미 분명해졌다.
+        text: 오피스텔 서랍 안 붉은 줄과, 오늘 저 사람이 한 번씩 밀어 준 말들. 두 쪽이 같은 방향의 지도에 찍힌 두 핀이라는 건, 오늘 이 카페를 나가기 전에 이미 분명해졌다.
       - speaker: thought
         requires:
           flag: ghost_visitors
