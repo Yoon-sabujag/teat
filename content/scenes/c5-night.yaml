@@ -424,7 +424,7 @@ nodes:
       - speaker: system
         text: 하진님이 대화창을 나갔습니다.
       - speaker: thought
-        text: 그 애의 이 한 줄짜리 질문은 내가 두 달 전 이 회사를 나올 때 쥐고 나온 것 중 가장 무거운 짐이다. 오늘 밤 이 사건의 모든 단서보다 이 한 줄이 내 코트 주머니 안에서 더 묵직하다.
+        text: 하진이가 던진 짧은 질문 하나가 내가 두 달 전 이 회사를 나올 때 쥐고 나온 것 중 가장 무거운 짐이다. 오늘 밤 이 사건의 어느 단서보다 그 질문이 내 코트 주머니 안에서 더 묵직하다.
     next: lights-off
 
   hajin-reply-softer:
@@ -443,7 +443,7 @@ nodes:
       - speaker: system
         text: 하진님이 대화창을 나갔습니다.
       - speaker: thought
-        text: 저 애 쪽이 먼저 내 안부를 챙기는 대화를 오늘도 한 번 더 내준 셈이다. 내 쪽에서 돌려 준 한 줄이 내일 아침 집 현관에 닿을 수 있을지부터가 오늘 밤의 무게다.
+        text: 하진이가 먼저 아빠 안부를 챙겨 준 셈이다. 내가 보낸 답이 내일 아침 집 현관에 닿을 수 있을지부터가 오늘 밤의 무게다.
     next: lights-off
 
   hajin-reply-truthful:
