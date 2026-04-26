@@ -452,5 +452,51 @@ export function routeTrackers(flags: Flags): Tracker[] {
       });
   })();
 
+  // 사건 진실 — PC가 어디까지 캤는지
+  (() => {
+    let depth = 0;
+    const items: string[] = [];
+    if (is(flags, "saw_audit_paper")) {
+      depth += 1;
+      items.push("SPC 가짜 인보이스 12건");
+    }
+    if (is(flags, "got_tape")) {
+      depth += 1;
+      items.push("USB 본체 + 4묶음 목록");
+    }
+    if (is(flags, "heard_dohyun_recording")) {
+      depth += 2;
+      items.push("1,847억 / 64건 / 자금 분배 (HSBC·OCBC)");
+    }
+    if (is(flags, "miyoung_knew_usb_plan")) {
+      depth += 1;
+      items.push("미영 USB 사본 보관 인지");
+    }
+    if (is(flags, "knew_security_head")) {
+      depth += 1;
+      items.push("오정훈·오정태 형제 라인");
+    }
+    if (is(flags, "tail_orders_traced")) {
+      depth += 1;
+      items.push("미행 명령 = 장기철 비서실");
+    }
+    if (is(flags, "jang_present")) {
+      depth += 1;
+      items.push("김OO 비서실장 직접 대면");
+    }
+    if (is(flags, "knew_pc_named_in_dohyun_chain")) {
+      depth += 1;
+      items.push("도현 노트에 PC 이름 박힘");
+    }
+    if (depth === 0) return;
+    const tone: RouteTone =
+      depth >= 6 ? "warm" : depth >= 4 ? "neutral" : depth >= 2 ? "cold" : "dim";
+    out.push({
+      label: "사건 진실",
+      value: `${items.length}/8 단서 — ${items.slice(0, 3).join(", ")}${items.length > 3 ? " 외" : ""}`,
+      tone,
+    });
+  })();
+
   return out;
 }

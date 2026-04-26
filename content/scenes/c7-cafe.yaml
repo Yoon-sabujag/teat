@@ -547,6 +547,33 @@ nodes:
       - speaker: thought
         text: 저 사람이 오늘 이 카페 한 자리로 '한 달치 잔해' 의 전체 모양을 끝내고 싶어 하는 게 보인다. 오늘 내가 어떤 마지막 한 줄을 놓고 일어서느냐가, 다음 장의 문장 하나하나를 미리 재단한다.
     choices:
+      - id: end-public-armed
+        label: (USB 4묶목, 보안실 라인, NDA 출처 다 들고) 일요일 1면, 둘째 줄에 차상호·오정태. 셋째 줄에 장기철. 동의하시면 오늘 이 자리는 없던 자리로.
+        check: { stat: gwonmo, dc: 12 }
+        requires:
+          flag: heard_dohyun_recording
+          flagEqualsAll:
+            - { key: knew_security_head, value: true }
+            - { key: nda_from_above, value: true }
+        success:
+          next: close-public-armed
+          effects:
+            - kind: flag
+              key: c7_end
+              value: public
+            - kind: flag
+              key: cha_collapse
+              value: true
+            - kind: memory
+              text: 7장 카페에서 USB·보안실·NDA 세 카드 다 깔고 차상호 굴복 받음. 차상호가 자기 라인을 본인이 정리하는 쪽으로 합의.
+        failure:
+          next: close-public
+          effects:
+            - kind: flag
+              key: c7_end
+              value: public
+            - kind: memory
+              text: USB·보안실·NDA 세 카드 깔았지만 차상호 굴복까지는 못 받음. 공개 라인으로 진행.
       - id: end-public
         label: 오늘 자리 이후 저는 공개 라인으로 갑니다.
         next: close-public
@@ -632,6 +659,21 @@ nodes:
             value: defer
           - kind: memory
             text: 카페 퇴장 선언 — 유예. 다음 자리는 내 쪽이 시간을 정한다.
+
+  close-public-armed:
+    id: close-public-armed
+    lines:
+      - speaker: narration
+        text: 차상호의 손이 커피잔 손잡이에서 한 번 멎었다. 잔 안의 커피가 남은 만큼 더 식고 있었고, 그동안 차상호는 자기 안쪽에서 계산을 한 번 끝낸 것 같았다.
+      - speaker: cha-sangmu
+        text: …승재씨, 오늘 이 자리에서 그 세 가지를 한꺼번에 들고 오신 거, 저는 받습니다. 본인 쪽 라인 정리는 제가 직접 하겠습니다. 일요일 출고 전까지 사흘. 그동안 저쪽 — 장 전무·오 감사 — 한테 가는 사인 한 줄, 제가 미리 깔아 두는 걸로요.
+        expression: grim
+      - speaker: cha-sangmu
+        text: 다만 한 가지. 승재씨가 저한테 직접 받아 가시는 건, 본인 자녀 신탁 40억 자료입니다. 그게 제가 오늘 이 자리에서 드릴 수 있는 마지막 카드고요. 받으세요.
+        expression: weary
+      - speaker: thought
+        text: 차상호가 제 발로 본인 자녀 신탁 자료를 카드로 내놨다. 본인 라인이 같이 박힐 줄 알면서, 본인 손으로 본인을 정리해 가는 자세. 18년 사수가 본인 결정을 본인이 책임지는 쪽으로 한 번 돌아온 자리.
+    next: depart
 
   close-public:
     id: close-public
