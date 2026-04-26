@@ -103,8 +103,11 @@ nodes:
         text: 도현 씨에 대해 어디까지 정리하고 오셨어요. 시작 라인 잡아 두고 들어가는 게 둘 다 편할 것 같아서요.
         expression: tense
     choices:
+      # 준혁 만난 분기
       - id: honest
         label: 당신과 도현이 최근에 싸웠다. 도현이 뭘 하려고 했다. 거기까지.
+        requires:
+          flag: miyoung_meeting
         next: surface-truth
         effects:
           - kind: flag
@@ -112,6 +115,8 @@ nodes:
             value: honest
       - id: downplay
         label: 별 얘기 없었습니다. 직접 듣는 게 나을 것 같아서요.
+        requires:
+          flag: miyoung_meeting
         check: { stat: gwonmo, dc: 11 }
         success:
           next: surface-truth
@@ -121,6 +126,45 @@ nodes:
               delta: 1
             - kind: memory
               text: 준혁이 어디까지 말했는지 감추자 미영은 내가 생각보다 영리하다고 느꼈다.
+            - kind: flag
+              key: miyoung_respects
+              value: true
+            - kind: flag
+              key: c2_miyoung_probe
+              value: downplayed
+        failure:
+          next: surface-truth
+          effects:
+            - kind: flag
+              key: c2_miyoung_probe
+              value: downplay_missed
+      # 준혁 미만남 분기 — 김승기 비서실 직접 호출
+      - id: honest-direct
+        label: 김 부회장 의뢰 받았고, 도현 씨가 사라지기 전 본사 자료실 출입 다섯 번. 그 정도 깔고 왔습니다.
+        requires:
+          flagNotEquals:
+            key: miyoung_meeting
+            value: true
+        next: surface-truth
+        effects:
+          - kind: flag
+            key: c2_miyoung_probe
+            value: honest
+      - id: downplay-direct
+        label: 부회장님 쪽이 깔아 주신 줄거리 한 장이 전부입니다. 나머지는 변호사님 쪽이 풀어 주실 줄 알고요.
+        requires:
+          flagNotEquals:
+            key: miyoung_meeting
+            value: true
+        check: { stat: gwonmo, dc: 11 }
+        success:
+          next: surface-truth
+          effects:
+            - kind: stat
+              target: gwonmo
+              delta: 1
+            - kind: memory
+              text: 김 부회장 라인 받은 정도만 깔아 둠. 미영은 PC가 의외로 카드를 늦게 까는 사람이라고 봤다.
             - kind: flag
               key: miyoung_respects
               value: true
