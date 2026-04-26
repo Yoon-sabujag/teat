@@ -12,12 +12,27 @@ nodes:
     id: arrive
     lines:
       - speaker: narration
-        text: 청담 사거리에서 한 블록 안쪽. 로펌들이 드나드는 건물 지하 한 칸을 쓰는 카페였다. 저녁 여덟 시 조금 지나, 창가 두 좌석에만 손님이 있었고, 재즈 기타 솔로가 볼륨을 낮춰 흘러나오고 있었다. 드립 커피 향이 입구에서 한 번, 안쪽 자리에서 한 번 더 결 다르게 번졌다.
+        requires:
+          flag: miyoung_meeting
+        text: 청담 사거리에서 한 블록 안쪽. 로펌들이 드나드는 건물 지하 한 칸을 쓰는 카페였다. 준혁이가 어제 잡아 준 자리. 저녁 여덟 시 조금 지나, 창가 두 좌석에만 손님이 있었고, 재즈 기타 솔로가 볼륨을 낮춰 흘러나오고 있었다.
+      - speaker: narration
+        requires:
+          flagNotEquals:
+            key: miyoung_meeting
+            value: true
+        text: 청담 사거리에서 한 블록 안쪽. 로펌들이 드나드는 건물 지하 한 칸을 쓰는 카페였다. 어제 김승기 부회장 비서실에서 미영 변호사 쪽으로 한 줄 보내 자리가 잡힌 거였다. 저녁 여덟 시 조금 지나, 창가 두 좌석에만 손님이 있었고, 재즈 기타 솔로가 볼륨을 낮춰 흘러나오고 있었다.
       - speaker: narration
         text: 미영은 가장 안쪽 벽 쪽 좌석에 이미 자리 잡고 있었다. 얇은 블랙 니트 위에 밝은 회색 재킷 한 벌, 머리는 한쪽으로 단정하게 모여 있었다. 테이블 위엔 아메리카노 한 잔, 뒤집어 놓은 아이폰, 그리고 사건 번호가 적힌 것 같은 메모지 한 장이 법률 서류 가방 옆에 반듯하게 놓여 있었다.
       - speaker: miyoung
         text: 백 실장님. 앉으시죠.
         expression: neutral
+      - speaker: miyoung
+        requires:
+          flagNotEquals:
+            key: miyoung_meeting
+            value: true
+        text: 김 부회장님 비서실에서 한 줄 받았어요. 제가 거절할 자리가 아니라서요. 다만 오늘 자리는 준혁이를 안 끼고 잡힌 자리라, 저도 한 박자 늦게 시작합니다. 실장님 쪽 정보가 어디까지 깔려 있는지 제가 모르는 상태에서 들어가는 자리예요.
+        expression: tense
       - speaker: miyoung
         text: 제가 먼저 한 가지만 정리하고 시작할게요. 이 대화는 기록되지 않는 자리입니다. 저는 녹음하지 않고요, 실장님도 안 하시는 걸로 전제하겠습니다.
         expression: tense
@@ -76,7 +91,16 @@ nodes:
         expression: tense
 
       - speaker: miyoung
+        requires:
+          flag: miyoung_meeting
         text: 준혁이한테는 어디까지 들으셨어요.
+        expression: tense
+      - speaker: miyoung
+        requires:
+          flagNotEquals:
+            key: miyoung_meeting
+            value: true
+        text: 도현 씨에 대해 어디까지 정리하고 오셨어요. 시작 라인 잡아 두고 들어가는 게 둘 다 편할 것 같아서요.
         expression: tense
     choices:
       - id: honest
@@ -122,17 +146,35 @@ nodes:
         expression: neutral
       - speaker: miyoung
         requires:
-          flagEquals:
-            key: c2_miyoung_probe
-            value: downplayed
+          flag: miyoung_meeting
+          flagEqualsAll:
+            - { key: c2_miyoung_probe, value: downplayed }
         text: …음. 준혁이가 실장님한테 어디까지 깔아 뒀는지 제가 먼저 확인을 못 한 상태이니까, 저는 뒤에서 시작할게요.
         expression: weary
       - speaker: miyoung
         requires:
-          flagEquals:
-            key: c2_miyoung_probe
-            value: downplay_missed
+          flagEqualsAll:
+            - { key: c2_miyoung_probe, value: downplayed }
+          flagNotEquals:
+            key: miyoung_meeting
+            value: true
+        text: …음. 김 부회장님 라인으로 들어오신 거니까 제가 어디부터 시작해야 할지 감이 잡혀야 하는데, 이 답은 그 감을 더 흐리게 만드네요.
+        expression: weary
+      - speaker: miyoung
+        requires:
+          flag: miyoung_meeting
+          flagEqualsAll:
+            - { key: c2_miyoung_probe, value: downplay_missed }
         text: '"별 얘기 없었다"는 말은, 사실 준혁이랑은 잘 안 어울리는 태도예요. 걔가 한번 앉으면 최소 이십 분은 깔아 두고 가는 애거든요. 저 오늘 그 말 그대로 받지는 않겠습니다.'
+        expression: tense
+      - speaker: miyoung
+        requires:
+          flagEqualsAll:
+            - { key: c2_miyoung_probe, value: downplay_missed }
+          flagNotEquals:
+            key: miyoung_meeting
+            value: true
+        text: '"별 얘기 없었다"고 시작하시는 거, 김 부회장님 비서실에서 자리 잡아 주신 분이 하실 답은 아니라고 봐요. 저 오늘 그 말 그대로는 못 받습니다.'
         expression: tense
 
       - speaker: miyoung
