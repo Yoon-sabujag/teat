@@ -8,7 +8,7 @@ cast:
 entry: arrive
 
 # 4장 사이드 씬. c4-soo-yeon 의 side-prompt 에서 갈리어 진입.
-# 짧게: 준혁이 사흘 만에 입을 떼고 도현의 마지막 통화 한 줄을 줌.
+# 짧게: 준혁이 사흘 만에 입을 떼고 도현의 마지막 통화 내용을 줌.
 # 끝나면 chapter-5 로 넘어감.
 nodes:
   arrive:
@@ -33,7 +33,7 @@ nodes:
               key: c4side_junhyuk
               value: opened
             - kind: memory
-              text: '준혁이가 도현의 마지막 통화 내용을 풀었다 — "형, 나 제 이름 밑에 다른 이름 한 줄 더 박혀 있어. 그 이름이 너 알아."'
+              text: '준혁이가 도현의 마지막 통화 내용을 풀었다 — "형, 나 제 이름 밑에 다른 이름이 적혀 있어. 그 이름이 너 알아."'
             - kind: flag
               key: junhyuk_last_call
               value: true
@@ -53,7 +53,7 @@ nodes:
               key: c4side_junhyuk
               value: pressured
             - kind: memory
-              text: '준혁이를 압박해서 도현의 마지막 통화 한 줄을 받아냈다 — "형, 나 제 이름 밑에 다른 이름 한 줄 더 박혀 있어. 그 이름이 너 알아."'
+              text: '준혁이를 압박해서 도현의 마지막 통화 내용을 받아냈다 — "형, 나 제 이름 밑에 다른 이름이 적혀 있어. 그 이름이 너 알아."'
             - kind: flag
               key: junhyuk_last_call
               value: true
@@ -72,13 +72,13 @@ nodes:
         expression: grim
     lines:
       - speaker: junhyuk
-        text: 도현이가 그날 한 줄 그랬어요. "형, 나 제 이름 밑에 다른 이름 한 줄 더 박혀 있어. 그 이름이 너 알아."
+        text: 도현이가 그날 그랬어요. "형, 나 제 이름 밑에 다른 이름이 적혀 있어. 그 이름이 너 알아."
         expression: grim
       - speaker: junhyuk
         text: 그 다음에 통화 끊겼고, 사흘 뒤에 실종 보도. 저는 그 말을 사흘 동안 머리 속에서만 굴리다가 이수연 기자가 형 만나러 간다는 얘기 듣고 형한테 한 번은 풀어야겠다 싶었어요.
         expression: tense
       - speaker: thought
-        text: '"제 이름 밑에 다른 이름 한 줄." 도현이 회사 조직도 안에서 자기 자리 다음 줄에 누군가 한 명을 미리 정해 두었다는 뜻이고, 그 한 명을 도현 본인은 알았고 나도 안다는 뜻이다. 두 달 전 차 상무 라인에서 잘려 나간 사람 한 명. 내 이름.'
+        text: '"제 이름 밑에 다른 이름이 적혀 있어." 도현이 회사 조직도 안에서 자기 자리 다음 칸에 누군가 한 명을 미리 정해 두었다는 뜻이고, 그 한 명을 도현 본인은 알았고 나도 안다는 뜻이다. 두 달 전 차 상무 라인에서 잘려 나간 사람 한 명. 내 이름.'
       - speaker: junhyuk
         text: 형 들으니까 어때요. 저는 사흘 들고 다닌 게 형 머리 속에 사흘 안 가도 알 줄 알았어요.
         expression: weary
