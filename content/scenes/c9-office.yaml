@@ -236,6 +236,18 @@ nodes:
         text: 이수연 쪽엔 카톡도 안 왔다. 그쪽이 보내지 않은 부재가 오늘 밤 가장 단단한 한 줄이었다.
       - speaker: narration
         requires:
+          flagEqualsAll:
+            - { key: c7_end, value: deal }
+            - { key: miyoung_count_2, value: true }
+        text: 미영과는 두 번이 마지막이었다. 청담 오피스텔 도어록 번호는 한 달 만에 바뀌어 있었고, 그 사실을 카톡으로 묻지 않은 채 알았다.
+      - speaker: narration
+        requires:
+          flagEqualsAll:
+            - { key: c7_end, value: deal }
+            - { key: sooyeon_count_2, value: true }
+        text: 이수연은 한 달 뒤 다른 데스크로 옮겼다. 마포 오피스텔 주소는 그대로였지만 문 앞까지 가지는 않았다. 일이 가까워질수록 라인이 분리됐다는 사실을 양쪽 다 자기 책상에서 받아들였다.
+      - speaker: narration
+        requires:
           flagEquals:
             key: c7_end
             value: deal
@@ -313,6 +325,21 @@ nodes:
             key: c7_end
             value: silence
         text: 오늘 이후로 그 차는 한 번씩 같은 자리에 돌아온다. 내 쪽에서 문을 한 번 더 안 열더라도, 저쪽에서 문을 한 번씩 두드려 확인하러 오는 자리. 그 대칭이 오늘 이후의 기본값이다.
+      - speaker: narration
+        requires:
+          flagEqualsAll:
+            - { key: c7_end, value: silence }
+            - { key: miyoung_count_3, value: true }
+        text: 다음 달 첫째 주 토요일, 청담 미영 오피스텔 침실 옆 작은 방에 책상 한 개를 옮겨 들였다. 책상 위에 도현이 남긴 친필 편지 원본을 가장 안쪽 칸에. 일주일에 사흘은 그 책상에서 하루를 끝냈고, 나머지 나흘은 을지로 사무실에서 끝냈다. 미영도 나도 도현 얘기는 한 달이 지나도록 한 번도 꺼내지 않았다.
+      - speaker: narration
+        requires:
+          flagEqualsAll:
+            - { key: c7_end, value: silence }
+            - { key: miyoung_count_2, value: true }
+          flagNotEquals:
+            key: miyoung_count_3
+            value: true
+        text: 미영과 청담 카페에서 한 달에 두세 번씩 만났다. 도현 얘기도 우리 둘 얘기도 거의 꺼내지 않았다. 잔이 비워지면 한쪽이 먼저 일어났다.
       - speaker: narration
         requires:
           flag: c7_end
