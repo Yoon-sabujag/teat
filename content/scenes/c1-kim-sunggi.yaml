@@ -352,7 +352,15 @@ nodes:
     id: closing
     lines:
       - speaker: narration
+        requires:
+          flag: accepted_case
         text: VIP 상담실 문을 닫고 27층 엘리베이터 앞에 섰다. 두 달 전 차 상무 임원실에서 이 같은 엘리베이터를 탔다. 그땐 박스 하나를 들고 내려갔고, 오늘은 USB 하나를 들고 내려간다. 무게는 USB 쪽이 훨씬 가벼웠고, 책임은 그 반대였다.
+      - speaker: narration
+        requires:
+          flagNotEquals:
+            key: accepted_case
+            value: true
+        text: VIP 상담실 문을 닫고 27층 엘리베이터 앞에 섰다. 두 달 전 차 상무 임원실에서 이 같은 엘리베이터를 탔다. 그땐 박스 하나를 들고 내려갔고, 오늘은 빈손으로 내려간다. 가벼운 만큼 그 사람의 마지막 한 문장이 코트 안쪽에 더 무겁게 들어와 있었다.
 
       - speaker: thought
         requires:
@@ -383,18 +391,31 @@ nodes:
         text: 사인했다. 돈도 받고 의뢰도 받았다. 이게 가장 빠른 길이었는지 아닌지는 오늘 밤 안엔 답이 안 나온다.
 
       - speaker: thought
+        requires:
+          flag: accepted_case
         text: 조카가 들고 있던 것, 만난 임원, 생사. 셋 중 둘. 김승기 본인이 셋 다 알고 싶은 게 아니라는 점을 잊지 말 것.
 
       - speaker: thought
         requires:
-          flag: noticed_nda
+          flag: accepted_case
+          flagEqualsAll:
+            - { key: noticed_nda, value: true }
         text: 두 달 전 사인한 합의서의 5년 조항도, 오늘 사인한 의뢰 계약서도, 결국 SPC 라는 같은 사안 위에 박힌 두 장이다. 김승기는 그 사실을 알고 나를 골랐고, 나는 오늘 그 골라진 자리에 정확히 앉았다.
       - speaker: thought
         requires:
+          flag: accepted_case
           flagNotEquals:
             key: noticed_nda
             value: true
         text: 두 달 전 27층의 사인과 오늘 27층의 사인이 같은 그룹의 같은 층에서 이뤄졌다. 그 사이 무엇이 있었는지는 오늘 안엔 알지 못한다.
+
+      - speaker: thought
+        requires:
+          flagNotEquals:
+            key: accepted_case
+            value: true
+          flag: noticed_nda
+        text: 두 달 전 27층의 사인은 SPC 5년 NDA였고, 오늘 27층 자리는 그 NDA의 다음 장을 미리 한 번 읽고 가는 자리였다. 의뢰는 안 받았지만 그 사실 자체는 코트 안쪽에 그대로 들어왔다.
 
       - speaker: narration
         text: 1층 로비. 저녁 여덟 시. 광화문 사거리 쪽에서 들어오는 바람이 한 번 안쪽으로 휩쓸렸고, 정장 깃이 잠깐 떨렸다.
