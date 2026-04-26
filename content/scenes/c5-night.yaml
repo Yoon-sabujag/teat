@@ -462,7 +462,7 @@ nodes:
       - speaker: narration
         text: 이모티콘 하나 없이 보낸 문장이 그대로 위쪽으로 한 칸 밀렸다.
       - speaker: thought
-        text: 중 2짜리 아이가 내 쪽으로 어른의 자리를 한 칸 내밀어 준 거다. 그 자리 너비만큼 오늘 밤 내가 어른이 못 됐다는 계산이 책상 한쪽에 남는다.
+        text: 중 2짜리 아이가 내 쪽으로 어른 자리를 먼저 내밀어 준 거다. 그만큼 오늘 밤 내가 어른이 못 됐다는 계산이 책상 한쪽에 남는다.
     next: lights-off
 
   defer-hajin-beat:

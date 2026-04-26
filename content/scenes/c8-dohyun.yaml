@@ -250,7 +250,7 @@ nodes:
           flagEquals:
             key: c7_end
             value: silence
-        text: 카페 문이 닫히는 소리가 평소보다 한 박자 무겁게 들렸다. 청담 사거리에서 택시를 잡았다.
+        text: 카페 문이 닫히는 소리가 평소보다 무겁게 들렸다. 청담 사거리에서 택시를 잡았다.
         effects:
           - kind: chapterComplete
             chapter: chapter-8
