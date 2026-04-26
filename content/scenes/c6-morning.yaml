@@ -90,6 +90,118 @@ nodes:
             key: tail_was_security_line
             value: true
         next: jaemin-tail-goto
+      - id: morning-sooyeon
+        label: (시청 사거리 카페에서 이수연과 잠깐 본다. 편집국 들어가기 전에.)
+        requires:
+          flag: sooyeon_count_1
+          flagNotEquals:
+            key: sooyeon_morning_done
+            value: true
+        next: morning-sooyeon-touch
+
+  morning-sooyeon-touch:
+    id: morning-sooyeon-touch
+    background: jugangji-backlot
+    cast:
+      - npc: soo-yeon
+        position: center
+        expression: weary
+    lines:
+      - speaker: narration
+        text: 시청 사거리, 편집국에서 두 블록 떨어진 카페 1층. 아침 여덟 시, 출근 인파 시작 전. 이수연이 어제 마포에서 입었던 회색 후드 그대로, 머리만 한 번 빗어 넘긴 채 창가 자리에 먼저 앉아 있었다. 카푸치노 두 잔이 이미 나와 있었다.
+      - speaker: soo-yeon
+        text: 차장님 자리 들어가시기 전에 한 번 더 보고 싶었어요. 어제 밤 같은 라인으로 들어가기로 한 자세, 오늘 아침에도 그대로인지 확인하고 싶기도 했고요.
+        expression: weary
+      - speaker: thought
+        text: 어제 마포 식탁의 잔 두 개와 오늘 이 카푸치노 두 잔 사이에 같은 박자가 한 번 더 깔렸다. 그 박자를 받느냐 안 받느냐가 오늘 아침 여기서 정해진다.
+    choices:
+      - id: stay-touch
+        label: (잔을 옆자리로 옮기고 그녀의 손등에 잠시 손을 얹는다.)
+        check: { stat: yangsim, dc: 11 }
+        success:
+          next: morning-stay
+          effects:
+            - kind: flag
+              key: sooyeon_count_2
+              value: true
+            - kind: flag
+              key: sooyeon_intimacy
+              value: recurring
+            - kind: flag
+              key: sooyeon_morning_done
+              value: true
+            - kind: memory
+              text: 시청 카페에서 이수연과 두 번째 자리. 손등에 손을 얹은 채 잠시 머물렀고, 같은 라인이 조금 더 단단해졌다.
+        failure:
+          next: morning-stiff
+          effects:
+            - kind: flag
+              key: sooyeon_morning_done
+              value: true
+      - id: keep-distance
+        label: (커피만 같이 비우고 정시에 일어선다.)
+        next: morning-equal
+        effects:
+          - kind: flag
+            key: sooyeon_intimacy
+            value: held_steady
+          - kind: flag
+            key: sooyeon_morning_done
+            value: true
+          - kind: memory
+            text: 시청 카페에서 같이 커피만 비우고 동등한 동료 자세로 편집국에 들어간다.
+
+  morning-stay:
+    id: morning-stay
+    cast:
+      - npc: soo-yeon
+        position: center
+        expression: weary
+    lines:
+      - speaker: soo-yeon
+        text: 오늘 일 끝나면 다시 마포로 와요. 차장님 자리 끝나는 시간 봐서 제가 한 줄 보낼게요.
+        expression: weary
+      - speaker: thought
+        text: 두 번째 자리가 한 번에 그치지 않을 거라는 것까지 양쪽이 같이 받았다. 차장 자리에 들어가는 자세는 어제와 다른 무게로 한 번 더 무거워진다.
+    next: morning-resume
+
+  morning-stiff:
+    id: morning-stiff
+    cast:
+      - npc: soo-yeon
+        position: center
+        expression: tense
+    lines:
+      - speaker: soo-yeon
+        text: 손 한 번 얹으셨는데 박자가 자기 박자가 아니시네요. 오늘 자리는 동등한 동료로 가는 게 맞겠어요.
+        expression: tense
+      - speaker: thought
+        text: 두 번째로 가지지 못한 자세가 오늘 아침 카페 잔 두 개 사이에 한 번 박혔다. 차장 자리는 어제 같은 라인 자세 그대로.
+    next: morning-resume
+
+  morning-equal:
+    id: morning-equal
+    cast:
+      - npc: soo-yeon
+        position: center
+        expression: neutral
+    lines:
+      - speaker: soo-yeon
+        text: 정시에 일어나시는 거, 오늘 자리에 어울리는 자세예요. 가요, 차장님 기다리세요.
+        expression: amused
+      - speaker: thought
+        text: 어제 마포의 식탁 자리 그대로의 동료 자세. 두 번째로 안 가지만 같이 라인은 단단하다.
+    next: morning-resume
+
+  morning-resume:
+    id: morning-resume
+    cast: []
+    lines:
+      - speaker: narration
+        text: 카페 문을 나와 두 블록 걸어 편집국 뒷문 주차장 입구에 도착했다. 차장이 어제와 같은 자세로 차에 기대 서 있었다.
+        effects:
+          - kind: goto
+            scene: c6-morning
 
   jaemin-tail-goto:
     id: jaemin-tail-goto

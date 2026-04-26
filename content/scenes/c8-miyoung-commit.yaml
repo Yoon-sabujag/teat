@@ -1,0 +1,115 @@
+id: c8-miyoung-commit
+title: "다음 달부터"
+background: cheongdam-cafe
+cast:
+  - npc: miyoung
+    position: center
+    expression: tense
+entry: prompt
+
+# 8장 결합 결정 자리. c8-dohyun 의 silence 분기 안에서 miyoung_count_2 면 진입.
+# 받으면 count_3 → c9 동거 후일담 가능.
+nodes:
+  prompt:
+    id: prompt
+    lines:
+      - speaker: thought
+        text: 일주일에 사흘. 미영이 변호사 답게 숫자로 깔아 둔 제안. 이 숫자 안엔 도현 씨 자리가 들어가지 않는다. 그게 이 제안의 가장 단단한 한 줄이다.
+      - speaker: miyoung
+        text: 답은 오늘 안 하셔도 돼요. 다만 하실 거면 이번 주 안에. 다음 주부터 저는 다른 자리도 잡아 둬야 해서요.
+        expression: weary
+    choices:
+      - id: accept
+        label: 알겠습니다. 다음 달부터 청담으로 올라옵니다.
+        check: { stat: yangsim, dc: 11 }
+        success:
+          next: accept-clean
+          effects:
+            - kind: flag
+              key: miyoung_count_3
+              value: true
+            - kind: flag
+              key: miyoung_intimacy
+              value: cohabit
+            - kind: memory
+              text: 미영의 결합 제안 수락. 다음 달부터 청담 일주일 사흘. 도현 자리는 그대로 유지하는 조건.
+        failure:
+          next: accept-shaky
+          effects:
+            - kind: flag
+              key: miyoung_count_3
+              value: hesitated
+            - kind: flag
+              key: miyoung_intimacy
+              value: cohabit_shaky
+            - kind: memory
+              text: 청담 결합 수락은 했지만 자세가 흔들렸다. 미영도 그 흔들림을 받았다.
+      - id: counter
+        label: 일주일에 사흘은 무거워요. 한 달에 한두 번 정도부터 시작하시죠.
+        next: counter-line
+        effects:
+          - kind: flag
+            key: miyoung_intimacy
+            value: tentative
+          - kind: memory
+            text: 미영의 결합 제안에 횟수 줄여 역제안. 둘 다 천천히 가는 자세로 정리.
+      - id: decline
+        label: 그 자리는 제가 못 받겠습니다. 도현 씨 자리가 정리되기 전엔.
+        next: decline-line
+        effects:
+          - kind: flag
+            key: miyoung_intimacy
+            value: declined_commit
+          - kind: memory
+            text: 미영의 결합 제안 거절. 도현 자리가 정리되지 않은 채로는 받을 수 없다는 자세.
+
+  accept-clean:
+    id: accept-clean
+    lines:
+      - speaker: miyoung
+        text: 좋아요. 짐은 천천히 옮기시고요. 침실 옆 작은 방 하나 비워 둘게요. 도현 씨 편지 원본은 거기 둘 자리도 같이.
+        expression: weary
+      - speaker: thought
+        text: 도현 씨 편지가 미영의 침실 옆 방에 들어간다는 뜻이다. 그 사실 하나가 오늘 받은 제안의 진짜 무게였다.
+    next: depart
+
+  accept-shaky:
+    id: accept-shaky
+    lines:
+      - speaker: miyoung
+        text: 알겠다고 하셨는데 어미가 흔들리셨네요. 다음 달부터 시작은 하되, 자세가 잡힐 때까지는 양쪽 다 한 발씩 빼고 가요.
+        expression: tense
+      - speaker: thought
+        text: 결합은 결합이지만 흔들린 자세가 양쪽 사이에 한 줄 남았다.
+    next: depart
+
+  counter-line:
+    id: counter-line
+    lines:
+      - speaker: miyoung
+        text: 한 달에 두 번. 그 정도면 저도 받습니다. 다만 두 번이 점점 줄어드는 쪽인지 점점 늘어나는 쪽인지는 양쪽이 같이 보고 가야 해요.
+        expression: weary
+      - speaker: thought
+        text: 결합 직전에서 한 발 뒤로 물러섰다. 두 번이 한 번이 될지 세 번이 될지는 다음 자리들이 정한다.
+    next: depart
+
+  decline-line:
+    id: decline-line
+    lines:
+      - speaker: miyoung
+        text: 그 답도 받습니다. 도현 씨 자리가 정리되는 시점이 언제인지는 저도 모르고요. 그때까지는 우리도 자기 자리에서 보는 걸로.
+        expression: weary
+      - speaker: thought
+        text: 결합 제안을 거절한 자세가 미영 안에 또 한 줄로 박혔다. 다음 자리는 한참 뒤에 만들어진다.
+    next: depart
+
+  depart:
+    id: depart
+    cast: []
+    lines:
+      - speaker: narration
+        text: 카페 문을 나서자 청담 사거리의 늦은 오후 햇빛이 정면으로 닿았다. 다음 달부터 시작될 자리의 모양이 어떻든, 오늘 이 카페가 그 시작점이라는 건 양쪽이 같이 인정한 셈이었다.
+        effects:
+          - kind: chapterComplete
+            chapter: chapter-8
+            nextChapter: chapter-9

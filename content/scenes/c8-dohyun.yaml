@@ -223,6 +223,35 @@ nodes:
             value: letter_only
           - kind: memory
             text: 청담에서 미영이 도현의 친필 편지 원본 보여 줌. 도현은 한 달 한 번 안부 문자로만 본인을 증명 중. 직접 만남 없음.
+
+      # 결합 결정: count_2 가 박혀 있으면 미영이 같이 살자고 제안.
+      - speaker: narration
+        requires:
+          flagEqualsAll:
+            - { key: c7_end, value: silence }
+            - { key: miyoung_count_2, value: true }
+        text: 봉투를 가방 안에 다시 넣으며 미영이 잠시 손을 멈췄다. 카페 음악이 한 곡 바뀌는 사이 둘 다 잔에 손을 대지 않고 앉아 있었다.
+        background: cheongdam-cafe
+      - speaker: miyoung
+        requires:
+          flagEqualsAll:
+            - { key: c7_end, value: silence }
+            - { key: miyoung_count_2, value: true }
+        text: 다음 달부터 청담 쪽으로 올라오시면 어떨까요. 매일이 아니어도 됩니다. 일주일에 사흘. 도현 씨 자리는 그 자리대로 두고요.
+        expression: tense
+        background: cheongdam-cafe
+        effects:
+          - kind: goto
+            scene: c8-miyoung-commit
+
+      # count_2 미세팅 = 기존 흐름 그대로 다음 장으로 마무리.
+      - speaker: narration
+        requires:
+          flagEquals:
+            key: c7_end
+            value: silence
+        text: 카페 문이 닫히는 소리가 평소보다 한 박자 무겁게 들렸다. 청담 사거리에서 택시를 잡았다.
+        effects:
           - kind: chapterComplete
             chapter: chapter-8
             nextChapter: chapter-9
