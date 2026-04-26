@@ -93,7 +93,7 @@ nodes:
           flagEquals:
             key: c7_end
             value: deal
-        text: 어제 새벽에 자기 차로 부산까지 가시다가 사고 나신 거 처리한 결과예요. 공식 보고는 단독 사고로 들어갈 거고요.
+        text: 어제 새벽 통영에서 부산 가는 14번 국도 거제대교 직전. 단독 사고예요. 본인 차 BMW X5, 가드레일 충돌. 부검은 안 들어가고요, 화장 처리는 사흘 내. 가족 통보는 회장님 비서실에서 직접 내려갔습니다.
         expression: weary
         background: seongsu-warehouse
       - speaker: thought
@@ -101,7 +101,7 @@ nodes:
           flagEquals:
             key: c7_end
             value: deal
-        text: 시트 위로 다시 떨어진 차 상무의 손이 평소 결재판을 받을 때와 같은 각도였다. 단독 사고. 그 단어 안에 들어 있는 다른 단어들 — 운전, 속도, 새벽, 부산 — 어느 것도 도현이 직접 만든 단어가 아니었다.
+        text: 시트 위로 다시 떨어진 차상호의 손이 평소 결재판을 받을 때와 같은 각도였다. 14번 국도, 새벽 두 시 반, BMW X5 단독 충돌, 부검 생략, 사흘 내 화장. 그 다섯 단어를 만든 손은 도현의 손이 아니다. 장기철 비서실에서 내려온 시나리오를 차상호가 받은 자리에서 내가 그 시나리오를 한 번 더 받는 자리.
         background: seongsu-warehouse
       - speaker: cha-sangmu
         requires:
