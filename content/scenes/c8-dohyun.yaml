@@ -194,6 +194,22 @@ nodes:
         text: 도현 씨는 살아 있어요. 다만 어디 있는지는 저도 정확히 몰라요. 한 달 안에 한 번씩, 저한테 새 번호로 한 줄짜리 안부를 보내는 게 본인이 본인을 증명하는 방식이에요.
         expression: grim
         background: cheongdam-cafe
+      - speaker: miyoung
+        requires:
+          flagEquals:
+            key: miyoung_bond
+            value: deepened
+        text: 그 밤 자리, 도현 씨 편지에는 안 들어가요. 제가 먼저 그 자리 정리하고 나서 도현 씨 쪽 시간선이 한 칸 떨어졌어요. 그 거리 안에서 오늘 이 봉투가 가능했던 거고요.
+        expression: weary
+        background: cheongdam-cafe
+      - speaker: miyoung
+        requires:
+          flagEquals:
+            key: miyoung_bond
+            value: respected
+        text: 그 밤 자리, 자세 그대로 두고 닫으신 거 — 그게 오늘 이 봉투의 무게이기도 해요. 두 자리 다 같은 박자로 끝낸 사람만 받을 수 있는 형태로 도현 씨 글씨를 드리는 거고요.
+        expression: weary
+        background: cheongdam-cafe
       - speaker: thought
         requires:
           flagEquals:

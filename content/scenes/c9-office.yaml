@@ -42,6 +42,18 @@ nodes:
         text: 위쪽은 못 잡혔고, 기자는 옮겨가고, 집 안의 두 사람은 문을 닫은 채 각자 자고 있다. 이 건의 공식 승리와 내 개인 계산서 사이에 오늘 밤 처음으로 한 줄이 그어졌다.
       - speaker: narration
         requires:
+          flagEqualsAll:
+            - { key: c7_end, value: public }
+            - { key: sooyeon_bond, value: deepened }
+        text: 이수연한테서 한 줄 카톡 — '오늘 밤 우리 집 안 와도 돼요. 자리 맞춰지면 그때.' 답을 보내지 못한 채 휴대폰을 책상에 엎어 놓았다.
+      - speaker: narration
+        requires:
+          flagEqualsAll:
+            - { key: c7_end, value: public }
+            - { key: miyoung_bond, value: deepened }
+        text: 미영의 이름은 기사 둘째 줄에서 한 칸 옆으로 빠져 있었다. 본인 쪽 라인에서 한 번 더 정리한 결과였고, 그 정리가 어떤 자세에서 나온 건지는 오늘 밤 묻지 않기로 했다.
+      - speaker: narration
+        requires:
           flagEquals:
             key: c7_end
             value: public
@@ -101,6 +113,18 @@ nodes:
             key: c7_end
             value: deal_tainted
         text: 자리처럼 보이는 자리. 구조상 '실체 없는 자리'가 내 오늘 이후의 직함이 됐다. 녹음기는 여전히 내 쪽에 있지만, 오늘 이후 그 물건은 내 카드가 아니라 내 짐이 된다.
+      - speaker: narration
+        requires:
+          flagEqualsAll:
+            - { key: c7_end, value: deal }
+            - { key: miyoung_bond, value: deepened }
+        text: 미영한테서 카톡 한 줄 — '이제 답 안 하실 거잖아요. 받았어요.' 두 줄째는 없었다. 답을 찍다가 지웠다.
+      - speaker: narration
+        requires:
+          flagEqualsAll:
+            - { key: c7_end, value: deal }
+            - { key: sooyeon_bond, value: deepened }
+        text: 이수연 쪽엔 카톡도 안 왔다. 그쪽이 보내지 않은 부재가 오늘 밤 가장 단단한 한 줄이었다.
       - speaker: narration
         requires:
           flagEquals:

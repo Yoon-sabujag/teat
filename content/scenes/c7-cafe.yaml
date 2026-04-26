@@ -503,6 +503,19 @@ nodes:
         text: 미영 변호사 자리까지 가셨다면, 승재씨 쪽 한 달치 피로는 저도 대충 예상이 가요.
         expression: weary
       - speaker: cha-sangmu
+        requires:
+          flagEquals:
+            key: miyoung_bond
+            value: deepened
+        text: …다만 그 자리, 한 번 더 가져가신 자리시죠. 승재씨 쪽 자세가 어제까지의 자세와 같지 않은 거, 저도 오늘 처음 자리 잡을 때 한 번 봤습니다. 한 번 더 자세 맞추기 어렵네요.
+        expression: tense
+        effects:
+          - kind: flag
+            key: cha_yielded_tempo
+            value: true
+          - kind: memory
+            text: 차 상무가 미영과의 두 번째 자리(밤 자리)를 본인 쪽도 인지하고 있음을 시인. 페이스 한 칸 빼앗김.
+      - speaker: cha-sangmu
         text: 다만 미영 씨 쪽 정보와 제가 지금 이 자리에서 드릴 수 있는 정보 사이엔 한 층 두꺼운 벽이 있어요. 거긴 현장 쪽이고, 제가 앉은 건 그 현장 치우는 쪽 책상입니다. 한 방향으로 같이 움직이는 건 맞는데, 같은 층 얘기는 아니에요.
         expression: grim
       - speaker: thought
@@ -550,6 +563,9 @@ nodes:
           flagEquals:
             key: c7_offer
             value: consider
+          flagNotEquals:
+            key: cha_yielded_tempo
+            value: true
         success:
           next: close-deal-clean
           effects:
@@ -566,6 +582,28 @@ nodes:
               value: deal_tainted
             - kind: memory
               text: 복귀·거래 선언했지만 조건 조율에 실패. 그쪽 계산서가 내 쪽보다 조금 더 두꺼웠다.
+      - id: end-deal-tempo
+        label: 그 자리 받겠습니다. 다만 오늘 페이스 제 쪽이라는 거, 두 분 다 인지하고 시작합시다.
+        check: { stat: gwonmo, dc: 11 }
+        requires:
+          flagEquals:
+            key: c7_offer
+            value: consider
+          flag: cha_yielded_tempo
+        success:
+          next: close-deal-clean
+          effects:
+            - kind: flag
+              key: c7_end
+              value: deal
+            - kind: memory
+              text: 카페 퇴장 선언 — 복귀·거래. 페이스를 내 쪽으로 한 번 가져온 채로 거래.
+        failure:
+          next: close-deal-tainted
+          effects:
+            - kind: flag
+              key: c7_end
+              value: deal_tainted
       - id: end-silence
         label: 오늘 자리, 제 쪽에선 없는 자리로 정리하겠습니다.
         check: { stat: ttuksim, dc: 12 }

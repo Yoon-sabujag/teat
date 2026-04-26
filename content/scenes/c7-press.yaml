@@ -182,6 +182,10 @@ nodes:
       - id: end-silence-leak
         label: 한 주 늦춥시다. 카피본은 두고요. 협상 카드로 한 번 더.
         check: { stat: gwonmo, dc: 12 }
+        requires:
+          flagNotEquals:
+            key: sooyeon_bond
+            value: deepened
         success:
           next: close-leverage-success
           effects:
@@ -198,6 +202,27 @@ nodes:
               value: silence_leak
             - kind: memory
               text: 출고 유예했지만 카피본의 통제권이 편집국 쪽에 더 가깝게 정리됨.
+      - id: end-silence-leak-bonded
+        label: 한 주 늦춥시다. 카피본은 두고요. (이수연이 한 박자 먼저 룰을 내 쪽으로 당긴다.)
+        check: { stat: gwonmo, dc: 11 }
+        requires:
+          flagEquals:
+            key: sooyeon_bond
+            value: deepened
+        success:
+          next: close-leverage-success
+          effects:
+            - kind: flag
+              key: c7_end
+              value: silence_leak
+            - kind: memory
+              text: 편집국 카피본 보관 + 출고 한 주 유예. 같은 라인 사람의 룰 안에서 진행.
+        failure:
+          next: close-leverage-failed
+          effects:
+            - kind: flag
+              key: c7_end
+              value: silence_leak
       - id: end-defer
         label: 오늘은 여기까지. 다음 주에 다시 보겠습니다.
         next: close-defer
