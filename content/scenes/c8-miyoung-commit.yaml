@@ -87,7 +87,7 @@ nodes:
     id: counter-line
     lines:
       - speaker: miyoung
-        text: 한 달에 두 번. 그 정도면 저도 받습니다. 다만 두 번이 점점 줄어드는 쪽인지 점점 늘어나는 쪽인지는 양쪽이 같이 보고 가야 해요.
+        text: 한 달에 두 번. 그 정도면 저도 알겠어요. 다만 두 번이 점점 줄어드는 쪽인지 점점 늘어나는 쪽인지는 양쪽이 같이 보고 가야 해요.
         expression: weary
       - speaker: thought
         text: 결합 직전에서 한 발 뒤로 물러섰다. 두 번이 한 번이 될지 세 번이 될지는 다음 자리들이 정한다.
@@ -97,7 +97,7 @@ nodes:
     id: decline-line
     lines:
       - speaker: miyoung
-        text: 그 답도 받습니다. 도현 씨 자리가 정리되는 시점이 언제인지는 저도 모르고요. 그때까지는 우리도 자기 자리에서 보는 걸로.
+        text: 그 답도 알겠어요. 도현 씨 자리가 정리되는 시점이 언제인지는 저도 모르고요. 그때까지는 우리도 자기 자리에서 보는 걸로.
         expression: weary
       - speaker: thought
         text: 결합 제안을 거절한 자세가 미영 안에 또 한 줄로 박혔다. 다음 자리는 한참 뒤에 만들어진다.

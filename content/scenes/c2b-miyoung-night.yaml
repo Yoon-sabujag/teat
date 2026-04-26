@@ -21,7 +21,7 @@ nodes:
         text: 오셨네요. 한 잔 시켜 두었어요. 시바스 18, 얼음 한 조각.
         expression: weary
       - speaker: miyoung
-        text: 오늘 카페에서의 자리, 일찍 닫아 주신 거 — 그건 제가 부탁한 적이 없는 호의였어요. 그 호의 한 줄을 갚고 싶어서 오늘 자리는 제가 잡았어요.
+        text: 오늘 카페에서의 자리, 일찍 닫아 주신 거 — 그건 제가 부탁한 적이 없는 호의였어요. 그 호의 한 줄을 갚고 싶어서 오늘은 제가 잡았어요.
         expression: neutral
       - speaker: thought
         text: 낮의 자리에선 변호사 자세를 끝까지 잡고 앉아 있던 사람이었다. 오늘 밤은 어깨가 한 줄 내려와 있었고, 그 어깨가 시바스 잔의 무게로 옮겨 와 있었다.
@@ -37,7 +37,7 @@ nodes:
         text: 도현 씨 얘기는 오늘 밤은 안 해요. 다음 주 출근 전에 따로 정리할 자리가 있어서요.
         expression: weary
       - speaker: miyoung
-        text: 실장님 쪽 얘기 한 줄만 들을게요. 두 달 전 회사 나오신 그 자리의 마지막 한 시간, 어떻게 끝나셨어요.
+        text: 실장님 쪽 얘기 한 마디만 들을게요. 두 달 전 회사 나오신 그 자리의 마지막 한 시간, 어떻게 끝나셨어요.
         expression: tense
     choices:
       - id: tell-clean
@@ -84,14 +84,14 @@ nodes:
           flagEquals:
             key: c2b_open
             value: honest
-        text: …그 흔들림 한 번이 오늘 저녁의 첫 잔에 그대로 들어와 있네요. 저는 그 잔을 받습니다.
+        text: …그 흔들림 한 번이 오늘 저녁의 첫 잔에 그대로 들어와 있네요. 저는 그 잔을 알겠어요.
         expression: weary
       - speaker: miyoung
         requires:
           flagEquals:
             key: c2b_open
             value: deflect
-        text: 무거우신 거 받습니다. 다만 그 무거움을 한 번도 풀어 보신 적이 없으신 거 같아서요. 저는 그 풀어 보지 않은 자리가 더 신경 쓰여요.
+        text: 무거우신 거 알겠어요. 다만 그 무거움을 한 번도 풀어 보신 적이 없으신 거 같아서요. 저는 그 풀어 보지 않은 자리가 더 신경 쓰여요.
         expression: neutral
       - speaker: miyoung
         requires:
@@ -207,7 +207,7 @@ nodes:
       - speaker: narration
         text: 카운터 끝까지 잔을 밀고 자리에서 일어섰다. 일어서는 동작이 매끄럽지 않았고, 미영이 그걸 잔 너머로 봤다. 같이 일어서지 않고 자기 잔을 한 번 더 들었다.
       - speaker: miyoung
-        text: 자리에서 일어나신 건 받겠어요. 다만 일어서신 자세가 아직 본인 자세는 아니시라서요, 오늘 밤은 여기까지 하는 게 좋을 것 같네요.
+        text: 자리에서 일어나신 건 알겠어요. 다만 일어서신 자세가 아직 본인 자세는 아니시라서요, 오늘 밤은 여기까지 하는 게 좋을 것 같네요.
         expression: tense
       - speaker: thought
         text: 결정이 늦었다. 미영이 안 본 척했지만 본 게 분명했고, 카운터 끝에서 그 사람의 자세는 다시 낮의 변호사로 돌아가 있었다.
@@ -249,7 +249,7 @@ nodes:
         expression: neutral
     lines:
       - speaker: miyoung
-        text: 일정 안 자리로 돌려 주신 거 받습니다. 그 자세, 오늘 밤의 가장 단단한 자세예요. 다음에 일정 잡아 드리는 건 제 쪽에서.
+        text: 일정 안 자리로 돌려 주신 거 알겠어요. 그 자세, 오늘 밤의 가장 단단한 자세예요. 다음에 일정 잡아 드리는 건 제 쪽에서.
         expression: neutral
       - speaker: thought
         text: 한 번 뒤로 한 발 물러서 두 사람 다 자기 자리로 돌아가는 자세. 다음 자리가 오늘 밤보다 가벼울지 무거울지는 양쪽 다 모름.

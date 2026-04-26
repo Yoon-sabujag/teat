@@ -190,7 +190,7 @@ nodes:
         expression: amused
     lines:
       - speaker: soo-yeon
-        text: 일찍 일어서시는 거 받습니다. 내일 아침 자리, 그 자세 그대로 들어오세요. 저도 같은 자세로 받을게요.
+        text: 일찍 일어서시는 거 알겠어요. 내일 아침 자리, 그 자세 그대로 들어오세요. 저도 같은 자세로 받을게요.
         expression: amused
       - speaker: thought
         text: 같은 무게짜리 자리 한 번씩 받고, 두 사람 다 자기 자리로 돌아가는 자세. 같은 라인 사람의 가장 깔끔한 형태.

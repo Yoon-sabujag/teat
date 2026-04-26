@@ -325,7 +325,7 @@ nodes:
       - speaker: thought
         text: 진정성이 부족했다. 양심이라는 자리에서 나는 오늘 탐정의 자세였지 친구의 자세는 아니었다.
       - speaker: wonjang
-        text: 다른 방향 질문 있으세요.
+        text: 또 여쭈실 거 있으세요?
         expression: weary
     next: hub
 

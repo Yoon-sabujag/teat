@@ -88,7 +88,7 @@ nodes:
       - speaker: narration
         text: 차 상무 옆자리 사람이 처음으로 옆으로 한 번 시선을 옮겼다. 차 상무가 그 시선을 받아 내고 다시 내 쪽으로 돌렸다.
       - speaker: cha-sangmu
-        text: 승재씨, 그 숫자 박은 사람이 누구인지를 직접 호명하시는 거, 저는 받습니다. 다만 이 자리에서 그 이름이 답으로 돌아오진 않을 겁니다.
+        text: 승재씨, 그 숫자 박은 사람이 누구인지를 직접 호명하시는 거, 저는 알겠어요. 다만 이 자리에서 그 이름이 답으로 돌아오진 않을 겁니다.
         expression: grim
       - speaker: thought
         text: 호명 자체가 답이었다. 차 상무가 그 사람의 이름을 부정하지 않은 채 자리에서 한 발 물러섰다. 옆자리 사람이 누구인지는 오늘 이 회의실 안에서 가장 두꺼운 침묵이 대답했다.
@@ -156,7 +156,7 @@ nodes:
         expression: grim
     lines:
       - speaker: cha-sangmu
-        text: 자리 정리하시기 전에 한 줄만 정해 주시죠. 오늘 이후 며칠을 어떤 자세로 가실지.
+        text: 자리 정리하시기 전에 딱 한 마디만 정해 주시죠. 오늘 이후 며칠을 어떤 자세로 가실지.
         expression: weary
     choices:
       - id: end-public
@@ -211,7 +211,7 @@ nodes:
     id: close-public-shaky
     lines:
       - speaker: cha-sangmu
-        text: 공개 쪽으로 가시는 거 받습니다. 다만 오늘 이 자리, 옆자리 분 시선 한 번 가져오시는 데 늦으셨어요. 그가 다음 주 어딘가에서 청구로 돌아옵니다.
+        text: 공개 쪽으로 가시는 거 알겠어요. 다만 오늘 이 자리, 옆자리 분 시선 한 번 가져오시는 데 늦으셨어요. 그가 다음 주 어딘가에서 청구로 돌아옵니다.
         expression: weary
     next: depart
 
@@ -219,7 +219,7 @@ nodes:
     id: close-silence
     lines:
       - speaker: cha-sangmu
-        text: 그 한 줄, 받습니다. 승재씨가 오늘 이 자리에 앉지 않으신 걸로 본사 쪽 내부 보고도 정리하겠습니다.
+        text: 그 한 줄, 알겠어요. 승재씨가 오늘 이 자리에 앉지 않으신 걸로 본사 쪽 내부 보고도 정리하겠습니다.
         expression: neutral
     next: depart
 
