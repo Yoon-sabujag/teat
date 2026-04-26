@@ -136,6 +136,9 @@ nodes:
             - kind: flag
               key: miyoung_bond
               value: deepened
+            - kind: flag
+              key: miyoung_count_1
+              value: true
             - kind: memory
               text: 미영과 청담 위스키 바에서 선 한 번 넘었다. 내일 아침 광화문에 다른 무게로 들어간다.
         failure:

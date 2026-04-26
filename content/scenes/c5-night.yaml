@@ -582,6 +582,55 @@ nodes:
         text: 시청 사거리 뒷문, 아홉 시. 이수연한테 한 줄 보내고 휴대폰을 다시 안주머니로.
       - speaker: narration
         text: 큰길로 한 블록 더 걸어 택시를 잡았다. 운전기사한테 집 주소를 부르는 대신 그냥 "분당 쪽이요" 한 마디만 하고 차창에 머리를 기댔다.
+    next: late-night-prompt
+
+  late-night-prompt:
+    id: late-night-prompt
+    background: euljiro-office
+    cast: []
+    lines:
+      - speaker: narration
+        requires:
+          flag: miyoung_count_1
+        text: 차에 탄 지 십 분쯤 지났을 때 휴대폰이 짧게 울렸다. 미영. "지금 잠깐 보실 수 있을까요. 청담 사거리 옆 빌딩 5층, 도어록 4830."
+      - speaker: thought
+        requires:
+          flag: miyoung_count_1
+        text: 청담 위스키 바 그날 이후 처음 오는 호출이었다. 받느냐 안 받느냐로 두 번째 만남이 만들어지느냐가 정해진다.
+    choices:
+      - id: visit-miyoung-late
+        label: (기사한테 청담 사거리로 방향 변경.) 가 본다.
+        requires:
+          flag: miyoung_count_1
+        next: visit-miyoung-late-goto
+        effects:
+          - kind: flag
+            key: c5_late_chose
+            value: miyoung
+      - id: skip-late
+        label: (휴대폰을 다시 엎어 놓는다.) 오늘 밤은 답하지 않는다.
+        next: c5-final
+        effects:
+          - kind: flag
+            key: c5_late_chose
+            value: skip
+
+  visit-miyoung-late-goto:
+    id: visit-miyoung-late-goto
+    cast: []
+    lines:
+      - speaker: narration
+        text: 기사한테 분당 대신 청담을 부르고 차창에서 한 번 더 자세를 잡았다.
+        effects:
+          - kind: goto
+            scene: c5b-miyoung-touch
+
+  c5-final:
+    id: c5-final
+    cast: []
+    lines:
+      - speaker: narration
+        text: 분당 자택까지 가는 동안 휴대폰은 더 울리지 않았다. 새벽 두 시 즈음 문을 따고 들어가, 거실 불은 켜지 않은 채 소파에 잠시 앉았다 일어났다.
         effects:
           - kind: chapterComplete
             chapter: chapter-5

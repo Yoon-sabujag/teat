@@ -1,0 +1,192 @@
+id: c5b-miyoung-touch
+title: "한밤중 청담"
+background: cheongdam-cafe
+cast:
+  - npc: miyoung
+    position: center
+    expression: weary
+entry: arrive
+
+# 5장 사이드 (성인 누아르). c5-night 의 사이드 프롬프트에서 진입.
+# miyoung_count_1=true 게이트 (청담 위스키 바 1박 이미 통과).
+# 한밤중 미영의 짧은 호출. 두 번째 만남 — count_2 박는 분기.
+nodes:
+  arrive:
+    id: arrive
+    lines:
+      - speaker: narration
+        text: 청담 사거리 옆 빌딩 5층. 미영의 오피스텔. 인터폰 없이 본인이 도어록 번호를 미리 카톡으로 보내 두었다. 한밤 한 시 사십 분, 불은 거실 스탠드 한 개만. 미영은 회색 라운지 셔츠에 맨발, 손엔 와인 잔 하나.
+      - speaker: miyoung
+        text: 차 상무 일정, 내일 광화문 카페로 잡힌 거 저도 들었어요. 그 자리 들어가시기 전에 한 번 보고 싶었어요. 늦었네요, 죄송해요.
+        expression: weary
+      - speaker: miyoung
+        text: 술은 거의 안 남았어요. 한 잔 더 따를까요, 아니면 자리만 잠깐 같이 앉아 계실래요.
+        expression: neutral
+      - speaker: thought
+        text: 청담 위스키 바 그날 이후 처음 보는 자리였다. 그날 밤 호텔 방 협탁의 잔 두 개가 머리 속에 한 번 더 떠올랐고, 오늘 이 자리는 그 잔에서 한 단계 더 나아간 자리인지, 아니면 그 잔으로 한 번 더 돌아온 자리인지를 미영도 나도 정하지 않은 채 마주 앉아 있었다.
+    next: choose-tone
+
+  choose-tone:
+    id: choose-tone
+    cast:
+      - npc: miyoung
+        position: center
+        expression: weary
+    lines:
+      - speaker: miyoung
+        text: 사실은 내일 자리 얘기 한 줄도 안 하고 싶어서 부른 거예요. 오늘 밤은 그냥 옆에 앉으실 수 있는 분이 한 명만 필요했고요.
+        expression: tense
+    choices:
+      - id: stay-deep
+        label: (와인 잔을 받아 들고 미영 옆 소파에 앉는다.)
+        check: { stat: yangsim, dc: 11 }
+        success:
+          next: stay-night
+          effects:
+            - kind: flag
+              key: miyoung_count_2
+              value: true
+            - kind: flag
+              key: miyoung_intimacy
+              value: recurring
+            - kind: memory
+              text: 청담 미영 오피스텔에서 두 번째 자리. 한 번이 아니라 두 번이라는 사실이 양쪽 모두에게 박혔다.
+        failure:
+          next: stay-stiff
+          effects:
+            - kind: flag
+              key: miyoung_count_2
+              value: hesitated
+      - id: sit-shallow
+        label: (와인은 사양하고 식탁 의자 쪽에 앉아 잠시만 함께한다.)
+        check: { stat: ttuksim, dc: 11 }
+        success:
+          next: sit-quiet
+          effects:
+            - kind: flag
+              key: miyoung_intimacy
+              value: held_steady
+            - kind: memory
+              text: 청담 오피스텔에서 잠시만 앉아 있다 일어났다. 두 번째 자리는 두 번째 자리로 안 가게 둔 자세.
+        failure:
+          next: sit-awkward
+          effects:
+            - kind: flag
+              key: miyoung_intimacy
+              value: held_clumsy
+      - id: leave-now
+        label: 오늘 밤은 못 있겠습니다. 내일 자리에 무게가 너무 실릴 것 같아서요.
+        next: leave-clean
+        effects:
+          - kind: flag
+            key: miyoung_intimacy
+            value: declined
+          - kind: memory
+            text: 미영의 한밤 호출에 가서 짧게 인사만 하고 일어났다. 내일 광화문 자리는 오늘 밤의 무게 없이 들어간다.
+
+  stay-night:
+    id: stay-night
+    cast:
+      - npc: miyoung
+        position: center
+        expression: weary
+    lines:
+      - speaker: narration
+        text: 거실 스탠드의 불빛이 새벽 세 시쯤 한 번 약해졌다 다시 돌아왔다. 와인 잔 두 개는 협탁 위에 절반쯤 마신 채 그대로였다. 미영의 라운지 셔츠 어깨선이 소파 쿠션 쪽으로 흘러내려와 있었고, 그 어깨에 잠시 손등이 닿아 있었다.
+      - speaker: miyoung
+        text: 오늘은 자고 가셔도 돼요. 내일 아침에 광화문까지는 제가 차 한 대 불러 드릴게요.
+        expression: weary
+      - speaker: thought
+        text: 한 번이 아니라 두 번이라는 사실이 양쪽 사이에 한 번 더 깔렸다. 두 번이 세 번이 될 수 있는 자리인지는 오늘 밤 정하지 않는다.
+    next: depart
+
+  stay-stiff:
+    id: stay-stiff
+    cast:
+      - npc: miyoung
+        position: center
+        expression: tense
+    lines:
+      - speaker: narration
+        text: 와인 잔을 받아 들었지만 소파에 앉는 동작이 굳어 있었다. 미영이 그걸 보고 자기 잔을 한 번 더 입에 댔다.
+      - speaker: miyoung
+        text: 옆에 앉으셨는데 자세가 다른 자리에 가 계세요. 오늘은 거기까지가 좋겠네요. 차 한 대 불러 드릴게요.
+        expression: weary
+      - speaker: thought
+        text: 오늘 두 번째 자리를 만들 자세가 안 잡혔다. 미영도 그걸 인정해서 자리를 일찍 닫았다.
+    next: depart
+
+  sit-quiet:
+    id: sit-quiet
+    cast:
+      - npc: miyoung
+        position: center
+        expression: weary
+    lines:
+      - speaker: narration
+        text: 식탁 의자에 앉아 십오 분 정도 같이 앉아 있었다. 대화는 거의 없었고, 내일 광화문 얘기는 한 마디도 나오지 않았다. 미영이 마지막 잔을 비우고 일어나 식탁 끝까지 따라와 줬다.
+      - speaker: miyoung
+        text: 오신 거 그 자체가 답이었어요. 내일 자리 잘 다녀오시고요.
+        expression: neutral
+      - speaker: thought
+        text: 오늘 두 번째로 가지 않은 사실이 미영에게 신뢰의 다른 형태로 박혔다. 다음 자리는 두 사람 다 자기 자리에서 잡는다.
+    next: depart
+
+  sit-awkward:
+    id: sit-awkward
+    cast:
+      - npc: miyoung
+        position: center
+        expression: tense
+    lines:
+      - speaker: miyoung
+        text: 일찍 일어나신다는 건 받겠는데, 자세가 좀 어색하시네요. 오늘은 그냥 잠깐 들렀다 가신 걸로 정리할게요.
+        expression: tense
+      - speaker: thought
+        text: 잠깐만 머무는 자세를 잡으려다 어색해졌다. 미영 안에 두 번째 자리가 만들어지지 못한 채로 끝났다.
+    next: depart
+
+  leave-clean:
+    id: leave-clean
+    cast:
+      - npc: miyoung
+        position: center
+        expression: weary
+    lines:
+      - speaker: miyoung
+        text: 거기까지 정리해서 답해 주신 거 받아요. 내일 자리, 오늘 밤 무게 없이 들어가시는 게 맞기도 해요.
+        expression: weary
+      - speaker: thought
+        text: 호출에 답은 갔지만 자리는 만들지 않은 자세. 두 번째 만남은 다음 자리에서 처음으로 시작된다.
+    next: depart
+
+  depart:
+    id: depart
+    cast: []
+    lines:
+      - speaker: narration
+        text: 청담 사거리에서 택시를 잡았다. 새벽 세 시 반쯤. 사무실로 갈지 집으로 갈지를 차에 타기 전 잠시 정했고, 결국 사무실 쪽 주소를 불렀다.
+
+      - speaker: thought
+        requires:
+          flag: miyoung_count_2
+        text: 오늘 밤이 두 번째였다. 두 번이 세 번이 될 수 있는 자리인지는 내일 광화문 자리가 끝난 다음에 정해진다.
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: miyoung_intimacy
+            value: held_steady
+        text: 오늘 밤 두 번째로 가지 않은 자세가 다음 자리의 무게가 된다. 그 무게는 내일 광화문에서 차 상무 앞에 앉을 때 다른 형태로 한 번 돌아온다.
+      - speaker: thought
+        requires:
+          flagEquals:
+            key: miyoung_intimacy
+            value: declined
+        text: 오늘 밤은 호출에 답만 하고 끝낸 자세. 미영도 그 자세를 받아 줬다는 사실이 다음 자리의 단단함이 된다.
+
+      - speaker: narration
+        text: 사무실 책상 위 시계가 새벽 네 시 십 분을 가리키고 있었다. 다음 두 시간만 앉아 있으면 광화문 가는 택시 잡을 시간이 됐다.
+        effects:
+          - kind: chapterComplete
+            chapter: chapter-5
+            nextChapter: chapter-6
