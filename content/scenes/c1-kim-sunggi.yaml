@@ -418,8 +418,27 @@ nodes:
         text: 두 달 전 27층의 사인은 SPC 5년 NDA였고, 오늘 27층 자리는 그 NDA의 다음 장을 미리 한 번 읽고 가는 자리였다. 의뢰는 안 받았지만 그 사실 자체는 코트 안쪽에 그대로 들어왔다.
 
       - speaker: narration
+        requires:
+          flag: accepted_case
         text: 1층 로비. 저녁 여덟 시. 광화문 사거리 쪽에서 들어오는 바람이 한 번 안쪽으로 휩쓸렸고, 정장 깃이 잠깐 떨렸다.
         effects:
           - kind: chapterComplete
             chapter: chapter-1
             nextChapter: chapter-2
+
+      # 거절 분기 — 본 게임 종료 (배드 엔딩, decline 라인)
+      - speaker: narration
+        requires:
+          flagNotEquals:
+            key: accepted_case
+            value: true
+        text: 1층 로비. 저녁 여덟 시. 광화문 사거리 쪽에서 들어오는 바람이 한 번 안쪽으로 휩쓸렸고, 정장 깃이 잠깐 떨렸다. 의뢰는 안 받았지만, 김승기의 마지막 한 문장이 코트 안쪽에 그대로 들어와 있었다.
+      - speaker: narration
+        requires:
+          flagNotEquals:
+            key: accepted_case
+            value: true
+        text: 두 달 뒤. 그룹 사보 한 모퉁이에 도현이의 부고가 작은 글자로 실렸다. 단독 사고. 부검 생략. 나는 그 사보를 을지로 사무실 책상 서랍에 한 장으로 접어 넣었고, 그 다음 달 사무실 임대 계약을 갱신하지 않았다. 의뢰는 안 받았고, 그래서 이 사건의 무게도 내 책임 밖이라고, 그 한 문장으로 6개월을 살았다. 그 6개월이 끝날 때쯤 5년 NDA 가 만 1년이 됐고, 나는 SPC 라는 단어를 본인 입에 한 번도 올리지 않은 채로 다른 일을 알아보고 있었다.
+        effects:
+          - kind: end
+            outcome: declined
