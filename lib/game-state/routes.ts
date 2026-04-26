@@ -165,23 +165,35 @@ export function routeTrackers(flags: Flags): Tracker[] {
 
   // 미영
   (() => {
-    const bond = flags.miyoung_bond;
-    if (bond === "deepened")
+    if (is(flags, "miyoung_count_3"))
       return out.push({
         label: "미영",
-        value: "두 번째 자리 · 선 한 번 넘음",
+        value: "결합 · 청담 일주일 사흘",
         tone: "warm",
       });
+    if (is(flags, "miyoung_count_2"))
+      return out.push({
+        label: "미영",
+        value: "두 번째 만남 · 정기적",
+        tone: "warm",
+      });
+    if (is(flags, "miyoung_count_1"))
+      return out.push({
+        label: "미영",
+        value: "한 번 자리 · 단발",
+        tone: "warm",
+      });
+    const bond = flags.miyoung_bond;
     if (bond === "respected")
       return out.push({
         label: "미영",
-        value: "두 번째 자리 · 선 그대로 닫음",
+        value: "선 그대로 닫음",
         tone: "warm",
       });
     if (bond === "clean")
       return out.push({
         label: "미영",
-        value: "두 번째 자리 · 일정 안 자리로",
+        value: "일정 안 자리로",
         tone: "neutral",
       });
     if (is(flags, "miyoung_walked_out"))
@@ -262,23 +274,35 @@ export function routeTrackers(flags: Flags): Tracker[] {
 
   // 이수연
   (() => {
-    const bond = flags.sooyeon_bond;
-    if (bond === "deepened")
+    if (is(flags, "sooyeon_count_3"))
       return out.push({
         label: "이수연",
-        value: "마포 자리 · 같은 라인 사람",
+        value: "결합 · 마포 같이 살기",
         tone: "warm",
       });
+    if (is(flags, "sooyeon_count_2"))
+      return out.push({
+        label: "이수연",
+        value: "두 번째 자리 · 정기적",
+        tone: "warm",
+      });
+    if (is(flags, "sooyeon_count_1"))
+      return out.push({
+        label: "이수연",
+        value: "마포 한 번 자리",
+        tone: "warm",
+      });
+    const bond = flags.sooyeon_bond;
     if (bond === "respected")
       return out.push({
         label: "이수연",
-        value: "마포 자리 · 식탁 자세 유지",
+        value: "식탁 자세 유지",
         tone: "warm",
       });
     if (bond === "clean")
       return out.push({
         label: "이수연",
-        value: "마포 자리 · 동등한 동료",
+        value: "동등한 동료",
         tone: "neutral",
       });
     if (is(flags, "tape_duplicated_plan"))
