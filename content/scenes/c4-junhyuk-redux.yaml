@@ -98,10 +98,10 @@ nodes:
         expression: weary
     lines:
       - speaker: junhyuk
-        text: 형이 그렇게 받으니까 저도 한 박자 더 묵혀야겠어요. 오늘은 형 얼굴만 보고 가는 자리로 정리해도 돼요?
+        text: 형이 그렇게 받으니까 저도 더 묵혀야겠어요. 오늘은 형 얼굴만 보고 가는 자리로 정리해도 돼요?
         expression: weary
       - speaker: thought
-        text: 양심 자세를 취했지만 자세 한 칸이 모자랐다. 준혁이가 사흘 더 묵힌다. 그 사흘 동안 도현의 마지막 한 줄은 준혁이 머리 속에만 남는다.
+        text: 양심 자세를 취했지만 자세가 모자랐다. 준혁이가 사흘 더 묵힌다. 그 사흘 동안 도현의 마지막 한 줄은 준혁이 머리 속에만 남는다.
     next: depart
 
   junhyuk-walks:
@@ -117,7 +117,7 @@ nodes:
       - speaker: narration
         text: 준혁이 자리에서 일어났다. 카스 잔에 마지막 한 입 남기지 않고 끝까지 비웠고, 일회용 전자담배는 탁자 위에 놓아둔 채 그대로 나갔다.
       - speaker: thought
-        text: 권모 카드를 잘못 꺼냈다. 사흘짜리 호의가 한 박자에 닫혔다. 도현의 마지막 한 줄은 오늘 밤 이 노가리집 안에 남지 못한다.
+        text: 권모 카드를 잘못 꺼냈다. 사흘짜리 호의가 그 자리에서 닫혔다. 도현의 마지막 한 줄은 오늘 밤 이 노가리집 안에 남지 못한다.
     next: depart
 
   depart:
@@ -136,7 +136,7 @@ nodes:
           flagEquals:
             key: c4side_junhyuk
             value: clams
-        text: 사흘짜리 호의가 한 박자 더 묵히는 쪽으로 정리됐다. 그 한 박자가 며칠짜리가 될지는 준혁이 쪽 결정.
+        text: 사흘짜리 호의가 더 묵히는 쪽으로 정리됐다. 며칠짜리가 될지는 준혁이 쪽 결정.
       - speaker: thought
         requires:
           flagEquals:

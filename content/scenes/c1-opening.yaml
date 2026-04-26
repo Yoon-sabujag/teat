@@ -230,7 +230,7 @@ nodes:
       - speaker: pc
         text: 여보세요.
       - speaker: narration
-        text: 전화 너머에서 매너 있게 절제된 중년 남자 목소리가 한 박자 늦게 흘러나왔다. 술자리에서도, 결산 보고에서도 같은 톤을 지킬 줄 아는 사람의 목소리.
+        text: 전화 너머에서 매너 있게 절제된 중년 남자 목소리가 늦게 흘러나왔다. 술자리에서도, 결산 보고에서도 같은 톤을 지킬 줄 아는 사람의 목소리.
       - speaker: kim-sunggi
         requires:
           flagEquals:
@@ -254,7 +254,7 @@ nodes:
       - speaker: kim-sunggi
         text: 오늘 저녁에 잠깐 시간 좀 내 주실 수 있을까요. 본사 27층 VIP 상담실에 자리 잡아 두겠습니다. 긴한 의뢰 한 건이 있어서요.
       - speaker: narration
-        text: 27층은 두 달 전 차 상무 임원실에서 봤던 그 층이었다. 한 박자 사이에 그 사실이 떠올랐고, 약속 시간이 정해지는 동안 그 사실은 다시 한 번 더 떠올랐다.
+        text: 27층은 두 달 전 차 상무 임원실에서 봤던 그 층이었다. 사이에 그 사실이 떠올랐고, 약속 시간이 정해지는 동안 그 사실은 다시 한 번 더 떠올랐다.
         effects:
           - kind: goto
             scene: c1-kim-sunggi

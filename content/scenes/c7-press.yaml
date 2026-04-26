@@ -75,7 +75,7 @@ nodes:
               key: c7_press_handover
               value: tense
       - id: walk-back
-        label: 잠시만요. 오늘 이 자리, 한 박자만 미루겠습니다.
+        label: 잠시만요. 오늘 이 자리, 잠깐만 미루겠습니다.
         next: walk-back-now
         effects:
           - kind: flag
@@ -90,7 +90,7 @@ nodes:
         expression: weary
     lines:
       - speaker: narration
-        text: 차장이 거치대를 자기 쪽으로 돌려 카피 모드를 켰다. 작은 LED 한 칸이 빨간색에서 주황색으로 한 번 깜빡였다. 카피 시작.
+        text: 차장이 거치대를 자기 쪽으로 돌려 카피 모드를 켰다. LED가 빨간색에서 주황색으로 깜빡였다. 카피 시작.
       - speaker: soo-yeon
         text: 좋아요. 차장님이 카피 받는 동안 우리 쪽 마지막 한 줄만 맞추고 가요.
         expression: grim
@@ -104,10 +104,10 @@ nodes:
         expression: amused
     lines:
       - speaker: soo-yeon
-        text: 카피 두 개. 하나는 우리 데스크, 하나는 실장님 쪽 변호사 라인 — 미영 변호사겠죠. 그 룰로 가요. 한 시간 더 걸리지만 실장님 쪽 안전선은 한 칸 더 커져요.
+        text: 카피 두 개. 하나는 우리 데스크, 하나는 실장님 쪽 변호사 라인 — 미영 변호사겠죠. 그 룰로 가요. 한 시간 더 걸리지만 실장님 쪽 안전선이 그만큼 두꺼워져요.
         expression: amused
       - speaker: thought
-        text: 미영 쪽 카피 한 개를 추가하면 미영이 이 건의 공식 라인 안에 한 발 더 들어온다. 오늘 이후 미영의 위치가 내 쪽 라인 옆에 한 칸 고정되는 셈이다.
+        text: 미영 쪽 카피 한 개를 추가하면 미영이 이 건의 공식 라인 안에 한 발 더 들어온다. 오늘 이후 미영의 위치가 내 쪽 라인 옆에 단단히 박히는 셈이다.
     next: final-decision
 
   handover-clumsy:
@@ -118,9 +118,9 @@ nodes:
         expression: tense
     lines:
       - speaker: narration
-        text: 녹음기를 꺼내 거치대 위에 올리는 동작이 한 박자 빨랐다. 차장이 말없이 카피를 시작했지만, 자기 손이 한 번 멈춘 자리에 작은 표정 한 줄이 남았다.
+        text: 녹음기를 거치대 위에 올리는 동작이 너무 빨랐다. 차장이 말없이 카피를 시작했지만, 손이 한 번 멈춘 자리에 표정이 잠깐 굳었다 풀렸다.
       - speaker: thought
-        text: 자세 한 칸이 부족했다. 오늘 자리는 룰을 정하는 자리가 아니라 룰에 끼워 넣어지는 자리로 끝난다. 카피본 한 장이 어디로 가는지 내 쪽에서 더 묻기 어려워진다.
+        text: 자세가 한 톤 부족했다. 오늘 자리는 룰을 정하는 자리가 아니라 룰에 끼워 넣어지는 자리로 끝났다. 카피본이 어디로 가는지 더 묻기 어려워졌다.
     next: final-decision
 
   handover-tense:
@@ -134,7 +134,7 @@ nodes:
         text: 카피 룰 다시 정리하자고 하시는 건데요, 오늘 이 주차장 자리는 데스크 룰이에요. 우리 쪽이 이미 한 번 회의 돌린 안이고요. 실장님이 다른 룰을 들고 오시려면 다음 자리가 필요해요.
         expression: grim
       - speaker: thought
-        text: 권모 한 칸이 모자랐다. 차장 쪽 룰을 그대로 받는 자리로 굳어졌다. 오늘 카피본은 카피본대로 가고, 내 쪽 안전선은 추가되지 않는다.
+        text: 권모가 모자랐다. 차장 쪽 룰을 그대로 받는 자리로 굳어졌다. 오늘 카피본은 카피본대로 가고, 내 쪽 안전선은 추가되지 않는다.
     next: final-decision
 
   walk-back-now:
@@ -145,7 +145,7 @@ nodes:
         expression: weary
     lines:
       - speaker: soo-yeon
-        text: 한 박자 미루신다는 거, 저는 받습니다. 다만 차장님이 한 번 나온 자리고요, 오늘 안에 한 번은 답이 와야 해요.
+        text: 미루신다는 거 받습니다. 다만 차장님이 한 번 나온 자리고요, 오늘 안엔 답이 한 번 와야 해요.
         expression: weary
       - speaker: thought
         text: 차장이 한 번 주차장까지 내려왔다는 사실 자체가 청구서로 남는다. 오늘 안에 대답을 안 하면 내일은 이 라인 자체가 닫힌다.
@@ -203,7 +203,7 @@ nodes:
             - kind: memory
               text: 출고 유예했지만 카피본의 통제권이 편집국 쪽에 더 가깝게 정리됨.
       - id: end-silence-leak-bonded
-        label: 한 주 늦춥시다. 카피본은 두고요. (이수연이 한 박자 먼저 룰을 내 쪽으로 당긴다.)
+        label: 한 주 늦춥시다. 카피본은 두고요. (이수연이 먼저 룰을 내 쪽으로 당긴다.)
         check: { stat: gwonmo, dc: 11 }
         requires:
           flagEquals:
@@ -231,7 +231,7 @@ nodes:
             key: c7_end
             value: defer
           - kind: memory
-            text: 편집국 자리 유예 처리. 다음 자리는 내 쪽이 잡을 예정이지만 라인은 한 칸 식는다.
+            text: 편집국 자리 유예 처리. 다음 자리는 내 쪽이 잡을 예정이지만 라인은 한 톤 식는다.
 
   close-public:
     id: close-public
@@ -289,7 +289,7 @@ nodes:
         text: 그러시군요. 차장님 한 번 더 모시기 어렵다는 건 실장님도 아실 거고요. 다음 주에 실장님 쪽이 자리 잡으시면 오긴 오겠지만, 오늘 같은 자리는 아니에요.
         expression: weary
       - speaker: thought
-        text: 오늘 한 번 미룬 자리는 다음 주에 같은 모양으로 돌아오지 않는다. 내가 다시 잡는 자리는 내 쪽 자리가 아니라 저쪽 일정 사이에 끼워지는 한 칸이다.
+        text: 오늘 한 번 미룬 자리는 다음 주에 같은 모양으로 돌아오지 않는다. 내가 다시 잡는 자리는 내 자리가 아니라 저쪽 일정 사이에 끼워지는 자리다.
     next: depart
 
   depart:
@@ -297,7 +297,7 @@ nodes:
     cast: []
     lines:
       - speaker: narration
-        text: 주차장을 나오자 시청 쪽 인도에 점심 시간보다 한 박자 이른 직장인 무리가 한 줄로 길을 건너고 있었다. 그 무리 안쪽으로 걸어 들어가면서, 오늘 저녁 일곱 시까지 내가 어디에 있어야 하는지를 한 번 정리했다.
+        text: 주차장을 나오자 시청 쪽 인도에 점심보다 살짝 이른 직장인 무리가 한 줄로 길을 건너고 있었다. 그 무리 안쪽으로 걸어 들어가면서, 오늘 저녁 일곱 시까지 내가 어디에 있어야 하는지를 정리했다.
 
       - speaker: thought
         requires:

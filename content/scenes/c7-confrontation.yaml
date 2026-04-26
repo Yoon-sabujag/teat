@@ -21,7 +21,7 @@ nodes:
         text: 승재씨, 오셨네요. 자리는 이쪽으로.
         expression: weary
       - speaker: thought
-        text: 둘이 앉아 있었다. 오늘 이 자리는 차 상무 단독 자리가 아니라 차 상무가 한 칸 옆으로 밀려 있는 자리다. 그 한 칸이 누군지가 오늘의 진짜 무게다.
+        text: 둘이 앉아 있었다. 오늘 이 자리는 차 상무 단독 자리가 아니라 차 상무가 옆으로 밀려난 자리다. 그 사람이 누군지가 오늘의 진짜 무게다.
     next: opening
   opening:
     id: opening
@@ -44,7 +44,7 @@ nodes:
               key: c7_conf_open
               value: direct
             - kind: memory
-              text: 본사 27층에서 5년 조항 박은 윗선을 정면 호명. 차 상무 옆자리 사람이 한 박자 굳어짐.
+              text: 본사 27층에서 5년 조항 박은 윗선을 정면 호명. 차 상무 옆자리 사람이 굳어짐.
         failure:
           next: pressure-deflected
           effects:
@@ -86,12 +86,12 @@ nodes:
         expression: tense
     lines:
       - speaker: narration
-        text: 차 상무 옆자리 사람이 처음으로 옆으로 한 번 시선을 옮겼다. 차 상무가 그 시선을 한 박자 받아 내고 다시 내 쪽으로 돌렸다.
+        text: 차 상무 옆자리 사람이 처음으로 옆으로 한 번 시선을 옮겼다. 차 상무가 그 시선을 받아 내고 다시 내 쪽으로 돌렸다.
       - speaker: cha-sangmu
         text: 승재씨, 그 숫자 박은 사람이 누구인지를 직접 호명하시는 거, 저는 받습니다. 다만 이 자리에서 그 이름이 답으로 돌아오진 않을 겁니다.
         expression: grim
       - speaker: thought
-        text: 호명 자체가 답이었다. 차 상무가 그 사람의 이름을 부정하지 않은 채 자리에서 한 칸 물러섰다. 옆자리 사람이 누구인지는 오늘 이 회의실 안에서 가장 두꺼운 침묵이 대답했다.
+        text: 호명 자체가 답이었다. 차 상무가 그 사람의 이름을 부정하지 않은 채 자리에서 한 발 물러섰다. 옆자리 사람이 누구인지는 오늘 이 회의실 안에서 가장 두꺼운 침묵이 대답했다.
         effects:
           - kind: flag
             key: jang_present
@@ -142,10 +142,10 @@ nodes:
         expression: weary
     lines:
       - speaker: cha-sangmu
-        text: 승재씨, 그 톤은 오늘 이 자리에 어울리는 톤이 아닙니다. 한 박자 늦춰서 다시 시작하죠.
+        text: 승재씨, 그 톤은 오늘 이 자리에 어울리는 톤이 아닙니다. 늦춰서 다시 시작하죠.
         expression: grim
       - speaker: thought
-        text: 정면 카드를 한 칸 일찍 깠다. 옆자리 사람이 자기 자세를 한 번도 흔들지 않았다는 사실이, 오늘 이 자리에서 가장 무거운 결과다.
+        text: 정면 카드를 너무 일찍 깠다. 옆자리 사람이 자기 자세를 한 번도 흔들지 않았다는 사실이, 오늘 이 자리에서 가장 무거운 결과다.
     next: final-decision
 
   final-decision:
@@ -211,7 +211,7 @@ nodes:
     id: close-public-shaky
     lines:
       - speaker: cha-sangmu
-        text: 공개 쪽으로 가시는 거 받습니다. 다만 오늘 이 자리, 옆자리 분 시선 한 번 가져오시는 데 한 박자 늦으셨어요. 그 한 박자가 다음 주 어딘가에서 청구로 돌아옵니다.
+        text: 공개 쪽으로 가시는 거 받습니다. 다만 오늘 이 자리, 옆자리 분 시선 한 번 가져오시는 데 늦으셨어요. 그가 다음 주 어딘가에서 청구로 돌아옵니다.
         expression: weary
     next: depart
 
@@ -236,7 +236,7 @@ nodes:
     cast: []
     lines:
       - speaker: narration
-        text: 27층 엘리베이터 안에 혼자였다. 1층까지 내려가는 동안 거울 벽 한 면에 비친 내 그림자가 두 달 전 같은 엘리베이터에 탔던 그림자보다 한 뼘 더 굳어 있었다.
+        text: 27층 엘리베이터 안에 혼자였다. 1층까지 내려가는 동안 거울 벽 한 면에 비친 내 그림자가 두 달 전 같은 엘리베이터에 탔던 그림자보다 더 굳어 있었다.
       - speaker: thought
         requires:
           flagEquals:
@@ -248,13 +248,13 @@ nodes:
           flagEquals:
             key: c7_end
             value: silence
-        text: 27층까지 들어가서 한 번 보고 나오는 자리로 정리. 옆자리 사람의 자세 한 칸이 내 쪽 기억엔 박혔다.
+        text: 27층까지 들어가서 한 번 보고 나오는 자리로 정리. 옆자리 사람의 자세는 내 쪽 기억엔 박혔다.
       - speaker: thought
         requires:
           flagEquals:
             key: c7_end
             value: silence_leak
-        text: 공개 쪽으로 갔지만 한 박자 늦은 카드였다. 다음 주 어딘가에서 그 한 박자가 다시 한 번 내 쪽 자리에 돌아와 앉는다.
+        text: 공개 쪽으로 갔지만 늦은 카드였다. 다음 주 어딘가에서 그가 다시 한 번 내 쪽 자리에 돌아와 앉는다.
       - speaker: thought
         requires:
           flagEquals:

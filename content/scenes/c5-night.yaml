@@ -500,7 +500,7 @@ nodes:
           flagEquals:
             key: cha_call_response
             value: defiant_flinch
-        text: 목소리가 한 박자 떨렸다. 그 떨림이 전화기 너머에서 어디까지 들렸는지는 내일 아침 광화문 카페에서 확인될 거다.
+        text: 목소리가 떨렸다. 그 떨림이 전화기 너머에서 어디까지 들렸는지는 내일 아침 광화문 카페에서 확인될 거다.
       - speaker: thought
         requires:
           flagEquals:

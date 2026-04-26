@@ -39,7 +39,7 @@ nodes:
               target: gwonmo
               delta: 1
             - kind: memory
-              text: 물을 청하자 김승기가 한 박자 짧게 웃었다. 가볍게 받지 않는 사람이라는 평가를 끝낸 표정.
+              text: 물을 청하자 김승기가 짧게 웃었다. 가볍게 받지 않는 사람이라는 평가를 끝낸 표정.
             - kind: flag
               key: c1_drink
               value: water_sharp
@@ -54,7 +54,7 @@ nodes:
     id: setup
     lines:
       - speaker: narration
-        text: 비서가 들어와 잔을 받침과 함께 내려놓고 다시 한 박자 안에 나갔다. 문이 닫히는 소리가 카펫에 한 번 잡혔다.
+        text: 비서가 들어와 잔을 받침과 함께 내려놓고 다시 안에 나갔다. 문이 닫히는 소리가 카펫에 한 번 잡혔다.
       - speaker: kim-sunggi
         requires:
           flagEquals:

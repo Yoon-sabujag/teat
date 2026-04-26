@@ -49,7 +49,7 @@ nodes:
               key: c6_jaemin_tail_pressed
               value: true
       - id: thank-and-go
-        label: 여기까지면 충분해. 이 한 줄로 카페 자리 한 박자 더 무겁게 깔 수 있다.
+        label: 여기까지면 충분해. 이 한 줄로 카페 자리 더 무겁게 깔 수 있다.
         next: depart-tail
 
   jaemin-deeper:
@@ -80,7 +80,7 @@ nodes:
         text: 형, 그 한 단계 더는 형 카드 한 장 더 깔리는 자리예요. 오늘 아침 한 시간 안엔 못 받아요.
         expression: amused
       - speaker: thought
-        text: 권모 한 칸이 모자랐다. 명령 라인까지는 오늘 못 받는다. 다만 미행 차량이 보안실 라인이라는 사실 하나만 들고 카페 자리에 들어가는 것도 어제까지의 빈손보다는 한 칸 무겁다.
+        text: 권모가 모자랐다. 명령 라인까지는 오늘 못 받는다. 다만 미행 차량이 보안실 라인이라는 사실 하나만 들고 카페 자리에 들어가는 것도 어제까지의 빈손보다는 무겁다.
     next: depart-tail
 
   depart-tail:
@@ -90,7 +90,7 @@ nodes:
       - speaker: narration
         text: 재민이 운전석 창을 다시 올렸다. 차가 인쇄 골목 안쪽으로 한 칸 후진해서 사라졌고, 골목 입구의 신호등이 한 번 깜빡였다. 광화문까지 다시 이동.
       - speaker: thought
-        text: 카페 자리 들어가기 전 한 시간을 이 한 줄로 채웠다. 오늘 아침 결정의 무게가 어제 저녁보다 한 칸 위에서 시작한다.
+        text: 카페 자리 들어가기 전 한 시간을 이 한 줄로 채웠다. 오늘 아침 결정의 무게가 어제 저녁보다 위에서 시작한다.
         effects:
           - kind: goto
             scene: c6-morning
