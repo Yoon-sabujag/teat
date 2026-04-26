@@ -31,7 +31,7 @@ nodes:
         expression: weary
     lines:
       - speaker: cha-sangmu
-        text: 승재씨가 오늘 본사로 들어오신 거, 저희 쪽도 한 번 정리하고 받았습니다. 카페 자리 대신 이 자리 잡으신 의도를 먼저 들어 보고 시작하죠.
+        text: 승재씨가 오늘 본사로 들어오신 거, 저희 쪽도 한 번 정리하고 받았습니다. 카페 대신 여기를 고르신 의도부터 들어 보고 시작하죠.
         expression: grim
     choices:
       - id: open-direct
@@ -88,7 +88,7 @@ nodes:
       - speaker: narration
         text: 차 상무 옆자리 사람이 처음으로 옆으로 한 번 시선을 옮겼다. 차 상무가 그 시선을 받아 내고 다시 내 쪽으로 돌렸다.
       - speaker: cha-sangmu
-        text: 승재씨, 그 숫자 박은 사람이 누구인지를 직접 호명하시는 거, 저는 알겠어요. 다만 이 자리에서 그 이름이 답으로 돌아오진 않을 겁니다.
+        text: 승재씨, 그 숫자 박은 사람을 직접 호명하시는 거, 알겠어요. 다만 여기서 그 이름이 답으로 돌아오진 않을 겁니다.
         expression: grim
       - speaker: thought
         text: 호명 자체가 답이었다. 차 상무가 그 사람의 이름을 부정하지 않은 채 자리에서 한 발 물러섰다. 옆자리 사람이 누구인지는 오늘 이 회의실 안에서 가장 두꺼운 침묵이 대답했다.
@@ -97,7 +97,7 @@ nodes:
             key: jang_present
             value: true
           - kind: memory
-            text: 장 전무 비서실 라인 사람이 차 상무 옆에 동석. 5년 조항이 그 위에서 박혔음을 침묵으로 시사.
+            text: 장 전무 비서실 라인 사람이 차 상무 옆에 동석. 5년 조항이 그 위에서 결재됐음을 침묵으로 시사.
     next: final-decision
 
   pressure-recording:
@@ -110,10 +110,10 @@ nodes:
       - speaker: narration
         text: 차 상무가 잔의 손잡이 한 번 돌렸다. 옆자리 사람이 천천히 자기 IWC를 한 번 들여다보고 다시 자세를 잡았다.
       - speaker: cha-sangmu
-        text: 그 녹음의 존재는 어제 저희 쪽 라인에서도 한 번 올라왔습니다. 다만 오늘 이 자리에서 들으실 분이 있을지는 승재씨가 한 번 더 생각해 보셔야 할 거고요.
+        text: 그 녹음 얘기는 어제 저희 쪽에서도 한 번 올라왔습니다. 다만 오늘 여기서 들으실 분이 있을지는 승재씨가 한 번 더 생각해 보셔야 할 거고요.
         expression: weary
       - speaker: thought
-        text: 옆자리 사람이 한 번 시계를 본 건 시간이 없다는 신호가 아니라, 이 자리에 자기가 있다는 사실 자체가 카드라는 신호다. 녹음은 알고 있고, 오늘 자리는 그 녹음의 바깥 사람을 한 번 재 보는 자리.
+        text: 옆자리 사람이 시계를 본 건 시간이 없다는 신호가 아니라, 자기가 여기 있다는 사실 자체가 카드라는 신호다. 녹음은 알고 있고, 오늘 회의는 그 녹음의 바깥쪽 사람을 한 번 재 보는 자리.
         effects:
           - kind: flag
             key: jang_present
@@ -128,7 +128,7 @@ nodes:
         expression: amused
     lines:
       - speaker: cha-sangmu
-        text: 듣는 자리시면 저도 편합니다. 다만 오늘 이 자리, 양쪽 다 듣기만 하다 끝나면 그 자체가 한 줄 답으로 정리될 거고요.
+        text: 듣는 쪽이시면 저도 편합니다. 다만 양쪽 다 듣기만 하다 끝나면 그 자체가 답으로 정리되고요.
         expression: weary
       - speaker: thought
         text: 듣는 자세는 내 쪽 카드를 안 까는 자세이지만, 동시에 저쪽도 안 까도 되는 자세를 만들어 준다. 두 자리 다 침묵이면 결국 무게추는 본사 쪽으로 기운다.
@@ -142,7 +142,7 @@ nodes:
         expression: weary
     lines:
       - speaker: cha-sangmu
-        text: 승재씨, 그 톤은 오늘 이 자리에 어울리는 톤이 아닙니다. 늦춰서 다시 시작하죠.
+        text: 승재씨, 그 톤은 오늘 자리에 어울리지 않습니다. 한 박자 늦춰서 다시 시작하죠.
         expression: grim
       - speaker: thought
         text: 정면 카드를 너무 일찍 깠다. 옆자리 사람이 자기 자세를 한 번도 흔들지 않았다는 사실이, 오늘 이 자리에서 가장 무거운 결과다.
@@ -156,7 +156,7 @@ nodes:
         expression: grim
     lines:
       - speaker: cha-sangmu
-        text: 자리 정리하시기 전에 딱 한 마디만 정해 주시죠. 오늘 이후 며칠을 어떤 자세로 가실지.
+        text: 자리 정리하시기 전에 딱 한 가지만 정해 주시죠. 오늘 이후 며칠을 어떤 자세로 가실지.
         expression: weary
     choices:
       - id: end-public
@@ -171,7 +171,7 @@ nodes:
               key: c7_end
               value: public
             - kind: memory
-              text: 본사 27층에서 정면 공개 선언. 차 상무 + 장 라인 한 사람이 동석한 자리 자체가 한 줄로 외부에 나간다.
+              text: 본사 27층에서 정면 공개 선언. 차 상무 + 장 라인 한 사람이 동석했다는 사실 자체가 외부로 나간다.
         failure:
           next: close-public-shaky
           effects:
@@ -179,7 +179,7 @@ nodes:
               key: c7_end
               value: silence_leak
       - id: end-silence
-        label: 오늘 자리, 제 쪽에선 없는 자리로 정리하겠습니다.
+        label: 오늘 만난 적 없는 걸로 제 쪽에선 정리하겠습니다.
         next: close-silence
         effects:
           - kind: flag
@@ -201,7 +201,7 @@ nodes:
     id: close-public
     lines:
       - speaker: cha-sangmu
-        text: 그러시군요. 27층까지 오신 분이 그 한 줄로 자리를 정리하시면, 저희 쪽도 그 한 줄에 맞춰 움직입니다.
+        text: 그러시군요. 27층까지 오신 분이 그렇게 정리하시면, 저희 쪽도 거기에 맞춰 움직입니다.
         expression: grim
       - speaker: narration
         text: 옆자리 사람이 처음으로 자리에서 일어났다. 회의실 문이 열렸고, 그 사람이 먼저 나갔다. 차 상무는 끝까지 자리에 앉은 채로 자기 잔을 한 번 더 돌렸다.
@@ -211,7 +211,7 @@ nodes:
     id: close-public-shaky
     lines:
       - speaker: cha-sangmu
-        text: 공개 쪽으로 가시는 거 알겠어요. 다만 오늘 이 자리, 옆자리 분 시선 한 번 가져오시는 데 늦으셨어요. 그가 다음 주 어딘가에서 청구로 돌아옵니다.
+        text: 공개 쪽으로 가시는 거 알겠어요. 다만 옆자리 분 시선 한 번 가져오시는 데 늦으셨어요. 그가 다음 주 어딘가에서 청구로 돌아옵니다.
         expression: weary
     next: depart
 
@@ -219,7 +219,7 @@ nodes:
     id: close-silence
     lines:
       - speaker: cha-sangmu
-        text: 그 한 줄, 알겠어요. 승재씨가 오늘 이 자리에 앉지 않으신 걸로 본사 쪽 내부 보고도 정리하겠습니다.
+        text: 알겠어요. 승재씨가 오늘 여기 앉지 않으신 걸로 본사 쪽 내부 보고도 정리하겠습니다.
         expression: neutral
     next: depart
 
@@ -227,7 +227,7 @@ nodes:
     id: close-defer
     lines:
       - speaker: cha-sangmu
-        text: 그러시죠. 오늘 들어오신 분, 한 번 본 걸로 충분합니다. 다음 자리는 승재씨 쪽 일정 맞춰 주십시오.
+        text: 그러시죠. 오늘 들어오신 거, 한 번 보신 걸로 충분합니다. 다음 약속은 승재씨 쪽 일정에 맞춰 주십시오.
         expression: weary
     next: depart
 
@@ -242,13 +242,13 @@ nodes:
           flagEquals:
             key: c7_end
             value: public
-        text: 27층에서 옆자리 사람의 이름을 한 줄로 가져 나왔다. 그 한 줄이 내일 아침 어느 신문 한 면 위에 어떻게 자리 잡을지가 오늘 이후의 첫 변수.
+        text: 27층에서 옆자리 사람의 이름을 짊어지고 나왔다. 그 이름이 내일 아침 어느 신문 한 면 위에 어떻게 박힐지가 오늘 이후의 첫 변수.
       - speaker: thought
         requires:
           flagEquals:
             key: c7_end
             value: silence
-        text: 27층까지 들어가서 한 번 보고 나오는 자리로 정리. 옆자리 사람의 자세는 내 쪽 기억엔 박혔다.
+        text: 27층까지 들어가서 한 번 보고 나왔다. 옆자리 사람의 자세는 내 쪽 기억엔 또렷이 남았다.
       - speaker: thought
         requires:
           flagEquals:
