@@ -14,13 +14,13 @@ nodes:
           flagEqualsAll:
             - { key: c7_end, value: public }
             - { key: sooyeon_count_2, value: true }
-        text: 카페 자리 닷새 뒤 새벽. 이수연한테서 카톡 한 줄. "오늘 밤 마포로 와요. 거실 한 자리, 빈 책상 하나, 미리 비워 둘게요. 같이 살자는 자리예요."
+        text: 카페 자리 닷새 뒤 새벽. 이수연한테서 카톡. "오늘 밤 마포로 오세요. 거실 끝에 책상 하나 들였어요. 실장님 자리로요. 같이 살자는 얘기 맞고, 저 두 번 묻지 않을게요. 답은 오늘 안으로."
       - speaker: thought
         requires:
           flagEqualsAll:
             - { key: c7_end, value: public }
             - { key: sooyeon_count_2, value: true }
-        text: 마포 13평. 빈 책상 하나. 같이 산다는 단어를 그쪽이 먼저 박았다. 답을 어떻게 보내느냐로 다음 몇 년의 방향이 정해진다.
+        text: 마포 13평. 책상 하나가 미리 자리 잡혀 있다. 두 번 묻지 않는다는 그 한 줄이, 본인이 본인 쪽 무게를 먼저 내려놓고 시작한 문장이다. 답을 어떻게 보내느냐로 다음 몇 년의 방향이 정해진다.
     choices:
       - id: sooyeon-accept
         label: (답을 보낸다.) 가요. 이번 주 안에 짐 옮길게요.
@@ -133,22 +133,23 @@ nodes:
             - { key: miyoung_bond, value: deepened }
         text: 미영의 이름은 기사 둘째 줄에서 한 칸 옆으로 빠져 있었다. 본인 쪽 라인에서 한 번 더 정리한 결과였고, 그 정리가 어떤 자세에서 나온 건지는 오늘 밤 묻지 않기로 했다.
 
-      # ── 미영 결합 단계별 후일담 ──
-      - speaker: narration
-        requires:
-          flagEqualsAll:
-            - { key: c7_end, value: public }
-            - { key: miyoung_count_3, value: true }
-        text: 다음 달 첫째 주, 청담 미영 오피스텔 침실 옆 작은 방에 책상 한 개를 들였다. 책상 위에 도현이 남긴 편지 원본을 가장 안쪽에 두었다. 일주일에 사흘은 그 책상에서 하루를 끝내는 사람이 됐고, 나머지 나흘은 을지로 사무실 책상에서 끝냈다. 두 책상의 무게가 같진 않았지만, 둘 중 하나가 더 가벼워지지도 않았다.
+      # ── 미영 단계별 후일담 (public 분기 — 결합 자리는 silence 쪽에만 있음) ──
       - speaker: narration
         requires:
           flagEqualsAll:
             - { key: c7_end, value: public }
             - { key: miyoung_count_2, value: true }
-          flagNotEquals:
-            key: miyoung_count_3
-            value: true
+          flagNotEqualsAll:
+            - { key: miyoung_count_3, value: true }
+            - { key: sooyeon_count_3, value: true }
         text: 미영과 한 달에 두세 번씩 청담 카페에서 만났다. 도현 얘기는 한 번도 꺼내지 않았고, 우리 둘 얘기도 거의 꺼내지 않았다. 잔이 비워지면 한쪽이 먼저 일어났고, 다른 쪽이 따라 일어났다.
+      - speaker: narration
+        requires:
+          flagEqualsAll:
+            - { key: c7_end, value: public }
+            - { key: miyoung_count_2, value: true }
+            - { key: sooyeon_count_3, value: true }
+        text: 미영한테는 따로 연락 가지 않았다. 그쪽도 묻지 않았다. 청담 카페에서 마지막으로 마주 앉은 잔의 자국이 한 달 사이에 천천히 식었고, 그 식는 속도가 둘이 같이 정한 답이었다.
 
       # ── 수연 결합 단계별 후일담 ──
       - speaker: narration
@@ -162,9 +163,8 @@ nodes:
           flagEqualsAll:
             - { key: c7_end, value: public }
             - { key: sooyeon_count_2, value: true }
-          flagNotEquals:
-            key: sooyeon_count_3
-            value: true
+          flagNotEqualsAll:
+            - { key: sooyeon_count_3, value: true }
         text: 이수연과는 일주일에 한 번 마포에서 만났다. 처음 몇 번은 같이 식사했고, 그 다음부터는 노트북 두 대 사이에서 같은 기사 톤을 다듬는 자리가 됐다. 이 사람의 부재가 가장 단단한 자리에서 부재가 자리로 바뀌는 데 한 달이 걸렸다.
 
       - speaker: narration

@@ -237,7 +237,7 @@ nodes:
           flagEqualsAll:
             - { key: c7_end, value: silence }
             - { key: miyoung_count_2, value: true }
-        text: 다음 달부터 청담 쪽으로 올라오시면 어떨까요. 매일이 아니어도 됩니다. 일주일에 사흘. 도현 씨 자리는 그 자리대로 두고요.
+        text: 다음 달부터 청담 쪽으로 올라오시면 어떨까 싶어요. 매일은 아니어도 돼요. 일주일에 사흘. 도현 씨 자리는 그대로 두고요. 그 사람 기다리면서 혼자 있는 시간이 길어지니까 — 한 사람이라도 옆에 두고 싶어서요. 변호사 말투라 미안한데, 그게 본심이에요.
         expression: tense
         background: cheongdam-cafe
         effects:

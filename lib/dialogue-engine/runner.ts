@@ -41,6 +41,11 @@ function matchesRequires(
       if (flags[cond.key] !== cond.value) return false;
     }
   }
+  if ("flagNotEqualsAll" in r && r.flagNotEqualsAll) {
+    for (const cond of r.flagNotEqualsAll) {
+      if (flags[cond.key] === cond.value) return false;
+    }
+  }
   if (r.minStat && (stats[r.minStat.stat] ?? 0) < r.minStat.value) return false;
   if (r.maxStat && (stats[r.maxStat.stat] ?? 0) > r.maxStat.value) return false;
   return true;

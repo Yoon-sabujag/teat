@@ -60,6 +60,14 @@ const LineRequires = z.object({
       }),
     )
     .optional(),
+  flagNotEqualsAll: z
+    .array(
+      z.object({
+        key: z.string(),
+        value: z.union([z.boolean(), z.string(), z.number()]),
+      }),
+    )
+    .optional(),
   minStat: z.object({ stat: StatEnum, value: z.number() }).optional(),
   maxStat: z.object({ stat: StatEnum, value: z.number() }).optional(),
 });

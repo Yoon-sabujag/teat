@@ -28,6 +28,8 @@ export type LineRequires = {
   flagNotEquals?: { key: string; value: boolean | string | number };
   /** AND of multiple equals checks, useful when one flag isn't enough. */
   flagEqualsAll?: Array<{ key: string; value: boolean | string | number }>;
+  /** AND of multiple not-equals checks, useful for mutually exclusive routes. */
+  flagNotEqualsAll?: Array<{ key: string; value: boolean | string | number }>;
   minStat?: { stat: Stat; value: number };
   maxStat?: { stat: Stat; value: number };
 };
@@ -51,6 +53,7 @@ export type ChoiceRequires = {
   flagEquals?: { key: string; value: boolean | string | number };
   flagNotEquals?: { key: string; value: boolean | string | number };
   flagEqualsAll?: Array<{ key: string; value: boolean | string | number }>;
+  flagNotEqualsAll?: Array<{ key: string; value: boolean | string | number }>;
   minStat?: { stat: Stat; value: number };
   maxStat?: { stat: Stat; value: number };
 };
